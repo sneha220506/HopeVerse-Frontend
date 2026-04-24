@@ -16,21 +16,10 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">Platform</h4>
-            <ul className="space-y-2">{['Dashboard', 'Community Needs', 'Volunteers', 'Smart Matching', 'Tasks', 'Analytics'].map(i => <li key={i}><a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">{i}</a></li>)}</ul>
-          </div>
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">API Endpoints</h4>
-            <ul className="space-y-2">
-              {[['POST /api/auth/login', 'Login'], ['GET /api/needs', 'List Needs'], ['GET /api/volunteers', 'Volunteers'], ['POST /api/matching/all', 'Smart Match'], ['POST /api/surveys', 'Submit Report']].map(([ep, label]) => (
-                <li key={ep}><div className="text-gray-500 text-xs"><code className="text-emerald-400/60">{ep}</code><br /><span className="text-gray-400 text-[10px]">{label}</span></div></li>
-              ))}
-            </ul>
-          </div>
+        
         </div>
         <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-xs">© 2024 ImpactHub. Smart Resource Allocation for Social Impact. MERN Stack Application.</p>
+          <p className="text-gray-500 text-xs">© 2024 CommunityPulse. Smart Resource Allocation for Social Impact. MERN Stack Application.</p>
           <div className="flex gap-4 mt-3 md:mt-0">
             <a href="#" className="text-gray-500 hover:text-gray-400 text-xs">Privacy</a>
             <a href="#" className="text-gray-500 hover:text-gray-400 text-xs">Terms</a>

@@ -56,7 +56,7 @@ export default function Login({ onLogin, onSwitchToRegister, onBack }) {
           <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-4">
             <span className="text-white text-2xl">🤝</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Welcome to <span className="text-emerald-400">ImpactHub</span></h1>
+          <h1 className="text-2xl font-bold text-white">Welcome to <span className="text-emerald-400">CommunityPulse</span></h1>
           <p className="text-gray-400 text-sm mt-1">Sign in to access the volunteer coordination platform</p>
         </div>
 
@@ -80,7 +80,7 @@ export default function Login({ onLogin, onSwitchToRegister, onBack }) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@impacthub.org"
+                  placeholder="admin@CommunityPulse.org"
                   className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-11 pr-4 py-3 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 transition-colors"
                 />
               </div>
@@ -152,9 +152,9 @@ export default function Login({ onLogin, onSwitchToRegister, onBack }) {
           </h3>
           <div className="space-y-2">
             {[
-              { email: 'admin@impacthub.org', password: 'admin123', role: 'Admin', icon: '👑', color: 'border-emerald-500/30' },
-              { email: 'sarah@impacthub.org', password: 'password123', role: 'Coordinator', icon: '👩‍💼', color: 'border-blue-500/30' },
-              { email: 'raj@impacthub.org', password: 'password123', role: 'Field Worker', icon: '👷', color: 'border-amber-500/30' },
+              { email: 'admin@CommunityPulse.org', password: 'admin123', role: 'Admin', icon: '👑', color: 'border-emerald-500/30' },
+              { email: 'sarah@CommunityPulse.org', password: 'password123', role: 'Coordinator', icon: '👩‍💼', color: 'border-blue-500/30' },
+              { email: 'raj@CommunityPulse.org', password: 'password123', role: 'Field Worker', icon: '👷', color: 'border-amber-500/30' },
             ].map((demo) => (
               <button
                 key={demo.email}

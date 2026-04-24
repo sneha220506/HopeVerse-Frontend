@@ -4,7 +4,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 // Helper for API calls
 const apiCall = async (endpoint, options = {}) => {
   try {
-    const token = localStorage.getItem('impacthub_token');
+    const token = localStorage.getItem('CommunityPulse_token');
     const config = {
       headers: {
         'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-// Helper functions for the ImpactHub frontend
+// Helper functions for the CommunityPulse frontend
 
 export const getCategoryColor = (category) => {
   const colors = {

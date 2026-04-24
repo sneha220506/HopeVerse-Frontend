@@ -161,9 +161,9 @@ const ROLE_PERMISSIONS = {
 
 // Demo accounts
 const DEMO_USERS = {
-  'admin@impacthub.org': { _id: 'u1', name: 'Admin User', email: 'admin@impacthub.org', password: 'admin123', role: 'admin', avatar: '👑', organization: 'ImpactHub HQ' },
-  'sarah@impacthub.org': { _id: 'u2', name: 'Sarah Coordinator', email: 'sarah@impacthub.org', password: 'password123', role: 'coordinator', avatar: '👩‍💼', organization: 'Community Aid NGO' },
-  'raj@impacthub.org': { _id: 'u3', name: 'Raj Field Worker', email: 'raj@impacthub.org', password: 'password123', role: 'field-worker', avatar: '👷', organization: 'Field Operations Team' },
+  'admin@CommunityPulse.org': { _id: 'u1', name: 'Admin User', email: 'admin@CommunityPulse.org', password: 'admin123', role: 'admin', avatar: '👑', organization: 'CommunityPulse HQ' },
+  'sarah@CommunityPulse.org': { _id: 'u2', name: 'Sarah Coordinator', email: 'sarah@CommunityPulse.org', password: 'password123', role: 'coordinator', avatar: '👩‍💼', organization: 'Community Aid NGO' },
+  'raj@CommunityPulse.org': { _id: 'u3', name: 'Raj Field Worker', email: 'raj@CommunityPulse.org', password: 'password123', role: 'field-worker', avatar: '👷', organization: 'Field Operations Team' },
   'volunteer@example.com': { _id: 'u4', name: 'Test Volunteer', email: 'volunteer@example.com', password: 'password123', role: 'volunteer', avatar: '🙋', organization: 'General Volunteers' },
 };
 
@@ -180,7 +180,7 @@ export default function App() {
   useEffect(() => {
     const init = async () => {
       try { setBackendStatus((await checkBackendHealth()).connected); } catch { setBackendStatus(false); }
-      const stored = localStorage.getItem('impacthub_user');
+      const stored = localStorage.getItem('CommunityPulse_user');
       if (stored) { setUser(JSON.parse(stored)); setAuthView('authenticated'); }
       else { setAuthView('landing'); }
       setAuthLoading(false);
@@ -194,25 +194,25 @@ export default function App() {
 
   const doLogin = async (email, pw) => {
     if (backendStatus) {
-      try { const { authAPI } = await import('./services/api'); const d = await authAPI.login(email, pw); localStorage.setItem('impacthub_token', d.token); localStorage.setItem('impacthub_user', JSON.stringify(d.user)); setUser(d.user); setAuthView('authenticated'); setActiveSection('dashboard'); return; } catch {}
+      try { const { authAPI } = await import('./services/api'); const d = await authAPI.login(email, pw); localStorage.setItem('CommunityPulse_token', d.token); localStorage.setItem('CommunityPulse_user', JSON.stringify(d.user)); setUser(d.user); setAuthView('authenticated'); setActiveSection('dashboard'); return; } catch {}
     }
     const demo = DEMO_USERS[email.toLowerCase()];
     if (demo && demo.password === pw) {
       const u = { _id: demo._id, name: demo.name, email: demo.email, role: demo.role, avatar: demo.avatar, organization: demo.organization };
-      localStorage.setItem('impacthub_user', JSON.stringify(u));
+      localStorage.setItem('CommunityPulse_user', JSON.stringify(u));
       setUser(u); setAuthView('authenticated'); setActiveSection('dashboard');
     } else { throw new Error('Invalid credentials. Try a demo account.'); }
   };
 
   const doRegister = async (data) => {
     if (backendStatus) {
-      try { const { authAPI } = await import('./services/api'); const d = await authAPI.register(data); localStorage.setItem('impacthub_token', d.token); localStorage.setItem('impacthub_user', JSON.stringify(d.user)); setUser(d.user); setAuthView('authenticated'); setActiveSection('dashboard'); return; } catch (e) { throw new Error(e.message); }
+      try { const { authAPI } = await import('./services/api'); const d = await authAPI.register(data); localStorage.setItem('CommunityPulse_token', d.token); localStorage.setItem('CommunityPulse_user', JSON.stringify(d.user)); setUser(d.user); setAuthView('authenticated'); setActiveSection('dashboard'); return; } catch (e) { throw new Error(e.message); }
     }
     const u = { _id: 'u' + Date.now(), name: data.name, email: data.email, role: data.role || 'viewer', avatar: '👤', organization: data.organization || '' };
-    localStorage.setItem('impacthub_user', JSON.stringify(u)); setUser(u); setAuthView('authenticated'); setActiveSection('dashboard');
+    localStorage.setItem('CommunityPulse_user', JSON.stringify(u)); setUser(u); setAuthView('authenticated'); setActiveSection('dashboard');
   };
 
-  const doLogout = () => { localStorage.removeItem('impacthub_token'); localStorage.removeItem('impacthub_user'); setUser(null); setAuthView('landing'); };
+  const doLogout = () => { localStorage.removeItem('CommunityPulse_token'); localStorage.removeItem('CommunityPulse_user'); setUser(null); setAuthView('landing'); };
 
   const go = (s) => { setActiveSection(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
@@ -251,5 +251,5 @@ export default function App() {
 }
 
 function LoadingScreen() {
-  return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-center"><div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-4 animate-pulse"><span className="text-white text-2xl">🤝</span></div><p className="text-gray-400 text-sm">Loading ImpactHub...</p></div></div>;
+  return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-center"><div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mx-auto mb-4 animate-pulse"><span className="text-white text-2xl">🤝</span></div><p className="text-gray-400 text-sm">Loading CommunityPulse...</p></div></div>;
 }

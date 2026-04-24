@@ -25,7 +25,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
         <div className="flex items-center justify-between h-16">
           <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 group">
             <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30"><span className="text-white text-lg">🤝</span></div>
-            <span className="text-white font-bold text-lg">Impact<span className="text-emerald-400">Hub</span></span>
+            <span className="text-white font-bold text-lg">Community<span className="text-emerald-400">Pulse</span></span>
           </button>
 
           <div className="hidden lg:flex items-center gap-1">
@@ -67,21 +67,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
                           <p className="text-gray-400 text-xs">{user?.email}</p>
                           <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-700/50 ${roleColors[user?.role]}`}>{p.label || user?.role}</span>
                         </div>
-                      </div>
-                      {/* SHOW WHAT USER CAN DO */}
-                      <div className="bg-gray-700/30 rounded-lg p-3">
-                        <p className="text-gray-400 text-[10px] font-medium mb-2">YOUR PERMISSIONS:</p>
-                        <div className="grid grid-cols-2 gap-1">
-                          <PermItem label="Create Needs" active={p.canCreateNeed} />
-                          <PermItem label="Create Tasks" active={p.canCreateTask} />
-                          <PermItem label="Assign Volunteers" active={p.canAssignVolunteer} />
-                          <PermItem label="Complete Tasks" active={p.canCompleteTask} />
-                          <PermItem label="Submit Reports" active={p.canSubmitSurvey} />
-                          <PermItem label="Verify Reports" active={p.canVerifySurvey} />
-                          <PermItem label="Confirm Matches" active={p.canConfirmMatch} />
-                          <PermItem label="Delete Items" active={p.canDeleteNeed || p.canDeleteTask || p.canDeleteSurvey} />
-                        </div>
-                      </div>
+                      </div>                      
                     </div>
                     <div className="p-2">
                       <button onClick={() => { onNavigate('dashboard'); setShowUserMenu(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/50 text-sm text-left">

@@ -54,7 +54,7 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
             <span className="text-white text-2xl">🤝</span>
           </div>
           <h1 className="text-2xl font-bold text-white">Create Your <span className="text-emerald-400">Account</span></h1>
-          <p className="text-gray-400 text-sm mt-1">Join ImpactHub and start making a difference</p>
+          <p className="text-gray-400 text-sm mt-1">Join CommunityPulse and start making a difference</p>
         </div>
 
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8">

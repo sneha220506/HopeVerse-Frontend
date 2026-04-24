@@ -15,7 +15,7 @@ export default function LandingPage({ onLogin, onRegister }) {
               <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
                 <span className="text-white text-lg">🤝</span>
               </div>
-              <span className="text-white font-bold text-lg">Impact<span className="text-emerald-400">Hub</span></span>
+              <span className="text-white font-bold text-lg">Community<span className="text-emerald-400">Pulse</span></span>
             </div>
             <div className="hidden md:flex items-center gap-4">
               <a href="#features" className="text-gray-400 hover:text-white text-sm transition-colors">Features</a>
@@ -41,10 +41,7 @@ export default function LandingPage({ onLogin, onRegister }) {
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0)', backgroundSize: '50px 50px' }} />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-8">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-emerald-400 text-sm font-medium">Data-Driven Volunteer Coordination</span>
-          </div>
+          
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
             Smart Resource<br />
@@ -142,7 +139,7 @@ export default function LandingPage({ onLogin, onRegister }) {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Role-Based Access</h2>
             <p className="text-gray-400 max-w-xl mx-auto">Different permissions for different team members</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 role: 'Admin', icon: '👑', color: 'border-red-500/30 bg-red-500/5',
@@ -155,11 +152,7 @@ export default function LandingPage({ onLogin, onRegister }) {
               {
                 role: 'Field Worker', icon: '👷', color: 'border-amber-500/30 bg-amber-500/5',
                 features: ['Submit reports', 'View needs', 'View volunteers', 'View tasks', 'View analytics']
-              },
-              {
-                role: 'Viewer', icon: '👁️', color: 'border-gray-500/30 bg-gray-500/5',
-                features: ['View needs', 'View volunteers', 'View tasks', 'View analytics', 'Read-only access']
-              },
+              }
             ].map((r, i) => (
               <div key={i} className={`rounded-xl border ${r.color} p-6`}>
                 <div className="text-3xl mb-3">{r.icon}</div>
@@ -230,9 +223,9 @@ export default function LandingPage({ onLogin, onRegister }) {
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm">🤝</span>
               </div>
-              <span className="text-white font-bold">Impact<span className="text-emerald-400">Hub</span></span>
+              <span className="text-white font-bold">Community<span className="text-emerald-400">Pulse</span></span>
             </div>
-            <p className="text-gray-500 text-sm">© 2024 ImpactHub. Smart Resource Allocation for Social Impact. MERN Stack.</p>
+            <p className="text-gray-500 text-sm">© 2026 CommunityPulse. Smart Resource Allocation for Social Impact. MERN Stack.</p>
           </div>
         </div>
       </footer>
