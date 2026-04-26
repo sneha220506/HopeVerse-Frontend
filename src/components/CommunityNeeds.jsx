@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect ,useState } from 'react';
 import { communityNeeds } from '../data/mockData';
 import { getCategoryIcon, getCategoryBg, getUrgencyColor } from '../utils/helpers';
 

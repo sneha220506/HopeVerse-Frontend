@@ -1,3 +1,4 @@
+
 // API Base URL - points to the Express backend
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -67,6 +68,9 @@ export const needsAPI = {
   getById: (id) => apiCall(`/needs/${id}`),
 
   getStats: () => apiCall('/needs/stats'),
+
+  getCriticalNeeds: () => apiCall('/needs/getcriticalneeds'),
+
 
   create: (needData) => apiCall('/needs', {
     method: 'POST',
