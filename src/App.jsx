@@ -241,7 +241,7 @@ export default function App() {
       <Navbar activeSection={activeSection} onNavigate={go} backendStatus={backendStatus} user={user} onLogout={doLogout} perms={perms} />
       <main className="pt-16">
         <div className={`text-center py-1.5 text-[11px] font-medium ${backendStatus ? 'bg-emerald-500/10 text-emerald-400 border-b border-emerald-500/20' : 'bg-yellow-500/10 text-yellow-400 border-b border-yellow-500/20'}`}>
-          {backendStatus ? `✅ Backend — ${user.name} (${perms.label})` : `⚡ Demo — ${user.name} (${perms.label})`}
+          {backendStatus ? `✅ Server Connected — ${user.name} (${perms.label})` : `⚡ Demo — ${user.name} (${perms.label})`}
         </div>
         {renderSection()}
       </main>

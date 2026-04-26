@@ -9,7 +9,7 @@ export default function Footer() {
                 <span className="text-white text-lg">🤝</span>
               </div>
               <span className="text-white font-bold text-lg">
-                Impact<span className="text-emerald-400">Hub</span>
+                Community<span className="text-emerald-400">Pulse</span>
               </span>
             </div>
             <p className="text-gray-400 max-w-md text-sm leading-relaxed text-center">
