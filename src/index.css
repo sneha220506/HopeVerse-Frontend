@@ -1,1 +1,52 @@
 @import "tailwindcss";
+
+@theme {
+  /* --- Color Palette --- */
+  --color-primary: #8E7CC3;        /* Dusty Lavender */
+  --color-secondary: #B8A1E3;      /* Soft Lilac */
+  --color-accent: #FF8A65;         /* Warm Coral */
+  --color-accent-hover: #FFB199;   /* Lighter Coral for hover */
+  --color-background: #FAFAFC;     /* Off White */
+  --color-surface: #F3F0FA;        /* Very Light Lavender for Cards */
+  --color-slate-dark: #2F2F3A;     /* Text Primary */
+  --color-success: #7BC47F;        /* Soft Green */
+
+  /* --- Gradients --- */
+  --background-image-hero-grad: linear-gradient(135deg, #8E7CC3, #B8A1E3);
+  --background-image-cta-grad: linear-gradient(135deg, #FF8A65, #FFB199);
+
+  /* --- Typography --- */
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Inter", "Nunito", sans-serif;
+
+  /* --- Effects --- */
+  --shadow-soft: 0 8px 30px rgba(142, 124, 195, 0.12);
+  --radius-xl: 1.25rem; /* For that rounded UI feel */
+}
+
+/* Global Styles */
+@layer base {
+  body {
+    @apply bg-background text-slate-dark font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold tracking-tight;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  a, button {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}
+
+/* Custom UI Utility Classes */
+@layer components {
+  .btn-pill {
+    @apply rounded-full px-8 py-3 font-medium shadow-md hover:shadow-lg active:scale-95;
+  }
+  
+  .card-soft {
+    @apply bg-surface rounded-xl shadow-soft border border-white/50;
+  }
+}

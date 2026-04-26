@@ -59,76 +59,162 @@ export default function SmartMatching({ permissions }) {
   };
 
   return (
-    <section className="py-8">
+    <section className="py-12 bg-surface min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white">🤖 Smart Matching Engine</h2>
-          <p className="text-gray-400 text-sm mt-1">AI-powered volunteer-to-need matching based on skills, location, and availability</p>
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl">🤖</span>
+              <h2 className="text-3xl font-heading font-bold text-slate-dark tracking-tight">Smart Match Engine</h2>
+            </div>
+            <p className="text-slate-dark/40 text-sm font-medium">Algorithmic precision for community impact.</p>
+          </div>
+          
+          <div className="flex gap-3">
+             <div className="px-4 py-2 bg-white rounded-2xl border border-primary/5 shadow-sm">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-dark/30 block mb-1">Status</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-bold text-slate-dark uppercase">Engine Online</span>
+                </div>
+             </div>
+          </div>
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="text-gray-400 text-sm font-medium mb-2 block">Select Community Need (Optional)</label>
-              <select value={selectedNeed} onChange={(e) => setSelectedNeed(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-emerald-500">
-                <option value="">All Urgent Needs</option>
+        {/* Configuration Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white p-8 mb-12 shadow-soft">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+            <div className="lg:col-span-5">
+              <label className="text-slate-dark/60 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Target Community Need</label>
+              <select 
+                value={selectedNeed} 
+                onChange={(e) => setSelectedNeed(e.target.value)} 
+                className="w-full bg-surface border border-primary/5 rounded-2xl px-5 py-4 text-sm font-bold text-slate-dark focus:ring-4 focus:ring-primary/10 transition-all appearance-none outline-none shadow-inner"
+              >
+                <option value="">Analyze All High-Urgency Needs</option>
                 {openNeeds.map(n => <option key={n._id} value={n._id}>{getCategoryIcon(n.category)} {n.title}</option>)}
               </select>
             </div>
-            <div>
-              <label className="text-gray-400 text-sm font-medium mb-2 block">Available Volunteers</label>
-              <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">{available.slice(0, 4).map(v => <div key={v._id} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-sm">{v.avatar}</div>)}</div>
-                  <span className="text-white font-semibold text-lg">{available.length}</span><span className="text-gray-500 text-sm">ready</span>
+            
+            <div className="lg:col-span-4">
+              <label className="text-slate-dark/60 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-1">Available Workforce</label>
+              <div className="flex items-center gap-4 bg-surface border border-primary/5 rounded-2xl px-5 py-3.5 shadow-inner">
+                <div className="flex -space-x-3">
+                  {available.slice(0, 4).map(v => (
+                    <div key={v._id} className="w-9 h-9 rounded-full bg-white border-2 border-surface flex items-center justify-center text-sm shadow-sm ring-1 ring-primary/5">
+                      {v.avatar}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <span className="text-slate-dark font-black text-lg leading-none block">{available.length}</span>
+                  <span className="text-slate-dark/30 text-[10px] font-bold uppercase">Ready to Deploy</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-end">
-              <button onClick={runMatch} disabled={isMatching}
-                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 flex items-center justify-center gap-2">
-                {isMatching ? (<><svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Analyzing...</>) : '⚡ Run Smart Match'}
+
+            <div className="lg:col-span-3">
+              <button 
+                onClick={runMatch} 
+                disabled={isMatching}
+                className="btn-primary w-full py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-primary/20 hover:shadow-2xl transition-all bg-[#F3F0FA] text-slate-dark font-black uppercase tracking-[0.2em]"
+              >
+                {isMatching ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="uppercase tracking-widest font-black text-xs">Computing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-lg">⚡</span>
+                    <span className="uppercase tracking-widest font-black text-xs">Execute Match</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
         </div>
 
+        {/* Results Grid */}
         {matches.length > 0 && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Match Results</h3>
-              <span className="text-emerald-400 text-sm">{matches.length} matches found</span>
+          <div className="animate-fade-in">
+            <div className="flex items-center justify-between mb-8 px-2">
+              <h3 className="text-xl font-heading font-bold text-slate-dark">Optimization Results</h3>
+              <span className="px-4 py-1.5 bg-primary/5 text-primary rounded-full text-[10px] font-black uppercase tracking-widest">
+                {matches.length} Optimal Pairings Found
+              </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {matches.map((match, idx) => {
                 const key = `${match.volunteer._id}-${match.need._id}`;
                 const isAssigned = assigned.has(key);
                 return (
-                  <div key={idx} className={`bg-gray-800/50 backdrop-blur-sm rounded-xl border p-5 transition-all hover:-translate-y-1 ${isAssigned ? 'border-emerald-500/50 shadow-lg shadow-emerald-500/10' : 'border-gray-700/50 hover:border-gray-600'}`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${match.score >= 80 ? 'bg-emerald-500/20 text-emerald-400' : match.score >= 60 ? 'bg-blue-500/20 text-blue-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{match.score}%</div>
-                        <span className="text-gray-400 text-xs">Match</span>
+                  <div 
+                    key={idx} 
+                    className={`group relative bg-white rounded-[2rem] p-6 border transition-all duration-500 hover:-translate-y-2 ${
+                      isAssigned ? 'border-primary shadow-xl shadow-primary/10' : 'border-white shadow-soft hover:shadow-xl hover:border-primary/20'
+                    }`}
+                  >
+                    {/* Score Badge */}
+                    <div className="absolute -top-3 -right-3 w-14 h-14 bg-white rounded-2xl shadow-lg border border-primary/5 flex flex-col items-center justify-center">
+                       <span className="text-[9px] font-black text-slate-dark/30 uppercase leading-none mb-1">Score</span>
+                       <span className={`text-lg font-black leading-none ${match.score >= 80 ? 'text-primary' : 'text-secondary'}`}>
+                         {match.score}
+                       </span>
+                    </div>
+
+                    {/* Pairing Visual */}
+                    <div className="space-y-4 mb-6">
+                      <div className="flex items-center gap-4 p-3 bg-surface rounded-2xl border border-primary/5">
+                        <span className="text-2xl">{match.volunteer.avatar}</span>
+                        <div>
+                          <p className="text-slate-dark font-bold text-sm">{match.volunteer.name}</p>
+                          <p className="text-slate-dark/30 text-[10px] font-black uppercase tracking-tighter">{match.volunteer.skills[0]}</p>
+                        </div>
                       </div>
-                      {isAssigned && <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-medium">✓ Assigned</span>}
-                    </div>
-                    <div className="flex items-center gap-2 mb-2 p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-lg">{match.volunteer.avatar}</span>
-                      <div><p className="text-white text-sm font-medium">{match.volunteer.name}</p><p className="text-gray-500 text-[10px]">{match.volunteer.skills.slice(0, 2).join(', ')}</p></div>
-                    </div>
-                    <div className="text-center text-gray-600 text-xs my-1">→ matched with →</div>
-                    <div className="flex items-center gap-2 mb-3 p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-lg">{getCategoryIcon(match.need.category)}</span>
-                      <div><p className="text-white text-sm font-medium line-clamp-1">{match.need.title}</p>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${getUrgencyColor(match.need.urgency)}`}>{match.need.urgency}</span>
+
+                      <div className="flex justify-center -my-2 relative z-10">
+                        <div className="bg-white p-1 rounded-full border border-primary/10">
+                          <svg className="w-5 h-5 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-3 bg-slate-dark/5 rounded-2xl border border-transparent">
+                        <span className="text-2xl">{getCategoryIcon(match.need.category)}</span>
+                        <div className="flex-1 overflow-hidden">
+                          <p className="text-slate-dark font-bold text-sm truncate">{match.need.title}</p>
+                          <div className={`inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase border tracking-tighter ${getUrgencyColor(match.need.urgency)}`}>
+                            {match.need.urgency}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-1 mb-3">
-                      {match.reasons.map((r, i) => <div key={i} className="flex items-center gap-1.5 text-[11px] text-gray-400"><span className="text-emerald-500">✓</span>{r}</div>)}
+
+                    {/* Match Logic */}
+                    <div className="space-y-2 mb-6">
+                      {match.reasons.map((r, i) => (
+                        <div key={i} className="flex items-center gap-2 text-[11px] font-bold text-slate-dark/40 uppercase tracking-tight">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                          {r}
+                        </div>
+                      ))}
                     </div>
-                    <button onClick={() => setAssigned(prev => new Set([...prev, key]))} disabled={isAssigned}
-                      className={`w-full py-2 rounded-lg text-xs font-medium transition-colors ${isAssigned ? 'bg-emerald-500/10 text-emerald-400 cursor-default' : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'}`}>
-                      {isAssigned ? '✓ Assignment Confirmed' : permissions?.canConfirmMatch ? 'Confirm Assignment' : 'View Match'}
+
+                    {/* Action Button */}
+                    <button 
+                      onClick={() => setAssigned(prev => new Set([...prev, key]))} 
+                      disabled={isAssigned}
+                      className={`w-full py-3.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                        isAssigned 
+                        ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                        : 'bg-surface text-slate-dark/40 hover:bg-primary/10 hover:text-primary'
+                      }`}
+                    >
+                      {isAssigned ? '✓ Assignment Active' : permissions?.canConfirmMatch ? 'Confirm Deployment' : 'View Parameters'}
                     </button>
                   </div>
                 );
@@ -137,13 +223,21 @@ export default function SmartMatching({ permissions }) {
           </div>
         )}
 
+        {/* Empty State */}
         {matches.length === 0 && !isMatching && (
-          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-12 text-center">
-            <div className="text-6xl mb-4">🤖</div>
-            <h3 className="text-xl font-semibold text-white mb-2">Ready to Match</h3>
-            <p className="text-gray-400 max-w-md mx-auto mb-6">Our smart matching engine analyzes volunteer skills, location proximity, availability, and community needs.</p>
+          <div className="bg-white/50 backdrop-blur-sm rounded-[3rem] border border-white p-20 text-center animate-fade-in shadow-soft">
+            <div className="w-24 h-24 bg-surface rounded-[2rem] flex items-center justify-center text-5xl mx-auto mb-8 shadow-inner">🤖</div>
+            <h3 className="text-2xl font-heading font-bold text-slate-dark mb-3 tracking-tight">Systems Standby</h3>
+            <p className="text-slate-dark/40 max-w-lg mx-auto mb-10 font-medium">
+              The matching engine is ready to analyze volunteer skillsets against community demands. 
+              Run a scan to find optimal resource allocations.
+            </p>
             <div className="flex flex-wrap justify-center gap-3">
-              {['Skills Analysis', 'Location Matching', 'Urgency Priority', 'Availability Check'].map(f => <span key={f} className="px-3 py-1.5 bg-gray-700/50 text-gray-400 rounded-lg text-xs">{f}</span>)}
+              {['Skill Heuristics', 'Regional Analysis', 'Urgency Weighting'].map(f => (
+                <span key={f} className="px-4 py-2 bg-white border border-primary/5 text-slate-dark/30 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                  {f}
+                </span>
+              ))}
             </div>
           </div>
         )}
