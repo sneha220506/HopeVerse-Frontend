@@ -1,256 +1,129 @@
+import React, { useState, useEffect } from 'react';
 import { volunteersAPI } from "../services/api";
-import { useEffect, useState } from "react";
-import { getStatusColor } from "../utils/helpers";
 
-export default function VolunteerDirectory({ onNavigate, permissions }) {
+/**
+ * VOLUNTEER MODAL COMPONENT
+ */
+const VolunteerModal = ({ vol, onClose, onNavigate }) => {
+  if (!vol) return null;
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[#2F2F3A]/60 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose}/>
+      <div className="relative bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-[#F3F0FA]">
+        <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-[#FAFAFC] text-[#2F2F3A]/40 hover:text-[#8E7CC3] transition-colors z-10">✕</button>
+        <div className="p-8 sm:p-12">
+          <div className="flex flex-col items-center text-center mb-8">
+            <div className="w-28 h-28 rounded-[2.5rem] bg-gradient-to-tr from-[#8E7CC3] to-[#B8A1E3] flex items-center justify-center text-5xl text-white shadow-xl mb-4">{vol.avatar}</div>
+            <h3 className="text-3xl font-bold text-[#2F2F3A]">{vol.name}</h3>
+            <p className="text-[#8E7CC3] font-bold uppercase tracking-[0.2em] text-[10px] mt-2">Verified Community Responder</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            {[{ label: "Acts", val: vol.tasksCompleted, icon: "🌱" }, { label: "Rating", val: `★${vol.rating}`, icon: "✨" }, { label: "Hours", val: `${vol.hoursLogged}h`, icon: "⏳" }].map((stat) => (
+              <div key={stat.label} className="bg-[#F3F0FA] rounded-2xl p-4 text-center">
+                <div className="text-lg mb-1">{stat.icon}</div>
+                <div className="text-md font-bold text-[#2F2F3A]">{stat.val}</div>
+                <div className="text-[9px] text-[#2F2F3A]/40 uppercase font-black tracking-widest">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => { onNavigate("matching"); onClose(); }} className="w-full mt-8 py-5 bg-gradient-to-r from-[#FF8A65] to-[#FFB199] text-white rounded-2xl font-bold uppercase tracking-[0.2em] text-xs shadow-lg shadow-orange-100 hover:scale-[1.02] transition-transform">Send Collaboration Request</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * MAIN VOLUNTEER DIRECTORY COMPONENT
+ */
+export default function VolunteerDirectory({ onNavigate }) {
   const [volunteers, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [filterAvailability, setFilterAvailability] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedVolunteer, setSelectedVolunteer] = useState(null);
-
-  // 🔥 FETCH FUNCTION
-  const fetchVolunteers = async () => {
-    try {
-      const res = await volunteersAPI.getAll();
-      setVolunteers(res.data || res);
-      setError("");
-    } catch (err) {
-      setError("Please refresh");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedVol, setSelectedVol] = useState(null);
+  const [deletingId, setDeletingId] = useState(null); // Track which card is in "Confirm Delete" mode
 
   useEffect(() => {
+    const fetchVolunteers = async () => {
+      try {
+        const res = await volunteersAPI.getAll();
+        setVolunteers(res.data || res);
+      } catch (err) { console.error("Sync error."); } finally { setLoading(false); }
+    };
     fetchVolunteers();
   }, []);
 
-  // 🔍 FILTER LOGIC
-  const filtered = volunteers.filter((vol) => {
-    if (filterStatus !== "all" && vol.status !== filterStatus) return false;
-    if (filterAvailability !== "all" && vol.availability !== filterAvailability)
-      return false;
-    if (
-      searchTerm &&
-      !vol.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !vol.skills.some((s) =>
-        s.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    )
-      return false;
-    return true;
-  });
-
-  // 📊 STATS
-  const stats = {
-    total: volunteers.length,
-    active: volunteers.filter((v) => v.status === "active").length,
-    onTask: volunteers.filter((v) => v.status === "on-task").length,
-    totalHours: volunteers.reduce((s, v) => s + (v.hoursLogged || 0), 0),
-    avgRating: volunteers.length
-      ? (
-          volunteers.reduce((s, v) => s + (v.rating || 0), 0) /
-          volunteers.length
-        ).toFixed(1)
-      : 0,
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await volunteersAPI.delete(id);
+      setVolunteers(volunteers.filter(v => v._id !== id));
+      setDeletingId(null);
+    } catch (err) { alert("Could not remove volunteer."); }
   };
+
+  const filtered = volunteers.filter((vol) => 
+    vol.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    vol.skills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen bg-[#FAFAFC]">
+      <div className="flex space-x-2 animate-pulse text-[#8E7CC3] font-bold uppercase tracking-widest text-xs">Syncing Hearts...</div>
+    </div>
+  );
+
   return (
-    <section className="py-8">
+    <section className="py-16 bg-[#FAFAFC] min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
           <div>
-            <h2 className="text-2xl font-bold text-white">
-              Volunteer Directory
-            </h2>
-            <p className="text-gray-400 text-sm mt-1">
-              {filtered.length} volunteers in the network
-            </p>
+            <h2 className="text-4xl font-bold text-[#2F2F3A] tracking-tight">Community <span className="text-[#8E7CC3]">Directory</span></h2>
+            <p className="text-[#2F2F3A]/50 font-medium mt-2">Managing {volunteers.length} verified hearts.</p>
           </div>
-          <button
-            onClick={() => onNavigate("matching")}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors text-sm font-medium border border-emerald-500/20"
-          >
-            🤖 Smart Match
-          </button>
+          <input type="text" placeholder="Search by name or skills..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-96 bg-white border border-[#F3F0FA] rounded-2xl px-6 py-4 text-sm text-[#2F2F3A] shadow-soft outline-none focus:ring-2 focus:ring-[#8E7CC3]/20 transition-all"/>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-          {[
-            { l: "Total", v: stats.total, i: "👥", c: "text-white" },
-            { l: "Active", v: stats.active, i: "✅", c: "text-emerald-400" },
-            { l: "On Task", v: stats.onTask, i: "🎯", c: "text-blue-400" },
-            { l: "Hours", v: stats.totalHours, i: "⏱️", c: "text-amber-400" },
-            {
-              l: "Avg Rating",
-              v: stats.avgRating,
-              i: "⭐",
-              c: "text-yellow-400",
-            },
-          ].map((s) => (
-            <div
-              key={s.l}
-              className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-3 text-center"
-            >
-              <div className="text-lg">{s.i}</div>
-              <div className={`text-xl font-bold ${s.c}`}>{s.v}</div>
-              <div className="text-xs text-gray-500">{s.l}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          <div className="relative flex-1 min-w-[200px]">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search by name or skill..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-emerald-500"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="on-task">On Task</option>
-          </select>
-          <select
-            value={filterAvailability}
-            onChange={(e) => setFilterAvailability(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-emerald-500"
-          >
-            <option value="all">All Availability</option>
-            <option value="full-time">Full Time</option>
-            <option value="part-time">Part Time</option>
-            <option value="weekends">Weekends</option>
-            <option value="flexible">Flexible</option>
-          </select>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.map((vol) => (
-            <div
-              key={vol._id}
-              onClick={() =>
-                setSelectedVolunteer(
-                  selectedVolunteer === vol._id ? null : vol._id,
-                )
-              }
-              className={`bg-gray-800/50 backdrop-blur-sm rounded-xl border transition-all cursor-pointer hover:-translate-y-1 ${selectedVolunteer === vol._id ? "border-emerald-500/50 shadow-lg shadow-emerald-500/10" : "border-gray-700/50 hover:border-gray-600"}`}
+            <div key={vol._id} onClick={() => setSelectedVol(vol)}
+              className="group relative bg-white rounded-[2.5rem] p-8 border border-transparent shadow-soft hover:shadow-xl transition-all duration-500 cursor-pointer flex flex-col items-center text-center overflow-hidden"
             >
-              <div className="p-5">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-gray-700 flex items-center justify-center text-2xl">
-                    {vol.avatar}
+              {/* DELETE LOGIC */}
+              <div className="absolute top-6 right-6 z-20">
+                {deletingId === vol._id ? (
+                  <div className="flex items-center gap-2 animate-in slide-in-from-right-4">
+                    <button onClick={(e) => handleDelete(e, vol._id)} className="bg-rose-500 text-white text-[9px] font-bold px-3 py-1.5 rounded-lg shadow-lg hover:bg-rose-600 transition-colors">CONFIRM</button>
+                    <button onClick={(e) => { e.stopPropagation(); setDeletingId(null); }} className="bg-slate-100 text-slate-400 text-[9px] font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition-colors">CANCEL</button>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="text-white font-medium">{vol.name}</h4>
-                    <p className="text-gray-500 text-xs">📍 {vol.location}</p>
-                  </div>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${getStatusColor(vol.status)}`}
+                ) : (
+                  <button onClick={(e) => { e.stopPropagation(); setDeletingId(vol._id); }} 
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-50 text-rose-300 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all duration-300"
                   >
-                    {vol.status}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  {vol.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-2 py-0.5 bg-gray-700/50 text-gray-400 rounded text-[10px]"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-gray-700/30 rounded-lg p-2">
-                    <div className="text-white font-semibold text-sm">
-                      {vol.tasksCompleted}
-                    </div>
-                    <div className="text-gray-500 text-[10px]">Tasks</div>
-                  </div>
-                  <div className="bg-gray-700/30 rounded-lg p-2">
-                    <div className="text-white font-semibold text-sm">
-                      {vol.hoursLogged}h
-                    </div>
-                    <div className="text-gray-500 text-[10px]">Hours</div>
-                  </div>
-                  <div className="bg-gray-700/30 rounded-lg p-2">
-                    <div className="text-white font-semibold text-sm">
-                      ⭐ {vol.rating}
-                    </div>
-                    <div className="text-gray-500 text-[10px]">Rating</div>
-                  </div>
-                </div>
-
-                {selectedVolunteer === vol._id && (
-                  <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Availability</span>
-                      <span className="text-gray-300 capitalize">
-                        {vol.availability}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Joined</span>
-                      <span className="text-gray-300">
-                        {new Date(vol.joinedDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Email</span>
-                      <span className="text-gray-300">{vol.email}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 text-xs">Preferred:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {vol.preferredCategories.map((cat) => (
-                          <span
-                            key={cat}
-                            className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded text-[10px] capitalize"
-                          >
-                            {cat}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigate("matching");
-                      }}
-                      className="w-full mt-2 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg text-xs font-medium hover:bg-emerald-500/30 transition-colors"
-                    >
-                      Assign to Task →
-                    </button>
-                  </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
                 )}
               </div>
+
+              <div className="w-20 h-20 rounded-full bg-[#F3F0FA] flex items-center justify-center text-4xl mb-6 group-hover:bg-gradient-to-tr group-hover:from-[#8E7CC3] group-hover:to-[#B8A1E3] group-hover:text-white transition-all duration-500 shadow-inner">{vol.avatar}</div>
+              <h4 className="text-xl font-bold text-[#2F2F3A] mb-1">{vol.name}</h4>
+              <p className="text-[#2F2F3A]/40 text-[10px] font-black uppercase tracking-[0.2em] mb-6">{vol.location}</p>
+
+              <div className="flex flex-wrap justify-center gap-2 mb-8">
+                {vol.skills.slice(0, 2).map((skill) => (
+                  <span key={skill} className="px-3 py-1 bg-[#F3F0FA] text-[#8E7CC3] rounded-full text-[10px] font-bold">{skill}</span>
+                ))}
+              </div>
+              <div className="mt-auto pt-4 border-t border-[#F3F0FA] w-full text-[10px] font-black text-[#8E7CC3] uppercase tracking-[0.2em] opacity-60">View Profile</div>
             </div>
           ))}
         </div>
       </div>
+      {selectedVol && <VolunteerModal vol={selectedVol} onClose={() => setSelectedVol(null)} onNavigate={onNavigate} />}
     </section>
   );
 }

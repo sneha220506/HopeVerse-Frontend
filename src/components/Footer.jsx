@@ -1,37 +1,56 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 border-t border-gray-800 mt-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="col-span-1 md:col-span-2 text-center flex flex-col items-center">
-            <div className="flex items-center gap-2 mb-4 justify-center">
-              <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                <span className="text-white text-lg">🤝</span>
-              </div>
-              <span className="text-white font-bold text-lg">
-                Community<span className="text-emerald-400">Pulse</span>
-              </span>
+    <footer className="bg-surface border-t border-primary/5 mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex flex-col items-center text-center">
+          {/* Logo & Identity */}
+          <div className="flex items-center gap-3 mb-6 justify-center">
+            <div className="w-10 h-10 bg-hero-grad rounded-[1rem] flex items-center justify-center shadow-lg shadow-primary/20">
+              <span className="text-white text-xl">🤝</span>
             </div>
-            <p className="text-gray-400 max-w-md text-sm leading-relaxed text-center">
-              Smart Resource Allocation platform that transforms scattered
-              community data into actionable insights. Connecting volunteers
-              with communities through intelligent matching.
-            </p>
+            <span className="text-slate-dark font-heading font-bold text-xl tracking-tight">
+              Community<span className="text-primary">Pulse</span>
+            </span>
+          </div>
+
+          {/* Mission Statement */}
+          <p className="text-slate-dark/40 max-w-xl text-sm font-medium leading-relaxed mb-10">
+            A Smart Resource Allocation platform designed to bridge the gap 
+            between scattered community data and meaningful action. 
+            Empowering change through intelligent matching and data-driven empathy.
+          </p>
+
+          {/* Secondary Links */}
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-10">
+            {['Impact Reports', 'Volunteer Guide', 'System Status', 'Safety Center'].map((link) => (
+              <a 
+                key={link} 
+                href="#" 
+                className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-dark/30 hover:text-primary transition-colors"
+              >
+                {link}
+              </a>
+            ))}
           </div>
         </div>
-        <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-xs">
-            © 2026 CommunityPulse. Smart Resource Allocation for Social Impact.
+
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-slate-dark/20 text-[10px] font-bold uppercase tracking-widest">
+            © 2026 CommunityPulse. Designed for Social Impact.
           </p>
-          <div className="flex gap-4 mt-3 md:mt-0">
-            <a href="#" className="text-gray-500 hover:text-gray-400 text-xs">
-              Privacy
+          
+          <div className="flex items-center gap-6">
+            <a href="#" className="text-slate-dark/20 hover:text-slate-dark/40 text-[10px] font-bold uppercase tracking-widest transition-colors">
+              Privacy Policy
             </a>
-            <a href="#" className="text-gray-500 hover:text-gray-400 text-xs">
-              Terms
+            <a href="#" className="text-slate-dark/20 hover:text-slate-dark/40 text-[10px] font-bold uppercase tracking-widest transition-colors">
+              Terms of Service
             </a>
-            <a href="#" className="text-gray-500 hover:text-gray-400 text-xs">
-              API Docs
+            <div className="h-4 w-px bg-primary/10 hidden md:block" />
+            <a href="#" className="flex items-center gap-2 text-primary/60 hover:text-primary text-[10px] font-black uppercase tracking-widest transition-colors">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              API v2.4 Live
             </a>
           </div>
         </div>
