@@ -49,13 +49,27 @@ const ROLE_PERMISSIONS = {
     canViewTasks: true,
     canViewSurvey: true,
     canViewAnalytics: false,
+    canSubmitSurvey: true,
   },
+  viewer: {
+    label: 'Viewer',
+    canViewDashboard: true,
+    canSubmitSurvey: true,
+    // Add false for others to be explicit, or leave out as they will be undefined (falsy)
+    canViewNeeds: false,
+    canViewVolunteers: false,
+    canViewMatching: false,
+    canViewTasks: false,
+    canViewSurvey: true, // Survey access based on your input
+    canViewAnalytics: false,
+  }
 };
 
 const DEMO_USERS = {
   'admin@communitypulse.org': { _id: 'u1', name: 'System Admin', email: 'admin@communitypulse.org', password: 'admin123', role: 'admin', avatar: '👑', organization: 'CommunityPulse HQ' },
   'sarah@communitypulse.org': { _id: 'u2', name: 'Sarah Miller', email: 'sarah@communitypulse.org', password: 'password123', role: 'coordinator', avatar: '👩‍💼', organization: 'Regional Relief' },
   'volunteer@example.com': { _id: 'u4', name: 'Alex Volunteer', email: 'volunteer@example.com', password: 'password123', role: 'volunteer', avatar: '🙋', organization: 'General Corps' },
+  'guest@example.com': { _id: 'u5', name: 'Guest Viewer', email: 'guest@example.com', password: 'password123', role: 'viewer', avatar: '👀', organization: 'Public' },
 };
 
 export default function App() {
@@ -65,8 +79,8 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Derived permissions with fallback to volunteer if role is missing or invalid
-  const perms = user ? (ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS['volunteer']) : null;
+  // Derived permissions with fallback to viewer (most restrictive)
+  const perms = user ? (ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS['viewer']) : null;
 
   useEffect(() => {
     const init = async () => {
@@ -137,12 +151,12 @@ export default function App() {
         return; 
       } catch (e) { throw new Error(e.message); }
     }
-    // Default to 'volunteer' since 'viewer' is removed
+
     const u = { 
         _id: 'u' + Date.now(), 
         name: data.name, 
         email: data.email, 
-        role: data.role || 'volunteer', 
+        role: data.role || 'viewer', // Re-enabled viewer as default
         avatar: '👤', 
         organization: data.organization || '' 
     };
@@ -166,12 +180,10 @@ export default function App() {
 
   if (authLoading) return <LoadingScreen />;
 
-  // Auth Routing
   if (authView === 'landing') return <LandingPage onLogin={() => setAuthView('login')} onRegister={() => setAuthView('register')} />;
   if (authView === 'login') return <Login onLogin={doLogin} onSwitchToRegister={() => setAuthView('register')} onBack={() => setAuthView('landing')} />;
   if (authView === 'register') return <Register onRegister={doRegister} onSwitchToLogin={() => setAuthView('login')} onBack={() => setAuthView('landing')} />;
 
-  // Main Section Router with Security Guard
   const renderSection = () => {
     if (!perms) return null;
 
@@ -181,7 +193,7 @@ export default function App() {
       volunteers: { comp: <VolunteerDirectory onNavigate={go} permissions={perms} />, view: perms.canViewVolunteers },
       matching: { comp: <SmartMatching permissions={perms} />, view: perms.canViewMatching },
       tasks: { comp: <TaskBoard permissions={perms} />, view: perms.canViewTasks },
-      survey: { comp: <SurveyForm permissions={perms} />, view: perms.canViewSurvey },
+      survey: { comp: <SurveyForm permissions={perms} user={user}/>, view: perms.canViewSurvey },
       analytics: { comp: <Analytics permissions={perms} />, view: perms.canViewAnalytics },
     };
 
@@ -214,7 +226,7 @@ export default function App() {
         }`}>
           {backendStatus ? '● System Uplink Active' : '○ Local Offline Mode'}
           <span className="mx-4 opacity-20">|</span>
-          Operator: {user?.name} <span className="opacity-50">[{perms?.label}]</span>
+          Operator: {user?.name} <span className="opacity-50">[{perms?.label || 'Guest'}]</span>
         </div>
 
         <div className="transition-all duration-500 ease-in-out">

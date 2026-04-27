@@ -60,7 +60,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                   : "Observer Interface"}
             </p>
           </div>
-          {p.canSubmitSurvey && (
+          {(p.label==="volunteer") && (
             <button
               onClick={() => onNavigate("survey")}
               className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95 text-sm font-black uppercase tracking-widest"
@@ -171,7 +171,8 @@ export default function Dashboard({ onNavigate, permissions }) {
             </div>
 
             {/* System Actions */}
-            <div className="bg-primary/30 rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
+            {p.canViewVolunteers &&
+            (<div className="bg-primary/30 rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
               <div className=" absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
               <h3 className="font-black text-lg mb-6 flex items-center gap-3 relative z-10">
                 <span className="w-8 h-8 rounded-xl flex items-center justify-center text-sm">
@@ -460,7 +461,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                   </button>
                 )}
               </div>
-            </div>
+            </div>)}
           </div>
 
           {/* Right Column */}
@@ -505,17 +506,18 @@ export default function Dashboard({ onNavigate, permissions }) {
             </div>
 
             {/* Top Volunteers */}
-            <div className="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8">
+            {p.canViewVolunteers &&
+            (<div className="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-slate-dark font-black text-lg">
                   Top Performers
                 </h3>
-                <button
+                {/* <button
                   onClick={() => onNavigate("volunteers")}
                   className="text-primary text-[10px] font-black hover:underline uppercase tracking-[0.2em]"
                 >
                   Full Roster
-                </button>
+                </button> */}
               </div>
               <div className="space-y-5">
                 {topVolunteers.map((v, i) => (
@@ -540,7 +542,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                   </div>
                 ))}
               </div>
-            </div>
+            </div>)}
 
             {/* Quick Actions Card */}
           </div>

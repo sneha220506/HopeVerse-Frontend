@@ -7,7 +7,7 @@ import {
 } from "../utils/helpers";
 const ASSET_URL = "http://localhost:5000";
 
-export default function SurveyForm({ permissions }) {
+export default function SurveyForm({ permissions, user }) {
   const [formData, setFormData] = useState({
     submittedBy: "",
     submitterId: "",
@@ -25,11 +25,13 @@ export default function SurveyForm({ permissions }) {
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState("reports");
   const [allReports, setAllReports] = useState([]);
+  const [MyReports, setMyReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const isAdminOrCoordinator =
     permissions?.label === "Administrator" ||
     permissions?.label === "Coordinator";
+  const p = permissions;
   const canVerify = isAdminOrCoordinator;
   const canDelete = isAdminOrCoordinator;
 
@@ -52,6 +54,14 @@ export default function SurveyForm({ permissions }) {
       setIsLoading(false);
     }
   };
+
+const myReports = (allReports || []).filter(
+  (report) =>
+    report.submitterId &&
+    user?.id &&
+    String(report.submitterId) === String(user.id)
+);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -166,6 +176,14 @@ export default function SurveyForm({ permissions }) {
             label={`All Reports (${(allReports || []).length})`}
             icon="📊"
           />
+          {p.canViewSurvey && (
+            <TabButton
+              active={activeTab === "yourreports"}
+              onClick={() => setActiveTab("yourreports")}
+              label={`Your Reports (${(myReports || []).length})`}
+              icon="📊"
+            />
+          )}
           {isAdminOrCoordinator && (
             <TabButton
               active={activeTab === "pending"}
@@ -437,6 +455,27 @@ export default function SurveyForm({ permissions }) {
               )}
             </div>
           )}
+          {activeTab === "yourreports" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+              {isLoading ? (
+                <div className="col-span-full py-32 text-center font-black text-slate-300 animate-pulse uppercase tracking-[0.4em]">
+                  Synchronizing Master Registry...
+                </div>
+              ) : (
+                (myReports || []).map((entry) => (
+                  <ReportCard2
+                    key={entry._id}
+                    entry={entry}
+                    canVerify={canVerify}
+                    canDelete={canDelete}
+                    onVerify={handleVerify}
+                    onDelete={handleDelete}
+                    highlight={true}
+                  />
+                ))
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -588,6 +627,144 @@ function ReportCard({
       </div>
 
       {/* Modal Component Call */}
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imgSrc={selectedImage}
+        location={entry.location}
+      />
+    </>
+  );
+}
+
+function ReportCard2({
+  entry,
+  canVerify,
+  canDelete,
+  onVerify,
+  onDelete,
+  highlight,
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const handleOpenModal = () => {
+    if (entry.photos && entry.photos.length > 0) {
+      const photoPath = entry.photos[0].url;
+      const imageUrl = photoPath.startsWith("http")
+        ? photoPath
+        : `${ASSET_URL}${photoPath}`;
+
+      setSelectedImage(imageUrl);
+      setIsModalOpen(true);
+    }
+  };
+
+  return (
+    <>
+      <div
+        className={`group bg-white rounded-[2rem] border p-7 transition-all duration-300 hover:shadow-soft ${
+          highlight
+            ? "ring-2 ring-primary ring-offset-4 ring-offset-surface"
+            : "border-white shadow-sm hover:border-primary/20"
+        }`}
+      >
+        <div className="flex items-start gap-4 mb-5">
+          <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-primary/5">
+            {getCategoryIcon(entry.category)}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <h4 className="text-slate-dark font-bold text-base truncate">
+                {entry.location}
+              </h4>
+
+              {entry.verified ? (
+                <span className="px-3 py-1 bg-emerald-50 text-emerald-500 rounded-full text-[9px] font-black uppercase tracking-tighter">
+                  Verified
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-amber-50 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-tighter animate-pulse">
+                  Pending
+                </span>
+              )}
+            </div>
+
+            <p className="text-slate-dark/30 text-[10px] font-bold uppercase tracking-tight italic">
+              By {entry.submittedBy} •{" "}
+              {new Date(entry.date).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+
+        <p className="text-slate-dark/60 text-sm leading-relaxed mb-6 font-medium line-clamp-3">
+          {entry.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-6 text-[9px] font-black uppercase">
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${getCategoryBg(
+              entry.category,
+            )}`}
+          >
+            {entry.category}
+          </span>
+
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${getUrgencyColor(
+              entry.urgency,
+            )}`}
+          >
+            {entry.urgency}
+          </span>
+
+          <span className="px-3 py-1.5 rounded-xl bg-slate-dark text-white">
+            👥 {Number(entry.affectedCount).toLocaleString()} IMPACTED
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={handleOpenModal}
+            disabled={!entry.photos || entry.photos.length === 0}
+            className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] flex items-center justify-center gap-2 transition-all ${
+              entry.photos && entry.photos.length > 0
+                ? "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                : "bg-slate-50 text-slate-300 cursor-not-allowed border border-transparent"
+            }`}
+          >
+            📸{" "}
+            {entry.photos?.length > 0
+              ? `View Evidence (${entry.photos.length})`
+              : "No Evidence"}
+          </button>
+
+          {(canVerify || canDelete) && (
+            <div className="flex gap-3">
+              {!entry.verified && canVerify && (
+                <button
+                  onClick={() => onVerify(entry._id)}
+                  className="flex-1 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all"
+                >
+                  Authorize
+                </button>
+              )}
+
+              {canDelete && (
+                <button
+                  onClick={() => onDelete(entry._id)}
+                  className="w-12 h-12 flex items-center justify-center bg-rose-50 text-rose-400 rounded-xl hover:bg-rose-100 transition-colors text-lg"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       <ImageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

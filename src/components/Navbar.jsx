@@ -1,36 +1,39 @@
 import { useState } from 'react';
 
-export default function Navbar({ activeSection, onNavigate, backendStatus, user, onLogout, permissions }) {
+export default function Navbar({ activeSection, onNavigate, backendStatus, user, onLogout, perms }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  // We use perms (passed from App.js) to filter the links
+  // If perms is missing (loading state), we show nothing or just dashboard
+  const p = perms || {};
+
   const allLinks = [
     { id: 'dashboard', name: 'Dashboard', show: true },
-    { id: 'needs', name: 'Needs', show: true },
-    { id: 'volunteers', name: 'Volunteers', show: true },
-    { id: 'matching', name: 'Matching', show: true },
-    { id: 'tasks', name: 'Tasks', show: true },
-    { id: 'survey', name: 'Reports', show: true },
-    { id: 'analytics', name: 'Analytics', show: true },
+    { id: 'needs', name: 'Needs', show: p.canViewNeeds },
+    { id: 'volunteers', name: 'Volunteers', show: p.canViewVolunteers },
+    { id: 'matching', name: 'Matching', show: p.canViewMatching },
+    { id: 'tasks', name: 'Tasks', show: p.canViewTasks },
+    { id: 'survey', name: 'Reports', show: p.canViewSurvey },
+    { id: 'analytics', name: 'Analytics', show: p.canViewAnalytics },
   ];
 
+  // This filters out any link where "show" is false or undefined
   const navLinks = allLinks.filter(l => l.show);
-  const p = permissions || {};
   
-  // Updated role colors to match the refined palette
   const roleColors = { 
     admin: 'text-primary', 
     coordinator: 'text-secondary', 
-    volunteer: 'text-accent'
+    volunteer: 'text-accent',
+    viewer: 'text-slate-400'
   };
 
   return (
-    /* Changed to Light Glassmorphism: bg-white/80 and border-primary/10 */
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-lg border-b border-primary/10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo Section - Lavender Gradient */}
+          {/* Logo Section */}
           <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 group">
             <div className="w-9 h-9 bg-hero-grad rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
               <span className="text-white text-lg">🤝</span>
@@ -40,7 +43,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
             </span>
           </button>
 
-          {/* Nav Links - Muted Purple Hover */}
+          {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map(l => (
               <button key={l.id} onClick={() => onNavigate(l.id)}
@@ -56,8 +59,8 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            {p.canSubmitSurvey && (
-              /* CTA Button - Warm Coral Gradient */
+            {/* CTA Button shows if user can submit survey */}
+            {!p.canViewVolunteers && (
               <button onClick={() => onNavigate('survey')} 
                 className="bg-cta-grad text-white px-5 py-2 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-accent/30 active:scale-95 transition-all">
                 + New Report
@@ -71,7 +74,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
                 </div>
                 <div className="text-left hidden xl:block px-1">
                   <p className="text-slate-dark text-sm font-semibold leading-none">{user?.name?.split(' ')[0]}</p>
-                  <p className={`text-[10px] uppercase tracking-wider font-bold mt-1 ${roleColors[user?.role]}`}>{user?.role}</p>
+                  <p className={`text-[10px] uppercase tracking-wider font-bold mt-1 ${roleColors[user?.role] || 'text-slate-400'}`}>{user?.role}</p>
                 </div>
                 <svg className="w-4 h-4 text-slate-dark/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
               </button>
