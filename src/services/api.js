@@ -1,3 +1,4 @@
+
 // API Base URL - points to the Express backend
 // const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const API_BASE = "https://community-pulse-backend.onrender.com";
@@ -69,6 +70,9 @@ export const needsAPI = {
   getById: (id) => apiCall(`/needs/${id}`),
 
   getStats: () => apiCall('/needs/stats'),
+
+  getCriticalNeeds: () => apiCall('/needs/getcriticalneeds'),
+
 
   create: (needData) => apiCall('/needs', {
     method: 'POST',

@@ -1,11 +1,60 @@
-import { communityNeeds, volunteers, regionStats } from '../data/mockData';
-import { getCategoryIcon, getUrgencyColor } from '../utils/helpers';
+import { useEffect, useState } from "react";
+import { needsAPI, volunteersAPI } from "../services/api";
+import { getCategoryIcon, getUrgencyColor } from "../utils/helpers";
 
 export default function Dashboard({ onNavigate, permissions }) {
   const p = permissions || {};
-  const criticalNeeds = communityNeeds.filter(n => n.urgency === 'critical');
-  const topVolunteers = [...volunteers].sort((a, b) => b.tasksCompleted - a.tasksCompleted).slice(0, 5);
-  const categoryCounts = communityNeeds.reduce((acc, n) => { acc[n.category] = (acc[n.category] || 0) + 1; return acc; }, {});
+
+  const [communityNeeds, setCommunityNeeds] = useState([]);
+  const [criticalNeeds, setCriticalNeeds] = useState([]);
+  const [topVolunteers, setTopVolunteers] = useState([]);
+  const [categoryCounts, setCategoryCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        // 🔥 Parallel API calls (fast)
+        const [needsRes, criticalRes, volunteersRes] = await Promise.all([
+          needsAPI.getAll(),
+          needsAPI.getAll({ urgency: "critical" }), // OR use /critical endpoint
+          volunteersAPI.getAll(),
+        ]);
+
+        const needs = needsRes.data || needsRes;
+        const critical = criticalRes.data || criticalRes;
+        const volunteers = volunteersRes.data || volunteersRes;
+
+        // ✅ Set needs
+        setCommunityNeeds(needs);
+
+        // ✅ Critical needs (already filtered from backend)
+        setCriticalNeeds(critical);
+
+        // ✅ Top volunteers (frontend sort)
+        const top = [...volunteers]
+          .sort((a, b) => b.tasksCompleted - a.tasksCompleted)
+          .slice(0, 5);
+        setTopVolunteers(top);
+
+        // ✅ Category counts
+        const counts = needs.reduce((acc, n) => {
+          acc[n.category] = (acc[n.category] || 0) + 1;
+          return acc;
+        }, {});
+        setCategoryCounts(counts);
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) return <div>Loading dashboard...</div>;
 
   return (
     <section className="py-8 bg-background min-h-screen">
@@ -17,7 +66,7 @@ export default function Dashboard({ onNavigate, permissions }) {
             <h2 className="text-3xl font-heading font-bold text-slate-dark">Operations Dashboard</h2>
             <p className="text-slate-dark/50 text-sm mt-1">
               {p.label && <span className="text-primary font-semibold">{p.label}</span>}
-              {p.canCreateTask ? ' — Full management access' : p.canSubmitSurvey ? ' — Report and view access' : ' — Read-only access'}
+              {p.canDeletevolunteer ? ' — Full management access' : p.canSubmitSurvey ? ' — Report and view access' : ' — Read-only access'}
             </p>
           </div>
           {p.canSubmitSurvey && (
@@ -158,7 +207,7 @@ export default function Dashboard({ onNavigate, permissions }) {
         </div>
 
         {/* Region Stats - Horizontal Cards */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {regionStats.map(r => (
             <div key={r.region} className="bg-white p-5 rounded-2xl shadow-soft border border-primary/5 hover:border-primary/20 transition-all group">
               <h4 className="text-slate-dark font-bold text-sm mb-3 group-hover:text-primary transition-colors">{r.region}</h4>
@@ -176,7 +225,7 @@ export default function Dashboard({ onNavigate, permissions }) {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

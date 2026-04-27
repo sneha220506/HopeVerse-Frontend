@@ -19,6 +19,7 @@ import { checkBackendHealth } from './services/api';
 const ROLE_PERMISSIONS = {
   admin: {
     label: 'Administrator',
+    canDeletevolunteer:true,
     canViewDashboard: true,
     canViewNeeds: true,
     canCreateNeed: true,
@@ -30,6 +31,7 @@ const ROLE_PERMISSIONS = {
   },
   coordinator: {
     label: 'Coordinator',
+    canSubmitSurvey:true,
     canViewDashboard: true,
     canViewNeeds: true,
     canViewVolunteers: true,
