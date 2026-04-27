@@ -197,7 +197,7 @@ export default function Login({ onLogin, onSwitchToRegister, onBack }) {
             {[
               { email: 'admin@CommunityPulse.org', pass: 'admin123', label: 'Admin', icon: '👑', color: 'hover:border-accent' },
               { email: 'sarah@CommunityPulse.org', pass: 'password123', label: 'Coord', icon: '👩‍💼', color: 'hover:border-primary' },
-              { email: 'raj@CommunityPulse.org', pass: 'password123', label: 'Field', icon: '👷', color: 'hover:border-secondary' },
+              { email: 'raj@CommunityPulse.org', pass: 'password123', label: 'Vol', icon: '👷', color: 'hover:border-secondary' },
             ].map((demo) => (
               <button
                 key={demo.label}

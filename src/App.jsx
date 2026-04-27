@@ -19,7 +19,7 @@ import { checkBackendHealth } from './services/api';
 const ROLE_PERMISSIONS = {
   admin: {
     label: 'Administrator',
-    canDeletevolunteer:true,
+    canDeletevolunteer: true,
     canViewDashboard: true,
     canViewNeeds: true,
     canCreateNeed: true,
@@ -31,7 +31,7 @@ const ROLE_PERMISSIONS = {
   },
   coordinator: {
     label: 'Coordinator',
-    canSubmitSurvey:true,
+    canSubmitSurvey: true,
     canViewDashboard: true,
     canViewNeeds: true,
     canViewVolunteers: true,
@@ -40,7 +40,7 @@ const ROLE_PERMISSIONS = {
     canViewSurvey: true,
     canViewAnalytics: true,
   },
-  'volunteer': {
+  volunteer: {
     label: 'Volunteer',
     canViewDashboard: true,
     canViewNeeds: true,
@@ -65,8 +65,8 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Derived permissions
-  const perms = user ? (ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS.viewer) : ROLE_PERMISSIONS.viewer;
+  // Derived permissions with fallback to volunteer if role is missing or invalid
+  const perms = user ? (ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS['volunteer']) : null;
 
   useEffect(() => {
     const init = async () => {
@@ -98,7 +98,6 @@ export default function App() {
   }, []);
 
   const doLogin = async (email, pw) => {
-    // 1. Try Live Auth
     if (backendStatus) {
       try { 
         const { authAPI } = await import('./services/api'); 
@@ -112,7 +111,6 @@ export default function App() {
       } catch (err) { console.warn("Live login failed, checking demo..."); }
     }
     
-    // 2. Demo Fallback
     const demo = DEMO_USERS[email.toLowerCase()];
     if (demo && demo.password === pw) {
       const u = { ...demo };
@@ -139,7 +137,15 @@ export default function App() {
         return; 
       } catch (e) { throw new Error(e.message); }
     }
-    const u = { _id: 'u' + Date.now(), name: data.name, email: data.email, role: data.role || 'viewer', avatar: '👤', organization: data.organization || '' };
+    // Default to 'volunteer' since 'viewer' is removed
+    const u = { 
+        _id: 'u' + Date.now(), 
+        name: data.name, 
+        email: data.email, 
+        role: data.role || 'volunteer', 
+        avatar: '👤', 
+        organization: data.organization || '' 
+    };
     localStorage.setItem('CommunityPulse_user', JSON.stringify(u)); 
     setUser(u); 
     setAuthView('authenticated'); 
@@ -167,6 +173,8 @@ export default function App() {
 
   // Main Section Router with Security Guard
   const renderSection = () => {
+    if (!perms) return null;
+
     const config = {
       dashboard: { comp: <Dashboard onNavigate={go} permissions={perms} />, view: true },
       needs: { comp: <CommunityNeeds onNavigate={go} permissions={perms} />, view: perms.canViewNeeds },
@@ -179,7 +187,6 @@ export default function App() {
 
     const target = config[activeSection] || config.dashboard;
 
-    // Security Gate: Redirect if no permission
     if (!target.view) {
       setTimeout(() => setActiveSection('dashboard'), 0);
       return config.dashboard.comp;
@@ -200,7 +207,6 @@ export default function App() {
       />
       
       <main className="pt-16 bg-[#0f172a]">
-        {/* Tactical Status Bar */}
         <div className={`text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b transition-all duration-700 ${
           backendStatus 
           ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/10' 
@@ -208,10 +214,9 @@ export default function App() {
         }`}>
           {backendStatus ? '● System Uplink Active' : '○ Local Offline Mode'}
           <span className="mx-4 opacity-20">|</span>
-          Operator: {user.name} <span className="opacity-50">[{perms.label}]</span>
+          Operator: {user?.name} <span className="opacity-50">[{perms?.label}]</span>
         </div>
 
-        {/* Section Animation Wrapper */}
         <div className="transition-all duration-500 ease-in-out">
           {renderSection()}
         </div>

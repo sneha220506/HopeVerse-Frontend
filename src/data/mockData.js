@@ -44,14 +44,14 @@ export const tasks = [
 ];
 
 export const surveyEntries = [
-  { _id: 's1', submittedBy: 'Field Worker - Raj K.', location: 'Riverside District', category: 'healthcare', description: 'Water contamination confirmed. 3 wells tested positive for bacteria.', affectedCount: 8500, urgency: 'critical', date: '2024-01-15', verified: true },
+  { _id: 's1', submittedBy: 'volunteer - Raj K.', location: 'Riverside District', category: 'healthcare', description: 'Water contamination confirmed. 3 wells tested positive for bacteria.', affectedCount: 8500, urgency: 'critical', date: '2024-01-15', verified: true },
   { _id: 's2', submittedBy: 'NGO - EduFirst', location: 'Hilltop Area', category: 'education', description: 'School inventory check shows 78% of students sharing textbooks.', affectedCount: 350, urgency: 'high', date: '2024-01-18', verified: true },
   { _id: 's3', submittedBy: 'Community Leader - Maria G.', location: 'South Ward', category: 'food', description: 'Factory closure affecting 500+ families. Food bank running critically low.', affectedCount: 2100, urgency: 'critical', date: '2024-01-20', verified: true },
-  { _id: 's4', submittedBy: 'Field Worker - Anita S.', location: 'Sunset Boulevard', category: 'elderly', description: 'Sunset Home understaffed. Seniors missing medication schedules regularly.', affectedCount: 120, urgency: 'high', date: '2024-01-12', verified: true },
+  { _id: 's4', submittedBy: 'volunteer - Anita S.', location: 'Sunset Boulevard', category: 'elderly', description: 'Sunset Home understaffed. Seniors missing medication schedules regularly.', affectedCount: 120, urgency: 'high', date: '2024-01-12', verified: true },
   { _id: 's5', submittedBy: 'Volunteer - Omar H.', location: 'Valley Creek', category: 'shelter', description: '45 homes completely destroyed. Families need permanent shelter solutions.', affectedCount: 340, urgency: 'critical', date: '2024-01-08', verified: true },
   { _id: 's6', submittedBy: 'Community Leader - John D.', location: 'Central Park', category: 'environment', description: 'Illegal dumping increasing. Park becoming unusable for families.', affectedCount: 15000, urgency: 'medium', date: '2024-01-22', verified: false },
   { _id: 's7', submittedBy: 'NGO - YouthRise', location: 'Oak Street CC', category: 'youth', description: 'At-risk youth dropping out of school at alarming rate in this area.', affectedCount: 85, urgency: 'medium', date: '2024-01-25', verified: true },
-  { _id: 's8', submittedBy: 'Field Worker - Dr. Priya', location: 'Marshland Settlements', category: 'healthcare', description: 'Dengue cases spiking. 400+ confirmed cases in 2 weeks.', affectedCount: 420, urgency: 'critical', date: '2024-01-28', verified: true },
+  { _id: 's8', submittedBy: 'volunteer - Dr. Priya', location: 'Marshland Settlements', category: 'healthcare', description: 'Dengue cases spiking. 400+ confirmed cases in 2 weeks.', affectedCount: 420, urgency: 'critical', date: '2024-01-28', verified: true },
 ];
 
 export const regionStats = [
