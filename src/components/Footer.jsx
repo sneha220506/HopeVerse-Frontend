@@ -20,18 +20,7 @@ export default function Footer() {
             Empowering change through intelligent matching and data-driven empathy.
           </p>
 
-          {/* Secondary Links */}
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-10">
-            {['Impact Reports', 'Volunteer Guide', 'System Status', 'Safety Center'].map((link) => (
-              <a 
-                key={link} 
-                href="#" 
-                className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-dark/30 hover:text-primary transition-colors"
-              >
-                {link}
-              </a>
-            ))}
-          </div>
+          
         </div>
 
         {/* Bottom Bar */}
