@@ -1,21 +1,44 @@
-import { useEffect ,useState } from 'react';
-import { communityNeeds } from '../data/mockData';
+import { useEffect, useState } from 'react';
+// import { communityNeeds } from '../data/mockData'; // Switched to live DB
+import { needsAPI } from '../services/api'; 
 import { getCategoryIcon, getCategoryBg, getUrgencyColor } from '../utils/helpers';
 
 export default function CommunityNeeds({ onNavigate, permissions }) {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterUrgency, setFilterUrgency] = useState('all');
   const [viewMode, setViewMode] = useState('list');
+  
+  // Database States
+  const [needs, setNeeds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredNeeds = communityNeeds.filter(need => {
+  // Fetch from DB on load
+  useEffect(() => {
+    const fetchNeeds = async () => {
+      setIsLoading(true);
+      try {
+        const response = await needsAPI.getAll();
+        const data = Array.isArray(response) ? response : response?.data || [];
+        setNeeds(data);
+      } catch (error) {
+        console.error("Field Intelligence Fetch Error:", error);
+        setNeeds([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchNeeds();
+  }, []);
+
+  const filteredNeeds = needs.filter(need => {
     if (filterCategory !== 'all' && need.category !== filterCategory) return false;
     if (filterUrgency !== 'all' && need.urgency !== filterUrgency) return false;
     return true;
   });
 
-  const categories = [...new Set(communityNeeds.map(n => n.category))];
+  const categories = [...new Set(needs.map(n => n.category))];
 
-  // Tactical Color Mapping for Urgency
+  // Tactical Color Mapping for Urgency - PRESERVED
   const urgencyStyles = {
     critical: { bg: 'bg-red-500', text: 'text-red-500', border: 'border-red-500', glow: 'shadow-[0_0_15px_rgba(239,68,68,0.5)]', light: 'bg-red-50' },
     high: { bg: 'bg-orange-500', text: 'text-orange-500', border: 'border-orange-500', glow: 'shadow-[0_0_15px_rgba(249,115,22,0.5)]', light: 'bg-orange-50' },
@@ -23,9 +46,18 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
     low: { bg: 'bg-[#FEF9C3]', text: 'text-yellow-700', border: 'border-yellow-200', glow: 'shadow-none', light: 'bg-[#FEF9C3]/50' },
   };
 
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 animate-pulse">Syncing Field Intelligence...</p>
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-24 bg-[#F8FAFC] min-h-screen relative overflow-hidden">
-      {/* Global Tactical Styles */}
+      {/* Global Tactical Styles - PRESERVED */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes radar-pulse {
           0% { transform: scale(1); opacity: 0.8; }
@@ -53,10 +85,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
         {/* --- Header Section --- */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-12 mb-20 animate-in fade-in slide-in-from-top-4 duration-700">
           <div>
-            {/* <div className="flex items-center gap-3 mb-4">
-              <span className="w-10 h-1 bg-primary rounded-full" />
-              <span className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">Field Intelligence</span>
-            </div> */}
             <h2 className="text-4xl font-heading font-black text-slate-dark tracking-tighter">
               Operational <span className="text-primary/70">Requirements</span>
             </h2>
@@ -124,8 +152,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
         {viewMode === 'map' && (
           <div className="bg-white rounded-[4rem] p-8 mb-20 shadow-2xl shadow-slate-200/50 border border-slate-50 relative overflow-hidden animate-in zoom-in duration-700">
             <div className="relative w-full aspect-[21/9] bg-slate-50 rounded-[3rem] overflow-hidden border-2 border-white shadow-inner">
-              
-              {/* Tactical Grid Overlay */}
               <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                 <svg width="100%" height="100%">
                   <pattern id="tactical-grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -135,24 +161,22 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                 </svg>
               </div>
 
-              {/* Node Indicators */}
-              {filteredNeeds.map(need => {
+              {filteredNeeds.map((need, idx) => {
                 const style = urgencyStyles[need.urgency] || urgencyStyles.low;
+                // If coordinates missing in DB, generate deterministic layout for radar
+                const xPos = need.coordinates?.x || (20 + (idx * 17) % 60);
+                const yPos = need.coordinates?.y || (20 + (idx * 11) % 60);
+
                 return (
                   <div 
                     key={need._id} 
                     className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer transition-all duration-500" 
-                    style={{ left: `${need.coordinates.x}%`, top: `${need.coordinates.y}%` }}
+                    style={{ left: `${xPos}%`, top: `${yPos}%` }}
                   >
-                    {/* Urgency Pulse */}
                     <div className={`absolute inset-0 w-12 h-12 -m-3 rounded-full opacity-40 animate-radar-pulse ${style.bg}`} />
-                    
-                    {/* The Node Icon */}
                     <div className={`relative w-8 h-8 rounded-2xl flex items-center justify-center text-sm shadow-2xl transition-all duration-500 group-hover:scale-150 group-hover:z-50 border-2 border-white ${style.bg} text-white`}>
                       {getCategoryIcon(need.category)}
                     </div>
-                    
-                    {/* Hover Intelligence Tooltip */}
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-[60] translate-y-2 group-hover:translate-y-0">
                       <div className="bg-slate-900 rounded-[1.5rem] p-5 shadow-2xl min-w-[240px] text-center border border-white/10">
                         <p className="text-white text-[11px] font-black uppercase tracking-widest leading-tight">{need.title}</p>
@@ -174,6 +198,10 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
         <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredNeeds.map((need, idx) => {
             const style = urgencyStyles[need.urgency] || urgencyStyles.low;
+            const saturation = need.volunteersNeeded > 0 
+              ? Math.round((need.volunteersAssigned / need.volunteersNeeded) * 100) 
+              : 0;
+
             return (
               <div 
                 key={need._id} 
@@ -202,12 +230,12 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                 <div className="mt-auto space-y-4 mb-10">
                   <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
                     <span className="text-slate-dark/20">Resource Saturation</span>
-                    <span className="text-primary">{Math.round((need.volunteersAssigned / need.volunteersNeeded) * 100)}%</span>
+                    <span className="text-primary">{saturation}%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-[1px] border border-slate-100">
                     <div 
                       className="h-full bg-hero-grad rounded-full transition-all duration-1000 ease-out" 
-                      style={{ width: `${Math.min((need.volunteersAssigned / need.volunteersNeeded) * 100, 100)}%` }} 
+                      style={{ width: `${Math.min(saturation, 100)}%` }} 
                     />
                   </div>
                 </div>
