@@ -1,35 +1,76 @@
-import { useState } from 'react';
-import { tasks, volunteers } from '../data/mockData';
+import { useState, useEffect } from 'react';
+// import { tasks, volunteers } from '../data/mockData'; // No longer needed
+import { tasksAPI, volunteersAPI } from '../services/api';
 import { getCategoryIcon, getUrgencyColor, getStatusColor } from '../utils/helpers';
 
 export default function TaskBoard({ permissions }) {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedTask, setSelectedTask] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(null);
-  const [allTasks, setAllTasks] = useState(tasks);
+  const [allTasks, setAllTasks] = useState([]);
+  const [allVolunteers, setAllVolunteers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Initial Data Load
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [tasksData, volunteersData] = await Promise.all([
+          tasksAPI.getAll(),
+          volunteersAPI.getAll()
+        ]);
+        setAllTasks(Array.isArray(tasksData) ? tasksData : tasksData.data || []);
+        setAllVolunteers(Array.isArray(volunteersData) ? volunteersData : volunteersData.data || []);
+      } catch (error) {
+        console.error("Operational Fetch Failure:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const filteredTasks = filterStatus === 'all' ? allTasks : allTasks.filter(t => t.status === filterStatus);
-  const getVolDetails = (id) => volunteers.find(v => v._id === id);
+  
+  // Get volunteer details from the state synced with DB
+  const getVolDetails = (id) => allVolunteers.find(v => v._id === id);
+  
   const progress = (t) => t.status === 'completed' ? 100 : t.status === 'in-progress' ? 60 : t.status === 'assigned' ? 30 : 10;
 
-  const availableVolunteers = volunteers.filter(v => v.status === 'active');
+  const availableVolunteers = allVolunteers.filter(v => v.status === 'active');
 
-  const handleAssignVolunteer = (taskId, volunteerId) => {
-    setAllTasks(prev => prev.map(task => {
-      if (task._id === taskId) {
-        const newAssigned = [...task.assignedVolunteers, volunteerId];
-        const newStatus = newAssigned.length >= task.volunteersRequired ? 'in-progress' : 'assigned';
-        return { ...task, assignedVolunteers: newAssigned, status: newStatus };
-      }
-      return task;
-    }));
-    setShowAssignModal(null);
+  const handleAssignVolunteer = async (taskId, volunteerId) => {
+    try {
+      // API call to persist assignment
+      await tasksAPI.assignVolunteer(taskId, volunteerId);
+      
+      // Update local state to reflect changes instantly
+      setAllTasks(prev => prev.map(task => {
+        if (task._id === taskId) {
+          const newAssigned = [...task.assignedVolunteers, volunteerId];
+          const newStatus = newAssigned.length >= task.volunteersRequired ? 'in-progress' : 'assigned';
+          return { ...task, assignedVolunteers: newAssigned, status: newStatus };
+        }
+        return task;
+      }));
+      setShowAssignModal(null);
+    } catch (err) {
+      alert("Personnel Deployment Failed: " + err.message);
+    }
   };
 
-  const handleComplete = (taskId) => {
-    setAllTasks(prev => prev.map(task =>
-      task._id === taskId ? { ...task, status: 'completed' } : task
-    ));
+  const handleComplete = async (taskId) => {
+    try {
+      // API call to persist completion
+      await tasksAPI.complete(taskId);
+      
+      setAllTasks(prev => prev.map(task =>
+        task._id === taskId ? { ...task, status: 'completed' } : task
+      ));
+    } catch (err) {
+      alert("Resolution Protocol Failed: " + err.message);
+    }
   };
 
   const columns = [
@@ -39,9 +80,15 @@ export default function TaskBoard({ permissions }) {
     { status: 'completed', label: 'Resolved', color: 'border-emerald-400', bg: 'bg-emerald-50/50', text: 'text-emerald-600', icon: '✅' },
   ];
 
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
+      <div className="animate-pulse font-black text-primary tracking-[0.3em] uppercase text-xs">Synchronizing Operations...</div>
+    </div>
+  );
+
   return (
     <section className="py-12 bg-[#F8FAFC] min-h-screen relative overflow-hidden">
-      {/* Visual Depth Accents */}
+      {/* Visual Depth Accents - CSS PRESERVED */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes slideInUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -64,7 +111,6 @@ export default function TaskBoard({ permissions }) {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
           <div className="animate-in fade-in slide-in-from-left duration-700">
-            
             <h2 className="text-5xl font-heading font-black text-slate-dark tracking-tighter">
               Task <span className="text-primary/70">Operations</span>
             </h2>
@@ -127,11 +173,10 @@ export default function TaskBoard({ permissions }) {
                           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 group-hover:scale-110 transition-transform">
                             {getCategoryIcon(task.category)}
                           </div>
-                          {/* UPDATED URGENCY PILL COLORS */}
                           <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl border ${
-                            task.urgency.toLowerCase() === 'critical' ? 'bg-red-50 border-red-100 text-red-500' : 
-                            task.urgency.toLowerCase() === 'high' ? 'bg-orange-50 border-orange-100 text-orange-500' : 
-                            task.urgency.toLowerCase() === 'medium' ? 'bg-yellow-50 border-yellow-100 text-yellow-500' : 
+                            task.urgency?.toLowerCase() === 'critical' ? 'bg-red-50 border-red-100 text-red-500' : 
+                            task.urgency?.toLowerCase() === 'high' ? 'bg-orange-50 border-orange-100 text-orange-500' : 
+                            task.urgency?.toLowerCase() === 'medium' ? 'bg-yellow-50 border-yellow-100 text-yellow-500' : 
                             'bg-[#FEF9C3] border-yellow-100 text-yellow-700'
                           }`}>
                             {task.urgency}
@@ -266,7 +311,7 @@ export default function TaskBoard({ permissions }) {
                     <div className="flex-1 min-w-0">
                       <p className="text-slate-dark text-base font-black tracking-tight group-hover:text-primary transition-colors">{vol.name}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {vol.skills.slice(0, 3).map(skill => (
+                        {vol.skills?.slice(0, 3).map(skill => (
                           <span key={skill} className="px-2 py-0.5 bg-slate-50 rounded-lg text-[8px] font-black text-slate-dark/40 uppercase tracking-tighter border border-slate-100">
                             {skill}
                           </span>
