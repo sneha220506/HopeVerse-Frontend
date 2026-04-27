@@ -1,27 +1,41 @@
-// API Base URL - points to the Express backend
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// API Base URL - points to the Render backend
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // Helper for API calls
 const apiCall = async (endpoint, options = {}) => {
   try {
     const token = localStorage.getItem('CommunityPulse_token');
+
+    const { isFormData, ...rest } = options;
+
     const config = {
+      ...rest,
       headers: {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }), // 👈 FIX
         ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
+        ...rest.headers,
       },
-      ...options,
     };
 
     const response = await fetch(`${API_BASE}${endpoint}`, config);
-    const data = await response.json();
+
+    const text = await response.text(); // 👈 SAFE PARSE
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("❌ Non-JSON response:", text);
+      throw new Error("Invalid JSON response from server");
+    }
 
     if (!response.ok) {
       throw new Error(data.message || 'API request failed');
     }
 
     return data;
+
   } catch (error) {
     console.error(`API Error [${endpoint}]:`, error.message);
     throw error;
@@ -67,6 +81,9 @@ export const needsAPI = {
   getById: (id) => apiCall(`/needs/${id}`),
 
   getStats: () => apiCall('/needs/stats'),
+
+  getCriticalNeeds: () => apiCall('/needs/getcriticalneeds'),
+
 
   create: (needData) => apiCall('/needs', {
     method: 'POST',
@@ -180,10 +197,13 @@ export const surveysAPI = {
 
   getStats: () => apiCall('/surveys/stats'),
 
-  submit: (surveyData) => apiCall('/surveys', {
-    method: 'POST',
-    body: JSON.stringify(surveyData),
-  }),
+  submit: (data) => {
+    return apiCall('/surveys', {
+      method: 'POST',
+      body: data,
+      isFormData: true, 
+    });
+  },
 
   verify: (id) => apiCall(`/surveys/${id}/verify`, {
     method: 'PUT',
