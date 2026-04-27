@@ -21,7 +21,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
   const roleColors = { 
     admin: 'text-primary', 
     coordinator: 'text-secondary', 
-    'field-worker': 'text-accent', 
+    'volunteer': 'text-accent', 
     volunteer: 'text-success', 
     viewer: 'text-slate-400' 
   };

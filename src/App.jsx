@@ -40,34 +40,14 @@ const ROLE_PERMISSIONS = {
     canViewSurvey: true,
     canViewAnalytics: true,
   },
-  'field-worker': {
-    label: 'Field Worker',
+  'volunteer': {
+    label: 'Volunteer',
     canViewDashboard: true,
     canViewNeeds: true,
     canViewVolunteers: true,
     canViewMatching: false,
     canViewTasks: true,
     canViewSurvey: true,
-    canViewAnalytics: false,
-  },
-  volunteer: {
-    label: 'Volunteer',
-    canViewDashboard: true,
-    canViewNeeds: true,
-    canViewVolunteers: false,
-    canViewMatching: false,
-    canViewTasks: true,
-    canViewSurvey: true,
-    canViewAnalytics: false,
-  },
-  viewer: {
-    label: 'Guest Viewer',
-    canViewDashboard: true,
-    canViewNeeds: true,
-    canViewVolunteers: false,
-    canViewMatching: false,
-    canViewTasks: false,
-    canViewSurvey: false,
     canViewAnalytics: false,
   },
 };
@@ -209,7 +189,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-200">
       <Navbar 
         activeSection={activeSection} 
         onNavigate={go} 
@@ -219,7 +199,7 @@ export default function App() {
         perms={perms} 
       />
       
-      <main className="pt-16">
+      <main className="pt-16 bg-[#0f172a]">
         {/* Tactical Status Bar */}
         <div className={`text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b transition-all duration-700 ${
           backendStatus 

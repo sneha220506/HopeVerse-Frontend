@@ -39,7 +39,7 @@ export default function Footer() {
             <div className="h-4 w-px bg-primary/10 hidden md:block" />
             <a href="#" className="flex items-center gap-2 text-primary/60 hover:text-primary text-[10px] font-black uppercase tracking-widest transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              API v2.4 Live
+              CP Version v1.0 Live
             </a>
           </div>
         </div>

@@ -175,7 +175,7 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
                 >
                   <option value="viewer">Viewer</option>
                   <option value="volunteer">Volunteer</option>
-                  <option value="field-worker">Field Worker</option>
+                  <option value="volunteer">Field Worker</option>
                   <option value="coordinator">Coordinator</option>
                 </select>
               </div>
