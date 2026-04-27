@@ -193,7 +193,7 @@ export default function Dashboard({ onNavigate, permissions }) {
         </div>
 
         {/* Region Stats - Enhanced Horizontal Grid */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-card stagger-3">
+        {/* <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-card stagger-3">
           {regionStats.map(r => (
             <div key={r.region} className="bg-white p-6 rounded-[2rem] shadow-soft border border-slate-100 hover:border-primary/30 hover:-translate-y-1.5 transition-all duration-500 group">
               <h4 className="text-slate-dark font-black text-xs uppercase tracking-[0.15em] mb-4 group-hover:text-primary transition-colors">{r.region}</h4>
@@ -215,7 +215,7 @@ export default function Dashboard({ onNavigate, permissions }) {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

@@ -260,7 +260,7 @@ export default function SmartMatching({ permissions }) {
                           : 'bg-primary/5 text-primary hover:bg-primary hover:text-white hover:shadow-xl hover:shadow-primary/30'
                         }`}
                       >
-                        {isAssigned ? '✓ Deployment Confirmed' : permissions?.canConfirmMatch ? 'Confirm Match' : 'Review Heuristics'}
+                        {isAssigned ? '✓ Deployment Confirmed' : permissions?.canConfirmMatch ? 'Confirm Match' : 'Deploy Task'}
                       </button>
                     </div>
                   );
