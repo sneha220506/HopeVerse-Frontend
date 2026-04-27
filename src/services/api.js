@@ -1,7 +1,7 @@
 
 // API Base URL - points to the Express backend
 // const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const API_BASE = "https://community-pulse-backend.onrender.com";
+const API_BASE = "https://community-pulse-backend.onrender.com/api";
 
 
 // Helper for API calls
