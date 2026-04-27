@@ -1,60 +1,11 @@
-import { useEffect, useState } from "react";
-import { needsAPI, volunteersAPI } from "../services/api";
-import { getCategoryIcon, getUrgencyColor } from "../utils/helpers";
+import { communityNeeds, volunteers, regionStats } from '../data/mockData';
+import { getCategoryIcon, getUrgencyColor } from '../utils/helpers';
 
 export default function Dashboard({ onNavigate, permissions }) {
   const p = permissions || {};
-
-  const [communityNeeds, setCommunityNeeds] = useState([]);
-  const [criticalNeeds, setCriticalNeeds] = useState([]);
-  const [topVolunteers, setTopVolunteers] = useState([]);
-  const [categoryCounts, setCategoryCounts] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        // 🔥 Parallel API calls (fast)
-        const [needsRes, criticalRes, volunteersRes] = await Promise.all([
-          needsAPI.getAll(),
-          needsAPI.getAll({ urgency: "critical" }), // OR use /critical endpoint
-          volunteersAPI.getAll(),
-        ]);
-
-        const needs = needsRes.data || needsRes;
-        const critical = criticalRes.data || criticalRes;
-        const volunteers = volunteersRes.data || volunteersRes;
-
-        // ✅ Set needs
-        setCommunityNeeds(needs);
-
-        // ✅ Critical needs (already filtered from backend)
-        setCriticalNeeds(critical);
-
-        // ✅ Top volunteers (frontend sort)
-        const top = [...volunteers]
-          .sort((a, b) => b.tasksCompleted - a.tasksCompleted)
-          .slice(0, 5);
-        setTopVolunteers(top);
-
-        // ✅ Category counts
-        const counts = needs.reduce((acc, n) => {
-          acc[n.category] = (acc[n.category] || 0) + 1;
-          return acc;
-        }, {});
-        setCategoryCounts(counts);
-
-      } catch (err) {
-        console.error("Dashboard error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboard();
-  }, []);
-
-  if (loading) return <div>Loading dashboard...</div>;
+  const criticalNeeds = communityNeeds.filter(n => n.urgency === 'critical');
+  const topVolunteers = [...volunteers].sort((a, b) => b.tasksCompleted - a.tasksCompleted).slice(0, 5);
+  const categoryCounts = communityNeeds.reduce((acc, n) => { acc[n.category] = (acc[n.category] || 0) + 1; return acc; }, {});
 
   return (
     <section className="py-8 bg-[#F8FAFC] min-h-screen relative overflow-hidden">
@@ -242,7 +193,7 @@ export default function Dashboard({ onNavigate, permissions }) {
         </div>
 
         {/* Region Stats - Enhanced Horizontal Grid */}
-        {/* <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-card stagger-3">
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-card stagger-3">
           {regionStats.map(r => (
             <div key={r.region} className="bg-white p-6 rounded-[2rem] shadow-soft border border-slate-100 hover:border-primary/30 hover:-translate-y-1.5 transition-all duration-500 group">
               <h4 className="text-slate-dark font-black text-xs uppercase tracking-[0.15em] mb-4 group-hover:text-primary transition-colors">{r.region}</h4>
@@ -264,7 +215,7 @@ export default function Dashboard({ onNavigate, permissions }) {
               </div>
             </div>
           ))}
-        </div> */}
+        </div>
       </div>
     </section>
   );
