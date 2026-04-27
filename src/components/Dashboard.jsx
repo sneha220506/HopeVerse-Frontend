@@ -1,11 +1,60 @@
-import { communityNeeds, volunteers, regionStats } from '../data/mockData';
-import { getCategoryIcon, getUrgencyColor } from '../utils/helpers';
+import { useEffect, useState } from "react";
+import { needsAPI, volunteersAPI } from "../services/api";
+import { getCategoryIcon, getUrgencyColor } from "../utils/helpers";
 
 export default function Dashboard({ onNavigate, permissions }) {
   const p = permissions || {};
-  const criticalNeeds = communityNeeds.filter(n => n.urgency === 'critical');
-  const topVolunteers = [...volunteers].sort((a, b) => b.tasksCompleted - a.tasksCompleted).slice(0, 5);
-  const categoryCounts = communityNeeds.reduce((acc, n) => { acc[n.category] = (acc[n.category] || 0) + 1; return acc; }, {});
+
+  const [communityNeeds, setCommunityNeeds] = useState([]);
+  const [criticalNeeds, setCriticalNeeds] = useState([]);
+  const [topVolunteers, setTopVolunteers] = useState([]);
+  const [categoryCounts, setCategoryCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        // 🔥 Parallel API calls (fast)
+        const [needsRes, criticalRes, volunteersRes] = await Promise.all([
+          needsAPI.getAll(),
+          needsAPI.getAll({ urgency: "critical" }), // OR use /critical endpoint
+          volunteersAPI.getAll(),
+        ]);
+
+        const needs = needsRes.data || needsRes;
+        const critical = criticalRes.data || criticalRes;
+        const volunteers = volunteersRes.data || volunteersRes;
+
+        // ✅ Set needs
+        setCommunityNeeds(needs);
+
+        // ✅ Critical needs (already filtered from backend)
+        setCriticalNeeds(critical);
+
+        // ✅ Top volunteers (frontend sort)
+        const top = [...volunteers]
+          .sort((a, b) => b.tasksCompleted - a.tasksCompleted)
+          .slice(0, 5);
+        setTopVolunteers(top);
+
+        // ✅ Category counts
+        const counts = needs.reduce((acc, n) => {
+          acc[n.category] = (acc[n.category] || 0) + 1;
+          return acc;
+        }, {});
+        setCategoryCounts(counts);
+
+      } catch (err) {
+        console.error("Dashboard error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) return <div>Loading dashboard...</div>;
 
   return (
     <section className="py-8 bg-[#F8FAFC] min-h-screen relative overflow-hidden">
