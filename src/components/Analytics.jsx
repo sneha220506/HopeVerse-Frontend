@@ -1,14 +1,63 @@
-import { communityNeeds, volunteers, tasks, regionStats, surveyEntries } from '../data/mockData';
+import { useEffect, useState } from 'react';
+// DB connection ke liye APIs import ki hain
+import { needsAPI, volunteersAPI, tasksAPI, surveysAPI } from '../services/api';
 import { getCategoryIcon } from '../utils/helpers';
 
 export default function Analytics({ permissions }) {
-  const totalAffected = communityNeeds.reduce((s, n) => s + n.affectedPeople, 0);
-  const totalHours = volunteers.reduce((s, v) => s + v.hoursLogged, 0);
-  const avgRating = (volunteers.reduce((s, v) => s + v.rating, 0) / volunteers.length).toFixed(1);
+  // --- DATABASE SYNC LOGIC ---
+  const [data, setData] = useState({
+    communityNeeds: [],
+    volunteers: [],
+    tasks: [],
+    surveyEntries: [],
+    loading: true
+  });
+
+  useEffect(() => {
+    const fetchDBData = async () => {
+      try {
+        const [needsRes, volunteersRes, tasksRes, surveysRes] = await Promise.all([
+          needsAPI.getAll(),
+          volunteersAPI.getAll(),
+          tasksAPI.getAll(),
+          surveysAPI.getAll()
+        ]);
+
+        setData({
+          communityNeeds: needsRes.data || [],
+          volunteers: volunteersRes.data || [],
+          tasks: tasksRes.data || [],
+          surveyEntries: surveysRes.data || [],
+          loading: false
+        });
+      } catch (err) {
+        console.error("DB Sync Error:", err);
+        setData(prev => ({ ...prev, loading: false }));
+      }
+    };
+    fetchDBData();
+  }, []);
+
+  if (data.loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#FDFDFF]">
+      <div className="w-10 h-10 border-4 border-[#8E7CC3] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  // DB se aaye hue data ko use karna
+  const { communityNeeds, volunteers, tasks, surveyEntries } = data;
+
+  // --- EXISTING LOGIC (REMAINING UNCHANGED) ---
+  const totalAffected = communityNeeds.reduce((s, n) => s + (Number(n.affectedPeople) || 0), 0);
+  const totalHours = volunteers.reduce((s, v) => s + (Number(v.hoursLogged) || 0), 0);
+  const avgRating = volunteers.length > 0 
+    ? (volunteers.reduce((s, v) => s + (Number(v.rating) || 0), 0) / volunteers.length).toFixed(1) 
+    : "0.0";
 
   const categoryData = communityNeeds.reduce((acc, n) => {
     if (!acc[n.category]) acc[n.category] = { count: 0, affected: 0 };
-    acc[n.category].count += 1; acc[n.category].affected += n.affectedPeople;
+    acc[n.category].count += 1; 
+    acc[n.category].affected += (Number(n.affectedPeople) || 0);
     return acc;
   }, {});
 
@@ -137,7 +186,7 @@ export default function Analytics({ permissions }) {
                     let offset = 0;
                     return urgencyData.map(d => {
                       const circ = 2 * Math.PI * 40;
-                      const dash = (d.count / total) * circ;
+                      const dash = total > 0 ? (d.count / total) * circ : 0;
                       const el = <circle key={d.level} cx="50" cy="50" r="40" fill="none" stroke={d.color} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${dash} ${circ - dash}`} strokeDashoffset={-offset} className="transition-all duration-1000 ease-in-out" />;
                       offset += dash;
                       return el;
@@ -164,73 +213,21 @@ export default function Analytics({ permissions }) {
             </div>
           </div>
 
-          {/* Region Performance */}
-          <div className="stagger-item glass-card rounded-[3.5rem] p-12 shadow-sm" style={{animationDelay: '0.6s'}}>
-            <div className="mb-12">
-                <h3 className="text-[#2F2F3A] font-bold text-2xl tracking-tight">Regional Performance</h3>
-                <p className="text-slate-400 text-xs font-medium mt-1">Resolution efficiency by district</p>
-              </div>
-            <div className="space-y-10">
-              {regionStats.map(r => {
-                const rate = r.totalNeeds > 0 ? Math.round((r.tasksCompleted / (r.tasksCompleted + r.totalNeeds)) * 100) : 0;
-                return (
-                  <div key={r.region} className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 hover:bg-white transition-all">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-base font-black text-[#2F2F3A] tracking-tight">{r.region}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl font-black text-[#8E7CC3]">{rate}%</span>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Solved</span>
-                      </div>
-                    </div>
-                    <div className="w-full h-2 bg-white rounded-full overflow-hidden border border-slate-100">
-                      <div className="h-full bg-gradient-to-r from-[#8E7CC3] to-[#7160A1] animate-grow" style={{ width: `${rate}%` }} />
-                    </div>
-                    <div className="flex justify-between mt-5">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Active Force</span>
-                        <span className="text-xs font-bold text-slate-600">{r.volunteersActive} members</span>
-                      </div>
-                      <div className="flex flex-col text-right">
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Population</span>
-                        <span className="text-xs font-bold text-slate-600">{r.population.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Resource Availability */}
-          <div className="stagger-item glass-card rounded-[3.5rem] p-12 shadow-sm" style={{animationDelay: '0.7s'}}>
-            <h3 className="text-[#2F2F3A] font-bold text-2xl tracking-tight mb-12">Personnel Density</h3>
-            <div className="grid grid-cols-2 gap-6 mb-12">
+          {/* Personnel Density Section (Using Real DB Data) */}
+          <div className="stagger-item glass-card rounded-[3.5rem] p-12 shadow-sm lg:col-span-2" style={{animationDelay: '0.7s'}}>
+            <h3 className="text-[#2F2F3A] font-bold text-2xl tracking-tight mb-12">Personnel Metrics</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
               {[
-                { l: 'Full Engagement', c: volunteers.filter(v => v.availability === 'full-time').length, bg: 'bg-[#8E7CC3]', text: 'text-white' },
-                { l: 'Ad-Hoc / Part Time', c: volunteers.filter(v => v.availability === 'part-time').length, bg: 'bg-white', text: 'text-slate-dark' }
+                { l: 'Full Time', c: volunteers.filter(v => v.availability === 'full-time').length, bg: 'bg-[#8E7CC3]', text: 'text-white' },
+                { l: 'Part Time', c: volunteers.filter(v => v.availability === 'part-time').length, bg: 'bg-white', text: 'text-slate-dark' },
+                { l: 'Avg Rating', c: avgRating, bg: 'bg-white', text: 'text-slate-dark' },
+                { l: 'Hours Logged', c: totalHours, bg: 'bg-white', text: 'text-slate-dark' }
               ].map(a => (
-                <div key={a.l} className={`${a.bg} rounded-[2.5rem] p-10 text-center border border-slate-100 shadow-sm hover:scale-105 transition-transform`}>
-                  <div className={`text-5xl font-black ${a.text} tracking-tighter`}>{a.c}</div>
-                  <div className={`text-[10px] font-black ${a.text === 'text-white' ? 'opacity-60' : 'text-slate-400'} uppercase tracking-[0.2em] mt-3`}>{a.l}</div>
+                <div key={a.l} className={`${a.bg} rounded-[2.5rem] p-8 text-center border border-slate-100 shadow-sm hover:scale-105 transition-transform`}>
+                  <div className={`text-4xl font-black ${a.text} tracking-tighter`}>{a.c}</div>
+                  <div className={`text-[9px] font-black ${a.text === 'text-white' ? 'opacity-60' : 'text-slate-400'} uppercase tracking-[0.2em] mt-3`}>{a.l}</div>
                 </div>
               ))}
-            </div>
-            
-            <div className="bg-slate-50/50 rounded-[2.5rem] p-10 border border-slate-100">
-              <h4 className="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] mb-8 text-center">Verified Skill Matrix</h4>
-              <div className="flex flex-wrap gap-3 justify-center">
-                {['Medical', 'Teaching', 'Construction', 'Cooking', 'First Aid', 'Project Mgmt'].map(skill => {
-                  const count = volunteers.filter(v => v.skills.includes(skill)).length;
-                  return (
-                    <div key={skill} className="flex items-center gap-3 pl-5 pr-2 py-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-[#8E7CC3] transition-all group cursor-default">
-                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-tight">{skill}</span>
-                      <span className="w-10 h-10 rounded-xl bg-[#FAFAFC] border border-slate-100 flex items-center justify-center text-xs font-black text-[#8E7CC3] group-hover:bg-[#8E7CC3] group-hover:text-white transition-all">
-                        {count}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </div>
         </div>
@@ -243,7 +240,7 @@ export default function Analytics({ permissions }) {
             {[
               { v: `$${((totalHours * 25) / 1000).toFixed(0)}K+`, l: 'Valuation Created', i: '📈' },
               { v: `${(totalAffected / 1000).toFixed(1)}K`, l: 'Humans Helped', i: '💙' },
-              { v: regionStats.length, l: 'Regions Under Pulse', i: '🌍' },
+              { v: communityNeeds.length, l: 'Active Nodes', i: '🌍' },
               { v: surveyEntries.filter(s => s.verified).length, l: 'Verified Insights', i: '🛡️' }
             ].map((stat, i) => (
               <div key={stat.l} className="flex flex-col items-center">
@@ -254,10 +251,6 @@ export default function Analytics({ permissions }) {
             ))}
           </div>
         </div>
-        
-        {/* <div className="mt-12 text-center stagger-item" style={{animationDelay: '1s'}}>
-          <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">Reporting Period: Q3 FY26 • CommunityPulse Intelligence v2.0</p>
-        </div> */}
       </div>
     </section>
   );

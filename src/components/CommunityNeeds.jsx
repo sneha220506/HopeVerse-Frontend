@@ -5,7 +5,7 @@ import { getCategoryIcon, getCategoryBg, getUrgencyColor } from '../utils/helper
 export default function CommunityNeeds({ onNavigate, permissions }) {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterUrgency, setFilterUrgency] = useState('all');
-  const [viewMode, setViewMode] = useState('map');
+  const [viewMode, setViewMode] = useState('list');
 
   const filteredNeeds = communityNeeds.filter(need => {
     if (filterCategory !== 'all' && need.category !== filterCategory) return false;
