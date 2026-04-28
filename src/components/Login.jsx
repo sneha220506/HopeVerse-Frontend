@@ -192,7 +192,7 @@ export default function Login({ onLogin, onSwitchToRegister, onBack }) {
 
         {/* Demo Fast-Track Boxes */}
         <div className="mt-12 animate-reveal" style={{animationDelay: '0.7s'}}>
-          <p className="text-[10px] font-black text-black-100 uppercase tracking-[0.4em] mb-6 text-center">Protocol Review Access</p>
+          <p className="text-[10px] font-black text-black-100 uppercase tracking-[0.4em] mb-6 text-center">Protocol Review Access (for Testing)</p>
           <div className="grid grid-cols-3 gap-4">
             {[
               { email: 'admin@CommunityPulse.org', pass: 'admin123', label: 'Admin', icon: '👑', color: 'hover:border-accent' },
