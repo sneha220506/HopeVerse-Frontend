@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { authAPI } from '../services/api';
 
 export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
   const [view, setView] = useState('login');
@@ -22,12 +23,12 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
     }
   };
 
-  const handleResetSubmit = async (e) => {
+  const handleForgotSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await authAPI.forgotPassword(email);
       setResetSent(true);
     } catch (err) {
       setError('Email not found.');
@@ -161,7 +162,7 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
                   </button>
                 </div>
                 <div className="flex justify-end mt-4">
-                  <button type="button" onClick={() => setView('reset')} className="forgot-link text-[10px] font-black uppercase tracking-widest">Forgot password</button>
+                  <button type="button" onClick={() => setView('reset')} className="forgot-link text-[10px] font-black uppercase tracking-widest">Forgot password ?</button>
                 </div>
               </div>
 
@@ -172,7 +173,7 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
           ) : (
             <div className="space-y-8">
               {!resetSent ? (
-                <form onSubmit={handleResetSubmit} className="space-y-8">
+                <form onSubmit={handleForgotSubmit} className="space-y-8">
                   <div className="input-group">
                     <label className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-2">Recovery Email</label>
                     <input
