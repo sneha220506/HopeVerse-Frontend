@@ -224,7 +224,34 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
               ))}
             </div>
           </div>
+<<<<<<< HEAD
         )}
+=======
+        </div>
+
+        {/* Demo Fast-Track Boxes */}
+        <div className="mt-12 animate-reveal" style={{animationDelay: '0.7s'}}>
+          <p className="text-[10px] font-black text-black-100 uppercase tracking-[0.4em] mb-6 text-center">Protocol Review Access (for Testing)</p>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { email: 'admin@CommunityPulse.org', pass: 'admin123', label: 'Admin', icon: '👑', color: 'hover:border-accent' },
+              { email: 'sarah@CommunityPulse.org', pass: 'password123', label: 'Coord', icon: '👩‍💼', color: 'hover:border-primary' },
+              { email: 'raj@CommunityPulse.org', pass: 'password123', label: 'Vol', icon: '👷', color: 'hover:border-secondary' },
+              { email: 'Adore@CommunityPulse.org', pass: 'password123', label: 'View', icon: '👷', color: 'hover:border-primary' },
+            ].map((demo) => (
+              <button
+                key={demo.label}
+                onClick={() => handleDemoLogin(demo.email, demo.pass)}
+                disabled={loading}
+                className={`group flex flex-col items-center gap-3 p-5 bg-white/40 hover:bg-white rounded-[2rem] border-2 border-transparent ${demo.color} transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-2`}
+              >
+                <span className="text-3xl group-hover:scale-125 transition-transform duration-500">{demo.icon}</span>
+                <span className="text-[9px] font-black text-slate-dark/40 uppercase tracking-widest">{demo.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+>>>>>>> 347ac9f715381e3982006f37095a81ba073c5967
       </div>
     </div>
   );

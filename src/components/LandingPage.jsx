@@ -231,11 +231,9 @@ export default function LandingPage({ onLogin, onRegister }) {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
             <button onClick={onRegister} className="px-12 py-6 bg-white text-primary rounded-2xl font-black text-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95 shadow-xl">
-              Create Free Account
+              Create Your Account
             </button>
-            <button onClick={onLogin} className="px-12 py-6 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-black text-xl hover:bg-white/20 transition-all active:scale-95">
-              Schedule Demo
-            </button>
+            
           </div>
         </div>
       </section>
