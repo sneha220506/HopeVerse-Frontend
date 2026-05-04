@@ -83,7 +83,6 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
             Back to Home
           </button>
         )}
-
         <div className="text-center mb-10">
           <h1 className="text-4xl font-black text-slate-800 tracking-tight">
             Create <span className="text-[#8E7CC3]">Account</span>
@@ -112,7 +111,6 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
                 <select value={formData.availability} onChange={(e) => updateField('availability', e.target.value)} className="input-field-refined appearance-none">
                   <option value="full-time">Full-time</option>
                   <option value="part-time">Part-time</option>
-                  <option value="on-call">On-call</option>
                 </select>
               </div>
               <div className="space-y-2">

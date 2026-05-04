@@ -95,6 +95,14 @@ export const authAPI = {
       method: "PATCH",
       body: JSON.stringify({ password, confirmPassword }),
     }),
+    verifyOTP: (email, otp) =>
+    apiCall("/auth/verify", {
+      method: "POST",
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        otp,
+      }),
+    }),
 };
 
 // ============================================
