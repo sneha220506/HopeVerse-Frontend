@@ -203,7 +203,7 @@ export default function LandingPage({ onLogin, onRegister }) {
             {[
               { role: "Admin", icon: "👑", theme: "hover:border-accent/30 text-accent", bg: "bg-accent/5", features: ["Full platform control", "User management", "Financial tracking", "System verification"] },
               { role: "Coordinator", icon: "👩‍💼", theme: "hover:border-primary/30 text-primary", bg: "bg-primary/5", features: ["Need & Task creation", "Volunteer assignment", "Match confirmation", "Regional analytics"] },
-              { role: "volunteer", icon: "👷", theme: "hover:border-secondary/30 text-secondary", bg: "bg-secondary/5", features: ["Field report submission", "Local need viewing", "Task status updates", "Impact logging"] },
+              { role: "Volunteer", icon: "👷", theme: "hover:border-secondary/30 text-secondary", bg: "bg-secondary/5", features: ["Field report submission", "Local need viewing", "Task status updates", "Impact logging"] },
             ].map((r, i) => (
               <div key={i} className={`group rounded-[3rem] border border-primary/10 ${r.theme} p-12 bg-white/80 shadow-soft transition-all duration-500 hover:-translate-y-4 hover:bg-white`}>
                 <div className={`w-20 h-20 ${r.bg} rounded-3xl flex items-center justify-center text-5xl mb-8 transition-transform group-hover:scale-110`}>{r.icon}</div>

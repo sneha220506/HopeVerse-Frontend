@@ -172,7 +172,7 @@ export default function Dashboard({ onNavigate, permissions }) {
 
             {/* System Actions */}
             {p.canViewVolunteers &&
-            (<div className="bg-primary/30 rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
+            (<div className="bg-primary/65 rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
               <div className=" absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
               <h3 className="font-black text-lg mb-6 flex items-center gap-3 relative z-10">
                 <span className="w-8 h-8 rounded-xl flex items-center justify-center text-sm">
