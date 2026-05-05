@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getSocket } from "../services/socket";
 import axios from "axios";
+const url = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const useNotifications = (user) => {
   const [notifications, setNotifications] = useState([]);
@@ -12,7 +13,7 @@ export const useNotifications = (user) => {
     const fetchNotifications = async () => {
       try {
         const token = localStorage.getItem("CommunityPulse_token");
-        const res = await axios.get("http://localhost:5000/api/notifications", {
+        const res = await axios.get(`${url}/api/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotifications(res.data.data);
