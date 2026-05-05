@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useNotifications } from "../hooks/useNotifications";
+import NotificationBell from './Notification/NotificationBell';
 
 export default function Navbar({ activeSection, onNavigate, backendStatus, user, onLogout, perms }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { notifications, unreadCount, markAsRead } = useNotifications(user);
 
   // We use perms (passed from App.js) to filter the links
   // If perms is missing (loading state), we show nothing or just dashboard
@@ -57,6 +60,8 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
             ))}
             <div className={`ml-3 w-2 h-2 rounded-full ${backendStatus ? 'bg-success' : 'bg-yellow-400'} animate-pulse`} title={backendStatus ? 'Connected' : 'Offline'} />
           </div>
+            
+          {user && <NotificationBell user={user} />}
 
           <div className="hidden lg:flex items-center gap-3">
             {/* CTA Button shows if user can submit survey */}

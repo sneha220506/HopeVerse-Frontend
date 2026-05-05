@@ -1,5 +1,4 @@
-// API Base URL - points to the Render backend
-// Ensure no trailing slash in VITE_API_URL
+
 const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
 
 // Helper for API calls
@@ -14,7 +13,6 @@ const apiCall = async (endpoint, options = {}) => {
     const config = {
       ...rest,
       headers: {
-        // FormData ke liye fetch automatically content-type set karta hai with boundary
         ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(token && { Authorization: `Bearer ${token}` }),
         ...rest.headers,
@@ -23,7 +21,6 @@ const apiCall = async (endpoint, options = {}) => {
 
     const response = await fetch(url, config);
 
-    // 2. Safe parsing based on content-type
     const contentType = response.headers.get("content-type");
     let data;
 
@@ -35,7 +32,6 @@ const apiCall = async (endpoint, options = {}) => {
     }
 
     if (!response.ok) {
-      // Render/Production errors handle karne ke liye
       throw new Error(
         data.message || `Error ${response.status}: Request failed`,
       );
@@ -48,16 +44,14 @@ const apiCall = async (endpoint, options = {}) => {
   }
 };
 
-// ============================================
-// AUTH API (With Normalization)
-// ============================================
+// AUTH API 
 export const authAPI = {
   register: (userData) =>
     apiCall("/auth/register", {
       method: "POST",
       body: JSON.stringify({
         ...userData,
-        email: userData.email?.toLowerCase().trim(), // Production Fix: Always lower-case
+        email: userData.email?.toLowerCase().trim(), 
       }),
     }),
 
@@ -105,9 +99,7 @@ export const authAPI = {
     }),
 };
 
-// ============================================
 // NEEDS API
-// ============================================
 export const needsAPI = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -130,9 +122,7 @@ export const needsAPI = {
   delete: (id) => apiCall(`/needs/${id}`, { method: "DELETE" }),
 };
 
-// ============================================
 // VOLUNTEERS API
-// ============================================
 export const volunteersAPI = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -163,9 +153,7 @@ export const volunteersAPI = {
   delete: (id) => apiCall(`/volunteers/${id}`, { method: "DELETE" }),
 };
 
-// ============================================
 // TASKS API
-// ============================================
 export const tasksAPI = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -197,9 +185,7 @@ export const tasksAPI = {
   delete: (id) => apiCall(`/tasks/${id}`, { method: "DELETE" }),
 };
 
-// ============================================
 // SURVEYS API
-// ============================================
 export const surveysAPI = {
   getAll: (params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -210,16 +196,14 @@ export const surveysAPI = {
   submit: (formData) =>
     apiCall("/surveys", {
       method: "POST",
-      body: formData, // FormData directly, no JSON.stringify
+      body: formData, 
       isFormData: true,
     }),
   verify: (id) => apiCall(`/surveys/${id}/verify`, { method: "PUT" }),
   delete: (id) => apiCall(`/surveys/${id}`, { method: "DELETE" }),
 };
 
-// ============================================
 // MATCHING API
-// ============================================
 export const matchingAPI = {
   matchForNeed: (needId, params = {}) => {
     const query = new URLSearchParams(params).toString();
@@ -247,9 +231,7 @@ export const matchingAPI = {
     }),
 };
 
-// ============================================
 // HEALTH CHECK
-// ============================================
 export const checkBackendHealth = async () => {
   try {
     const response = await fetch(`${API_BASE}/health`);

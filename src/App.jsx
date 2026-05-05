@@ -13,6 +13,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import { checkBackendHealth } from "./services/api";
 import VerifyEmail from "./components/VerifyEmail";
+import { initiateSocketConnection, disconnectSocket } from "./services/socket";
 
 // ============================================
 // ROLE PERMISSIONS - Single Source of Truth
@@ -51,11 +52,16 @@ const ROLE_PERMISSIONS = {
     canViewSurvey: true,
     canViewAnalytics: false,
   },
+  viewer: {
+    label: "viewer",
+    canViewDashboard: true,
+    canViewSurvey: true,
+  },
 };
 
 const DEMO_USERS = {
   "admin@communitypulse.org": {
-    _id: "u1",
+    id: "u1",
     name: "System Admin",
     email: "admin@communitypulse.org",
     password: "admin123",
@@ -64,7 +70,7 @@ const DEMO_USERS = {
     organization: "CommunityPulse HQ",
   },
   "sarah@communitypulse.org": {
-    _id: "u2",
+    id: "u2",
     name: "Sarah Miller",
     email: "sarah@communitypulse.org",
     password: "password123",
@@ -73,7 +79,7 @@ const DEMO_USERS = {
     organization: "Regional Relief",
   },
   "volunteer@example.com": {
-    _id: "u4",
+    id: "u4",
     name: "Alex Volunteer",
     email: "volunteer@example.com",
     password: "password123",
@@ -96,6 +102,17 @@ export default function App() {
     ? ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS.viewer
     : ROLE_PERMISSIONS.viewer;
 
+  useEffect(() => {
+    // Only connect if user is authenticated and backend is up
+    if (user && user.id && backendStatus) {
+      initiateSocketConnection(user);
+    }
+
+    // Cleanup: Disconnect when user logs out or app unmounts
+    return () => {
+      disconnectSocket();
+    };
+  }, [user, backendStatus]);
   useEffect(() => {
     const init = async () => {
       try {
@@ -174,7 +191,7 @@ export default function App() {
       }
     }
     const u = {
-      _id: "u" + Date.now(),
+      id: "u" + Date.now(),
       name: data.name,
       email: data.email,
       role: data.role || "viewer",
@@ -188,6 +205,7 @@ export default function App() {
   };
 
   const doLogout = () => {
+    disconnectSocket();
     localStorage.clear();
     setUser(null);
     setAuthView("landing");
