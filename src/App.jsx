@@ -14,6 +14,7 @@ import Register from "./components/Register";
 import { checkBackendHealth } from "./services/api";
 import VerifyEmail from "./components/VerifyEmail";
 import { initiateSocketConnection, disconnectSocket } from "./services/socket";
+import { Toaster } from "react-hot-toast";
 
 // ============================================
 // ROLE PERMISSIONS - Single Source of Truth
@@ -329,6 +330,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-200">
+      <Toaster position="top-right" />
       <Navbar
         activeSection={activeSection}
         onNavigate={go}

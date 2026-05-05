@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getSocket } from "../services/socket";
 import axios from "axios";
+import toast from "react-hot-toast";
 const url = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export const useNotifications = (user) => {
@@ -31,7 +32,7 @@ export const useNotifications = (user) => {
 
       if (socket && socket.connected) {
         socket.on("NOTIFICATION_RECEIVED", (newNotif) => {
-          // ✅ Prevent duplicates by checking if notification already exists
+
           setNotifications((prev) => {
             const notifId = newNotif._id || newNotif.id;
             const exists = prev.some((n) => (n._id || n.id) === notifId);
@@ -43,6 +44,7 @@ export const useNotifications = (user) => {
 
             return [newNotif, ...prev];
           });
+            toast.info(newNotif.message);
 
           setUnreadCount((prev) => prev + 1);
         });
@@ -73,7 +75,7 @@ export const useNotifications = (user) => {
   }, [user]);
 
   const markAsRead = async (notificationId) => {
-    // ✅ Handle both _id and id formats
+
     setNotifications((prev) =>
       prev.map((n) => {
         const nId = n._id || n.id;
