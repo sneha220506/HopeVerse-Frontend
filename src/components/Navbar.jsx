@@ -58,7 +58,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
                 {l.name}
               </button>
             ))}
-            <div className={`ml-3 w-2 h-2 rounded-full ${backendStatus ? 'bg-success' : 'bg-yellow-400'} animate-pulse`} title={backendStatus ? 'Connected' : 'Offline'} />
+            
           </div>
             
           {user && <NotificationBell user={user} />}

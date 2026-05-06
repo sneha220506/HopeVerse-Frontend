@@ -349,7 +349,7 @@ export default function App() {
               : "bg-amber-500/5 text-amber-500 border-amber-500/10"
           }`}
         >
-          {backendStatus ? "● System Uplink Active" : "○ Local Offline Mode"}
+          {backendStatus ? "● System Connected" : "○ Local Offline Mode"}
           <span className="mx-4 opacity-20">|</span>
           Operator: {user?.name || "Guest"}
           <span className="opacity-50">[{perms.label}]</span>

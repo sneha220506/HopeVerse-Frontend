@@ -40,10 +40,6 @@ export default function Dashboard({ onNavigate, permissions }) {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6 animate-card stagger-1">
           <div>
-            {/* <div className="flex items-center gap-2 mb-2">
-              <span className="w-8 h-1 bg-primary rounded-full" />
-              <span className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">Operational Live Feed</span>
-            </div> */}
             <h2 className="text-4xl font-heading font-black text-slate-dark tracking-tight">
               Operations <span className="text-primary/70">Dashboard</span>
             </h2>

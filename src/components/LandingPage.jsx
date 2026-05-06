@@ -115,13 +115,6 @@ export default function LandingPage({ onLogin, onRegister }) {
         <div className="absolute bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[100px] floating" style={{animationDelay: '1s'}} />
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/80 shadow-sm border border-primary/10 text-primary text-[11px] font-black uppercase tracking-[0.2em] mb-10 animate-fade-up">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
-            </span>
-            Real-Time Social Coordination
-          </div>
           
           <h1 className="text-6xl md:text-8xl font-heading font-extrabold leading-[1.05] text-slate-dark mb-8 tracking-tighter animate-fade-up delay-1">
             Smart Resource
