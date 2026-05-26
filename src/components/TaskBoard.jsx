@@ -4,8 +4,9 @@ import { tasksAPI, volunteersAPI } from '../services/api';
 import { getCategoryIcon, getUrgencyColor, getStatusColor } from '../utils/helpers';
 
 export default function TaskBoard({ permissions }) {
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all'); // Handles focused row view: 'all' or specific status
   const [selectedTask, setSelectedTask] = useState(null);
+  const [viewMode, setViewMode] = useState('board'); // 'board' or 'focused'
   const [showAssignModal, setShowAssignModal] = useState(null);
   const [allTasks, setAllTasks] = useState([]);
   const [allVolunteers, setAllVolunteers] = useState([]);
@@ -31,6 +32,7 @@ export default function TaskBoard({ permissions }) {
     fetchData();
   }, []);
 
+  // Filter tasks based on global top bar toggle or row focus state
   const filteredTasks = filterStatus === 'all' ? allTasks : allTasks.filter(t => t.status === filterStatus);
   
   // Get volunteer details from the state synced with DB
@@ -72,6 +74,35 @@ export default function TaskBoard({ permissions }) {
       alert("Resolution Protocol Failed: " + err.message);
     }
   };
+
+  // Click handler to open separate focused interface
+  const handleTaskClick = (task) => {
+    setSelectedTask(task._id);
+    setViewMode('focused');
+  };
+
+  // Next and Back navigation logic inside the focused list
+  const handleNextTask = (e) => {
+    e.stopPropagation();
+    const currentIndex = filteredTasks.findIndex(t => t._id === selectedTask);
+    if (currentIndex < filteredTasks.length - 1) {
+      setSelectedTask(filteredTasks[currentIndex + 1]._id);
+    } else {
+      setSelectedTask(filteredTasks[0]._id); // Loop back to start
+    }
+  };
+
+  const handlePrevTask = (e) => {
+    e.stopPropagation();
+    const currentIndex = filteredTasks.findIndex(t => t._id === selectedTask);
+    if (currentIndex > 0) {
+      setSelectedTask(filteredTasks[currentIndex - 1]._id);
+    } else {
+      setSelectedTask(filteredTasks[filteredTasks.length - 1]._id); // Loop to end
+    }
+  };
+
+  const currentFocusedTask = allTasks.find(t => t._id === selectedTask);
 
   const columns = [
     { status: 'pending', label: 'Pending', color: 'border-amber-400', bg: 'bg-amber-50/50', text: 'text-amber-600', icon: '⏳' },
@@ -121,162 +152,312 @@ export default function TaskBoard({ permissions }) {
             </p>
           </div>
 
-          <div className="flex bg-white p-2 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50">
-            {['all', 'pending', 'assigned', 'in-progress', 'completed'].map(s => (
-              <button 
-                key={s} 
-                onClick={() => setFilterStatus(s)} 
-                className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                  filterStatus === s 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-                    : 'text-slate-dark/30 hover:text-primary hover:bg-slate-50'
-                }`}
-              >
-                {s === 'all' ? 'View All' : s.replace('-', ' ')}
-              </button>
-            ))}
-          </div>
+          {viewMode === 'board' && (
+            <div className="flex bg-white p-2 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50">
+              {['all', 'pending', 'assigned', 'in-progress', 'completed'].map(s => (
+                <button 
+                  key={s} 
+                  onClick={() => setFilterStatus(s)} 
+                  className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                    filterStatus === s 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/30' 
+                      : 'text-slate-dark/30 hover:text-primary hover:bg-slate-50'
+                  }`}
+                >
+                  {s === 'all' ? 'View All' : s.replace('-', ' ')}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Kanban Board Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {columns.map((col, colIdx) => {
-            const colTasks = filteredTasks.filter(t => t.status === col.status);
-            return (
-              <div key={col.status} className="flex flex-col h-full">
-                {/* Column Header */}
-                <div className={`mb-8 px-6 py-4 rounded-[1.5rem] border-b-4 ${col.color} ${col.bg} flex items-center justify-between shadow-sm animate-in fade-in duration-700`} style={{ animationDelay: `${colIdx * 0.1}s` }}>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{col.icon}</span>
-                    <span className={`${col.text} font-black text-[11px] uppercase tracking-[0.2em]`}>{col.label}</span>
+        {/* Dynamic Navigation Interface for Board View vs Separate Interface View */}
+        {viewMode === 'focused' && currentFocusedTask ? (
+          <div className="animate-in fade-in duration-500 space-y-8">
+            {/* Control Panel Action Buttons */}
+            <div className="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-3xl border border-slate-100 shadow-md">
+              <button 
+                onClick={() => setViewMode('board')}
+                className="px-6 py-3 bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-all flex items-center gap-2"
+              >
+                ← Return To Board
+              </button>
+              
+              <div className="flex gap-4">
+                <button 
+                  onClick={handlePrevTask}
+                  className="px-6 py-3 bg-white text-slate-dark border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+                >
+                  ◀ Previous Task
+                </button>
+                <button 
+                  onClick={handleNextTask}
+                  className="px-6 py-3 bg-white text-slate-dark border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+                >
+                  Next Task ▶
+                </button>
+              </div>
+            </div>
+
+            {/* Separate Interface Layout View */}
+            <div className="bg-white rounded-[3.5rem] border border-slate-100 shadow-2xl p-8 md:p-12 max-w-4xl mx-auto">
+              <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-slate-100 pb-8 mb-8">
+                <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center text-4xl border border-slate-100 shadow-sm">
+                    {getCategoryIcon(currentFocusedTask.category)}
                   </div>
-                  <span className="bg-white/80 text-slate-dark/40 text-[10px] font-black px-3 py-1 rounded-lg border border-white">
-                    {colTasks.length}
-                  </span>
+                  <div>
+                    <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl border inline-block mb-3 ${
+                      currentFocusedTask.urgency?.toLowerCase() === 'critical' ? 'bg-red-50 border-red-100 text-red-500' : 
+                      currentFocusedTask.urgency?.toLowerCase() === 'high' ? 'bg-orange-50 border-orange-100 text-orange-500' : 
+                      currentFocusedTask.urgency?.toLowerCase() === 'medium' ? 'bg-yellow-50 border-yellow-100 text-yellow-500' : 
+                      'bg-[#FEF9C3] border-yellow-100 text-yellow-700'
+                    }`}>
+                      {currentFocusedTask.urgency} Priority
+                    </span>
+                    <h3 className="text-3xl font-black text-slate-dark tracking-tight leading-none mb-2">
+                      {currentFocusedTask.title}
+                    </h3>
+                    <p className="text-slate-dark/40 text-xs font-bold flex items-center gap-2 uppercase tracking-wider">
+                      <span className="text-lg">📍</span> {currentFocusedTask.location}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Task Stack */}
-                <div className="space-y-6 overflow-y-auto max-h-[calc(100vh-350px)] scrollbar-hide pb-12 px-1">
-                  {colTasks.map((task, taskIdx) => (
-                    <div 
-                      key={task._id}
-                      onClick={() => setSelectedTask(selectedTask === task._id ? null : task._id)}
-                      className={`task-card relative bg-white rounded-[2.5rem] border-2 transition-all duration-500 cursor-pointer ${
-                        selectedTask === task._id 
-                          ? 'border-primary shadow-[0_20px_50px_-10px_rgba(99,102,241,0.15)] -translate-y-2' 
-                          : 'border-transparent shadow-soft hover:shadow-xl hover:border-primary/20'
-                      }`}
-                      style={{ animationDelay: `${(colIdx * 0.1) + (taskIdx * 0.05)}s` }}
-                    >
-                      <div className="p-8">
-                        <div className="flex justify-between items-start mb-6">
-                          <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 group-hover:scale-110 transition-transform">
-                            {getCategoryIcon(task.category)}
-                          </div>
-                          <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl border ${
-                            task.urgency?.toLowerCase() === 'critical' ? 'bg-red-50 border-red-100 text-red-500' : 
-                            task.urgency?.toLowerCase() === 'high' ? 'bg-orange-50 border-orange-100 text-orange-500' : 
-                            task.urgency?.toLowerCase() === 'medium' ? 'bg-yellow-50 border-yellow-100 text-yellow-500' : 
-                            'bg-[#FEF9C3] border-yellow-100 text-yellow-700'
-                          }`}>
-                            {task.urgency}
+                <div className="flex flex-col items-end gap-2 w-full md:w-auto">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-dark/30">Current Sector Status</span>
+                  <span className="px-5 py-2.5 rounded-2xl bg-primary/5 text-primary text-xs font-black uppercase tracking-widest border border-primary/10">
+                    {currentFocusedTask.status.replace('-', ' ')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Task Core Parameters */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div className="md:col-span-2 space-y-6">
+                  <h4 className="text-xs font-black text-slate-dark/30 uppercase tracking-widest">Operational Intel</h4>
+                  <p className="text-slate-dark/70 text-base leading-relaxed font-semibold bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100 min-h-[120px]">
+                    "{currentFocusedTask.description}"
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-6 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-dark/30">Maturity Vector</span>
+                      <span className="text-[10px] font-black text-primary">{progress(currentFocusedTask)}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-white rounded-full overflow-hidden p-[2px] border border-slate-200/50">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                          currentFocusedTask.status === 'completed' ? 'bg-success' :
+                          currentFocusedTask.status === 'in-progress' ? 'bg-primary' :
+                          'bg-primary/40'
+                        }`} 
+                        style={{ width: `${progress(currentFocusedTask)}%` }} 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200/60 flex justify-between items-center">
+                    <div>
+                      <p className="text-xl font-black text-slate-dark tracking-tighter leading-none">
+                        {currentFocusedTask.assignedVolunteers.length} / {currentFocusedTask.volunteersRequired}
+                      </p>
+                      <p className="text-[8px] text-slate-dark/30 font-black uppercase tracking-widest mt-1">Personnel Assigned</p>
+                    </div>
+                    <div className="flex -space-x-2">
+                      {currentFocusedTask.assignedVolunteers.map(vId => (
+                        <div key={vId} className="w-9 h-9 rounded-xl bg-white border-2 border-white flex items-center justify-center text-sm shadow-sm ring-1 ring-slate-200" title={getVolDetails(vId)?.name}>
+                          {getVolDetails(vId)?.avatar || '👤'}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tactical Actions inside separate window */}
+              <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-100 justify-end">
+                {permissions?.canAssignVolunteer && currentFocusedTask.assignedVolunteers.length < currentFocusedTask.volunteersRequired && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowAssignModal(currentFocusedTask._id); }}
+                    className="px-8 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    Deploy Personnel
+                  </button>
+                )}
+                {permissions?.canCompleteTask && currentFocusedTask.status === 'in-progress' && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleComplete(currentFocusedTask._id); }}
+                    className="px-8 py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    Finalize & Resolve Task
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Standard Master Grid/Board Stack View Layout */
+          <>
+            {filterStatus !== 'all' && (
+              <button 
+                onClick={() => setFilterStatus('all')}
+                className="mb-8 px-6 py-3 bg-white text-slate-dark border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:text-primary hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+              >
+                ← Back to All Sectors
+              </button>
+            )}
+
+            <div className="space-y-12">
+              {columns
+                .filter(col => filterStatus === 'all' || filterStatus === col.status)
+                .map((col, colIdx) => {
+                  const colTasks = allTasks.filter(t => t.status === col.status);
+                  
+                  return (
+                    <div key={col.status} className="flex flex-col w-full bg-white/40 p-6 rounded-[3rem] border border-slate-100/50">
+                      
+                      {/* Row Header with dynamic text tracking focused views */}
+                      <div className={`mb-6 px-6 py-4 rounded-[1.5rem] border-l-4 ${col.color} ${col.bg} flex items-center justify-between shadow-sm`}>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">{col.icon}</span>
+                          <span className={`${col.text} font-black text-[11px] uppercase tracking-[0.2em]`}>
+                            {col.label} Sector {filterStatus !== 'all' && '• Focused View'}
+                          </span>
+                          <span className="bg-white/80 text-slate-dark/40 text-[10px] font-black px-3 py-1 rounded-lg border border-white ml-2">
+                            {colTasks.length}
                           </span>
                         </div>
 
-                        <h4 className="text-slate-dark text-lg font-black leading-tight mb-2 tracking-tight">
-                          {task.title}
-                        </h4>
-                        <p className="text-slate-dark/40 text-xs font-bold flex items-center gap-2 mb-6 uppercase tracking-wider">
-                          <span className="text-lg">📍</span> {task.location}
-                        </p>
+                        {/* View All / Close Row Focus Interface Toggler */}
+                        <button
+                          onClick={() => setFilterStatus(filterStatus === col.status ? 'all' : col.status)}
+                          className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
+                            filterStatus === col.status 
+                              ? 'bg-slate-800 text-white border-transparent' 
+                              : 'bg-white text-slate-dark/60 hover:text-primary border-slate-100'
+                          }`}
+                        >
+                          {filterStatus === col.status ? 'Close Frame' : 'View All Tasks'}
+                        </button>
+                      </div>
 
-                        {/* Progress System */}
-                        <div className="space-y-3 mb-6">
-                          <div className="flex justify-between items-center">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-dark/20">Task Maturity</span>
-                            <span className="text-[10px] font-black text-primary">{progress(task)}%</span>
-                          </div>
-                          <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden p-[2px] border border-slate-100/50">
-                            <div 
-                              className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                                task.status === 'completed' ? 'bg-success' :
-                                task.status === 'in-progress' ? 'bg-primary' :
-                                'bg-primary/40'
-                              }`} 
-                              style={{ width: `${progress(task)}%` }} 
-                            />
-                          </div>
-                        </div>
-
-                        {/* Personnel Avatars */}
-                        <div className="flex items-center justify-between pt-6 border-t border-slate-50">
-                          <div className="flex -space-x-3">
-                            {task.assignedVolunteers.map(vId => {
-                              const vol = getVolDetails(vId);
-                              return (
-                                <div key={vId} className="w-9 h-9 rounded-xl bg-white border-2 border-white flex items-center justify-center text-lg shadow-md ring-1 ring-slate-100" title={vol?.name}>
-                                  {vol?.avatar || '👤'}
+                      {/* Horizontal Sliding Stack vs Isolated View Flex Grid wrapper */}
+                      <div className={
+                        filterStatus === 'all' 
+                          ? "flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x" 
+                          : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6"
+                      }>
+                        {colTasks.map((task, taskIdx) => (
+                          <div 
+                            key={task._id}
+                            onClick={() => handleTaskClick(task)}
+                            className={`task-card relative bg-white rounded-[2.5rem] border-2 transition-all duration-500 cursor-pointer flex-shrink-0 snap-start ${
+                              filterStatus === 'all' ? 'w-[320px]' : 'w-full'
+                            } ${
+                              selectedTask === task._id 
+                                ? 'border-primary shadow-[0_20px_50px_-10px_rgba(99,102,241,0.15)] -translate-y-2' 
+                                : 'border-transparent shadow-soft hover:shadow-xl hover:border-primary/20'
+                            }`}
+                            style={{ animationDelay: `${(colIdx * 0.1) + (taskIdx * 0.05)}s` }}
+                          >
+                            <div className="p-8">
+                              <div className="flex justify-between items-start mb-6">
+                                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl border border-slate-100 group-hover:scale-110 transition-transform">
+                                  {getCategoryIcon(task.category)}
                                 </div>
-                              );
-                            })}
-                            {task.assignedVolunteers.length < task.volunteersRequired && (
-                              <div className="w-9 h-9 rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center text-xs text-slate-300">
-                                +
+                                <div className="flex flex-col items-end gap-2">
+                                  <span className={`text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-xl border ${
+                                    task.urgency?.toLowerCase() === 'critical' ? 'bg-red-50 border-red-100 text-red-500' : 
+                                    task.urgency?.toLowerCase() === 'high' ? 'bg-orange-50 border-orange-100 text-orange-500' : 
+                                    task.urgency?.toLowerCase() === 'medium' ? 'bg-yellow-50 border-yellow-100 text-yellow-500' : 
+                                    'bg-[#FEF9C3] border-yellow-100 text-yellow-700'
+                                  }`}>
+                                    {task.urgency}
+                                  </span>
+                                  
+                                  {/* Integrated Direct Complete button option inside Active status cards without needing selections */}
+                                  {task.status === 'in-progress' && (
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleComplete(task._id); }}
+                                      className="py-1 px-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[8px] font-black uppercase tracking-widest transition-all shadow-md shadow-emerald-200"
+                                    >
+                                      ✓ Resolve Task
+                                    </button>
+                                  )}
+                                </div>
                               </div>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <p className="text-[10px] text-slate-dark font-black tracking-tighter leading-none">
-                              {task.assignedVolunteers.length}/{task.volunteersRequired}
-                            </p>
-                            <p className="text-[8px] text-slate-dark/20 font-black uppercase tracking-widest mt-1">Personnel</p>
-                          </div>
-                        </div>
 
-                        {/* Expanded Controls */}
-                        {selectedTask === task._id && (
-                          <div className="mt-6 pt-6 border-t border-slate-50 animate-in fade-in slide-in-from-top-2 duration-400">
-                            <p className="text-slate-dark/50 text-xs leading-relaxed mb-6 font-semibold bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                              "{task.description}"
-                            </p>
-                            
-                            <div className="flex flex-col gap-3">
-                              {permissions?.canAssignVolunteer && task.assignedVolunteers.length < task.volunteersRequired && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setShowAssignModal(task._id); }}
-                                  className="w-full py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-                                >
-                                  Deploy Personnel
-                                </button>
-                              )}
-                              {permissions?.canCompleteTask && task.status === 'in-progress' && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); handleComplete(task._id); }}
-                                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all"
-                                >
-                                  Finalize & Resolve
-                                </button>
-                              )}
+                              <h4 className="text-slate-dark text-lg font-black leading-tight mb-2 tracking-tight">
+                                {task.title}
+                              </h4>
+                              <p className="text-slate-dark/40 text-xs font-bold flex items-center gap-2 mb-6 uppercase tracking-wider">
+                                <span className="text-lg">📍</span> {task.location}
+                              </p>
+
+                              {/* Progress System */}
+                              <div className="space-y-3 mb-6">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-dark/20">Task Maturity</span>
+                                  <span className="text-[10px] font-black text-primary">{progress(task)}%</span>
+                                </div>
+                                <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden p-[2px] border border-slate-100/50">
+                                  <div 
+                                    className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                                      task.status === 'completed' ? 'bg-success' :
+                                      task.status === 'in-progress' ? 'bg-primary' :
+                                      'bg-primary/40'
+                                    }`} 
+                                    style={{ width: `${progress(task)}%` }} 
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Personnel Avatars */}
+                              <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                                <div className="flex -space-x-3">
+                                  {task.assignedVolunteers.map(vId => {
+                                    const vol = getVolDetails(vId);
+                                    return (
+                                      <div key={vId} className="w-9 h-9 rounded-xl bg-white border-2 border-white flex items-center justify-center text-lg shadow-md ring-1 ring-slate-100" title={vol?.name}>
+                                        {vol?.avatar || '👤'}
+                                      </div>
+                                    );
+                                  })}
+                                  {task.assignedVolunteers.length < task.volunteersRequired && (
+                                    <div className="w-9 h-9 rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center text-xs text-slate-300">
+                                      +
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-[10px] text-slate-dark font-black tracking-tighter leading-none">
+                                    {task.assignedVolunteers.length}/{task.volunteersRequired}
+                                  </p>
+                                  <p className="text-[8px] text-slate-dark/20 font-black uppercase tracking-widest mt-1">Personnel</p>
+                                </div>
+                              </div>
                             </div>
+                          </div>
+                        ))}
+
+                        {colTasks.length === 0 && (
+                          <div className="border-4 border-dashed border-slate-100 rounded-[3rem] py-10 text-center animate-in fade-in duration-1000 w-full flex flex-col items-center justify-center">
+                            <div className="text-4xl mb-2 opacity-20">🏝️</div>
+                            <span className="text-slate-dark/20 text-[10px] font-black uppercase tracking-[0.3em] block px-8 leading-loose">
+                              No Active Operational Load
+                            </span>
                           </div>
                         )}
                       </div>
                     </div>
-                  ))}
-
-                  {colTasks.length === 0 && (
-                    <div className="border-4 border-dashed border-slate-100 rounded-[3rem] py-20 text-center animate-in fade-in duration-1000">
-                      <div className="text-4xl mb-4 opacity-20">🏝️</div>
-                      <span className="text-slate-dark/20 text-[10px] font-black uppercase tracking-[0.3em] block px-8 leading-loose">
-                        No Active <br/> Operational <br/> Load
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                  );
+                })}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Deployment Modal Overlay */}
