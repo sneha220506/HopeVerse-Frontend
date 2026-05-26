@@ -307,7 +307,7 @@ export default function App() {
         view: perms.canViewTasks,
       },
       survey: {
-        comp: <SurveyForm permissions={perms} />,
+        comp: <SurveyForm permissions={perms} user={user}/>,
         view: perms.canViewSurvey,
       },
       analytics: {
