@@ -38,6 +38,14 @@ export default function SurveyForm({ permissions, user }) {
   useEffect(() => {
     loadReports();
   }, []);
+  useEffect(() => {
+    if (user) {
+      setFormData((prevData) => ({
+        ...prevData,
+        submittedBy: user.name,
+      }));
+    }
+  }, [user]);
 
   const loadReports = async () => {
     setIsLoading(true);
@@ -55,13 +63,12 @@ export default function SurveyForm({ permissions, user }) {
     }
   };
 
-const myReports = (allReports || []).filter(
-  (report) =>
-    report.submitterId &&
-    user?.id &&
-    String(report.submitterId) === String(user.id)
-);
-
+  const myReports = (allReports || []).filter(
+    (report) =>
+      report.submitterId &&
+      user?.id &&
+      String(report.submitterId) === String(user.id),
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -224,7 +231,7 @@ const myReports = (allReports || []).filter(
                         <input
                           type="text"
                           required
-                          value={formData.submittedBy}
+                          value={formData.submittedBy || ""}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -307,6 +314,34 @@ const myReports = (allReports || []).filter(
                     </Field>
 
                     <Field label="Survey Type" required>
+                      <select
+                        required
+                        value={formData.surveyType}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            surveyType: e.target.value,
+                          })
+                        }
+                        className="input-field-refined bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold appearance-none"
+                      >
+                        <option value="">Choose Type</option>
+                        {[
+                          "door-to-door",
+                          "community-meeting",
+                          "phone-survey",
+                          "online",
+                          "observation",
+                          "other",
+                          "interview",
+                        ].map((c) => (
+                          <option key={c} value={c}>
+                            {getCategoryIcon(c)} {c.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    {/* <Field label="Survey Type" required>
                       <div className="flex bg-slate-50 p-1 rounded-2xl gap-1">
                         {["observation", "interview", "sensor"].map((type) => (
                           <button
@@ -325,7 +360,7 @@ const myReports = (allReports || []).filter(
                           </button>
                         ))}
                       </div>
-                    </Field>
+                    </Field> */}
                   </div>
 
                   {/* Urgency Protocol - Refined Critical Style */}
