@@ -1,7 +1,8 @@
 import React from 'react';
 
 export default function NotificationItem({ notification, onMarkAsRead }) {
-  const { _id, title, message, type, isRead, createdAt } = notification;
+  const { _id, id, title, message, type, isRead, createdAt } = notification;
+  const targetId = _id || id;
 
   // Icon mapping based on notification type
   const getIcon = () => {
@@ -15,7 +16,7 @@ export default function NotificationItem({ notification, onMarkAsRead }) {
 
   return (
     <div 
-      onClick={() => !isRead && onMarkAsRead(_id)}
+      onClick={() => !isRead && onMarkAsRead(targetId)}
       className={`group px-6 py-5 border-b border-slate-50 cursor-pointer transition-all duration-300 ${
         isRead ? 'bg-transparent' : 'bg-[#F3F0FF]/30 hover:bg-[#F3F0FF]/60'
       }`}

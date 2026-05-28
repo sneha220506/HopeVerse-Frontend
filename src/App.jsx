@@ -15,7 +15,9 @@ import { checkBackendHealth } from "./services/api";
 import VerifyEmail from "./components/VerifyEmail";
 import { initiateSocketConnection, disconnectSocket } from "./services/socket";
 import { Toaster } from "react-hot-toast";
+import { LoadScript, LoadScriptNext } from "@react-google-maps/api";
 
+const libraries = ["places"];
 // ============================================
 // ROLE PERMISSIONS - Single Source of Truth
 // ============================================
@@ -329,6 +331,10 @@ export default function App() {
   };
 
   return (
+    <LoadScriptNext
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
     <div className="min-h-screen bg-[#F8FAFC] text-slate-200">
       <Toaster position="top-right" />
       <Navbar
@@ -363,6 +369,7 @@ export default function App() {
 
       <Footer />
     </div>
+    </LoadScriptNext>
   );
 }
 

@@ -42,7 +42,19 @@ export default function NotificationBell({ user }) {
 
       {/* Bell Icon */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const nextOpenState = !isOpen;
+          setIsOpen(nextOpenState);
+
+          // FIX: When opening dropdown, optimistically mark all visible unread notifications as read
+          if (nextOpenState && unreadCount > 0) {
+            notifications.forEach((n) => {
+              if (!n.isRead) {
+                markAsRead(n._id || n.id);
+              }
+            });
+          }
+        }}
         className={`relative p-2.5 rounded-xl transition-all duration-300 ${isOpen ? 'bg-[#F3F0FF] text-[#8E7CC3]' : 'text-slate-400 hover:bg-slate-50'}`}
       >
         <svg
@@ -56,6 +68,7 @@ export default function NotificationBell({ user }) {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
+            pathLength={360}
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
           />
         </svg>
@@ -96,7 +109,7 @@ export default function NotificationBell({ user }) {
                   <NotificationItem
                     key={uniqueKey}
                     notification={n}
-                    onMarkAsRead={() => markAsRead(n._id || n.id)}
+                    onMarkAsRead={markAsRead}
                   />
                 );
               })
