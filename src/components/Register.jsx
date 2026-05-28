@@ -1,53 +1,67 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Register({ onRegister, onSwitchToLogin, onBack }) {
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', confirmPassword: '',
-    role: 'viewer', organization: '', phone: '',
-    skills: '', 
-    availability: 'full-time',
-    location: '',
-    region: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "viewer",
+    organization: "",
+    phone: "",
+    skills: "",
+    availability: "full-time",
+    location: "",
+    region: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Removed 'admin', kept Coordinator, Volunteer, and Viewer
   const roles = [
-    { id: 'coordinator', label: 'Coordinator', icon: '👩‍💼' },
-    { id: 'volunteer', label: 'Volunteer', icon: '👷' },
-    { id: 'viewer', label: 'Viewer', icon: '👁️' }
+    // { id: "coordinator", label: "Coordinator", icon: "👩‍💼" },
+    { id: "volunteer", label: "Volunteer", icon: "👷" },
+    { id: "viewer", label: "Viewer", icon: "👁️" },
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
-    
+
     setLoading(true);
     try {
       const processedData = {
         ...formData,
-        skills: formData.skills.split(',').map(s => s.trim()).filter(s => s !== ""),
-        status: 'available',
-        joinedDate: new Date().toISOString()
+        skills: formData.skills
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s !== ""),
+        status: "available",
+        joinedDate: new Date().toISOString(),
       };
       await onRegister(processedData);
     } catch (err) {
-      setError(err.message || 'Registration failed.');
+      setError(err.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateField = (field, value) => setFormData({ ...formData, [field]: value });
+  const updateField = (field, value) =>
+    setFormData({ ...formData, [field]: value });
 
   return (
     <div className="min-h-screen bg-[#FDFCFE] flex items-center justify-center px-4 py-16 relative overflow-hidden">
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .input-field-refined {
           width: 100%; background: white; border: 2px solid #F1F5F9;
           padding: 0.875rem 1.25rem; border-radius: 1.25rem;
@@ -67,17 +81,29 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
           border-color: #8E7CC3; background: #F3F0FF; transform: translateY(-5px);
           box-shadow: 0 10px 20px -5px rgba(142, 124, 195, 0.15);
         }
-      `}} />
+      `,
+        }}
+      />
 
       <div className="relative z-10 w-full max-w-3xl">
         {onBack && (
-          <button 
-            onClick={onBack} 
+          <button
+            onClick={onBack}
             className="fixed top-6 left-6 group flex items-center gap-2 text-slate-400 hover:text-[#8E7CC3] text-[11px] font-black uppercase tracking-[0.2em] mb-10 transition-all"
           >
             <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:bg-[#8E7CC3] group-hover:text-white transition-all">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </div>
             Back to Home
@@ -87,70 +113,193 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
           <h1 className="text-4xl font-black text-slate-800 tracking-tight">
             Create <span className="text-[#8E7CC3]">Account</span>
           </h1>
-          <p className="text-slate-400 text-sm font-semibold mt-2 tracking-wide">Enter your profile details to join</p>
+          <p className="text-slate-400 text-sm font-semibold mt-2 tracking-wide">
+            Enter your profile details to join
+          </p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-2xl rounded-[3.5rem] p-8 md:p-14 shadow-2xl border border-white">
           <form onSubmit={handleSubmit} className="space-y-10">
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Full Name</label>
-                <input type="text" required value={formData.name} onChange={(e) => updateField('name', e.target.value)} placeholder="Full Name" className="input-field-refined" />
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => updateField("name", e.target.value)}
+                  placeholder="Full Name"
+                  className="input-field-refined"
+                />
               </div>
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Email</label>
-                <input type="email" required value={formData.email} onChange={(e) => updateField('email', e.target.value)} placeholder="email@example.com" className="input-field-refined" />
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  placeholder="email@example.com"
+                  className="input-field-refined"
+                />
               </div>
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Phone Number</label>
-                <input type="tel" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} placeholder="Phone Number" className="input-field-refined" />
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => updateField("phone", e.target.value)}
+                  placeholder="Phone Number"
+                  className="input-field-refined"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  City
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => updateField("location", e.target.value)}
+                  placeholder="e.g. Central Zone"
+                  className="input-field-refined"
+                />
               </div>
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Availability</label>
-                <select value={formData.availability} onChange={(e) => updateField('availability', e.target.value)} className="input-field-refined appearance-none">
-                  <option value="full-time">Full-time</option>
-                  <option value="part-time">Part-time</option>
-                </select>
-              </div>
+
+  <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+    Region
+  </label>
+
+  <div className="relative">
+
+    <select
+      value={formData.region}
+      onChange={(e) => updateField("region", e.target.value)}
+      className="input-field-refined appearance-none pr-12"
+    >
+
+      <option value="">
+        🌍 Select Region
+      </option>
+
+      <option value="North Zone">
+        🧭 North Zone
+      </option>
+
+      <option value="South Zone">
+        🌴 South Zone
+      </option>
+
+      <option value="East Zone">
+        🌅 East Zone
+      </option>
+
+      <option value="West Zone">
+        🌄 West Zone
+      </option>
+
+      <option value="Central Zone">
+        🏛️ Central Zone
+      </option>
+
+    </select>
+
+    {/* Dropdown Arrow */}
+    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+      ▼
+    </div>
+
+  </div>
+
+</div>
+
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Location / Zone</label>
-                <input type="text" value={formData.location} onChange={(e) => updateField('location', e.target.value)} placeholder="e.g. Central Zone" className="input-field-refined" />
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  Password
+                </label>
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={(e) => updateField("password", e.target.value)}
+                    placeholder="••••••••"
+                    className="input-field-refined pr-12"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
+
               <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Region</label>
-                <input type="text" value={formData.region} onChange={(e) => updateField('region', e.target.value)} placeholder="e.g. North District" className="input-field-refined" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Skills (Comma separated)</label>
-                <input type="text" value={formData.skills} onChange={(e) => updateField('skills', e.target.value)} placeholder="e.g. First Aid, Logistics, Tech" className="input-field-refined" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Password</label>
-                <input type="password" required value={formData.password} onChange={(e) => updateField('password', e.target.value)} placeholder="••••••••" className="input-field-refined" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">Confirm Password</label>
-                <input type="password" required value={formData.confirmPassword} onChange={(e) => updateField('confirmPassword', e.target.value)} placeholder="••••••••" className="input-field-refined" />
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                  Confirm Password
+                </label>
+
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      updateField("confirmPassword", e.target.value)
+                    }
+                    placeholder="••••••••"
+                    className="input-field-refined pr-12"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Role Selection Section (Excluding Admin) */}
             <div className="space-y-6 pt-6 border-t border-slate-100">
               <div className="text-center">
-                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest block">System Role</label>
-                <p className="text-[11px] text-slate-400 mt-1">Select your account access level</p>
+                <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest block">
+                  System Role
+                </label>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Select your account access level
+                </p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {roles.map((role) => (
                   <div
                     key={role.id}
-                    onClick={() => updateField('role', role.id)}
-                    className={`role-card p-4 rounded-2xl text-center ${formData.role === role.id ? 'role-active' : 'bg-white'}`}
+                    onClick={() => updateField("role", role.id)}
+                    className={`role-card p-4 rounded-2xl text-center ${formData.role === role.id ? "role-active" : "bg-white"}`}
                   >
                     <div className="text-2xl mb-2">{role.icon}</div>
-                    <div className={`text-[10px] font-black uppercase tracking-tighter ${formData.role === role.id ? 'text-[#8E7CC3]' : 'text-slate-400'}`}>
+                    <div
+                      className={`text-[10px] font-black uppercase tracking-tighter ${formData.role === role.id ? "text-[#8E7CC3]" : "text-slate-400"}`}
+                    >
                       {role.label}
                     </div>
                   </div>
@@ -158,18 +307,24 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full py-5 bg-[#8E7CC3] text-white rounded-[1.5rem] text-[11px] uppercase tracking-[0.4em] font-black shadow-lg shadow-[#8E7CC3]/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 active:scale-95"
             >
-              {loading ? 'Processing...' : 'Complete Registration'}
+              {loading ? "Processing..." : "Complete Registration"}
             </button>
           </form>
 
           <div className="mt-10 text-center">
-            <button onClick={onSwitchToLogin} className="text-slate-400 text-xs font-bold hover:text-[#8E7CC3] transition-colors">
-              Already a member? <span className="text-[#8E7CC3] underline underline-offset-8 ml-1">Sign In</span>
+            <button
+              onClick={onSwitchToLogin}
+              className="text-slate-400 text-xs font-bold hover:text-[#8E7CC3] transition-colors"
+            >
+              Already a member?{" "}
+              <span className="text-[#8E7CC3] underline underline-offset-8 ml-1">
+                Sign In
+              </span>
             </button>
           </div>
         </div>
