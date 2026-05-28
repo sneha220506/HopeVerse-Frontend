@@ -168,7 +168,7 @@ export default function Dashboard({ onNavigate, permissions }) {
 
             {/* System Actions */}
             {p.canViewVolunteers &&
-            (<div className="bg-primary/65 rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
+            (<div className="bg-oklab rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
               <div className=" absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
               <h3 className="font-black text-lg mb-6 flex items-center gap-3 relative z-10">
                 <span className="w-8 h-8 rounded-xl flex items-center justify-center text-sm">
@@ -241,7 +241,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                 {p.canViewMatching && (
                   <button
                     onClick={() => onNavigate("needs")}
-                    className="w-full flex items-center gap-4 p-3 bg-violet-600/20 hover:bg-violet-600/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/20 relative overflow-hidden"
+                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/20 relative overflow-hidden"
                   >
                     {/* Hyper-Scan Pulse Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-violet-400/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_2s_infinite] pointer-events-none" />
@@ -297,7 +297,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                 {p.canViewMatching && (
                   <button
                     onClick={() => onNavigate("analytics")}
-                    className="w-full flex items-center gap-4 p-3 bg-violet-300/20 hover:bg-violet-600/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/30 relative overflow-hidden"
+                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/30 relative overflow-hidden"
                   >
                     <div className="w-10 h-10 bg-cyan-400/10 rounded-xl flex items-center justify-center text-cyan-400 shadow-inner border border-cyan-400/20 group-hover/btn:scale-110 transition-transform duration-500">
                       <svg
@@ -342,7 +342,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                 {p.canViewVolunteers && (
                   <button
                     onClick={() => onNavigate("volunteers")}
-                    className="w-full flex items-center gap-4 p-3 bg-rose-500/20 hover:bg-rose-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-rose-500/30 relative overflow-hidden"
+                    className="w-full flex items-center gap-4 p-3 bg-oklab-500/20 hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-rose-500/30 relative overflow-hidden"
                   >
                     {/* Biometric Scan Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-400/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_2s_infinite] pointer-events-none" />
@@ -403,7 +403,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                 {p.canViewSurvey && (
                   <button
                     onClick={() => onNavigate("survey")}
-                    className="w-full flex items-center gap-4 p-3 bg-yellow-500/10 hover:bg-yellow-500/20 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-yellow-500/20 relative overflow-hidden"
+                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-yellow-500/20 relative overflow-hidden"
                   >
                     {/* Data Retrieval Scan Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_3s_infinite] pointer-events-none" />
