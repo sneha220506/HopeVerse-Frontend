@@ -5,7 +5,12 @@ import {
   getCategoryBg,
   getUrgencyColor,
 } from "../utils/helpers";
-import { LoadScript, Autocomplete, GoogleMap, Marker } from "@react-google-maps/api";
+import {
+  LoadScript,
+  Autocomplete,
+  GoogleMap,
+  Marker,
+} from "@react-google-maps/api";
 
 const ASSET_URL = "http://localhost:5000";
 const libraries = ["places"];
@@ -33,7 +38,7 @@ export default function SurveyForm({ permissions, user }) {
   const [allReports, setAllReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [autocomplete, setAutocomplete] = useState(null);
-  
+
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [markerPosition, setMarkerPosition] = useState(null);
   const [showMapSelector, setShowMapSelector] = useState(false);
@@ -66,7 +71,7 @@ export default function SurveyForm({ permissions, user }) {
         (position) => {
           const coords = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           };
           setMapCenter(coords);
           setMarkerPosition(coords);
@@ -74,8 +79,10 @@ export default function SurveyForm({ permissions, user }) {
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Unable to get your current location. Please search or click on the map.");
-        }
+          alert(
+            "Unable to get your current location. Please search or click on the map.",
+          );
+        },
       );
     } else {
       alert("Geolocation is not supported by your browser.");
@@ -135,17 +142,19 @@ export default function SurveyForm({ permissions, user }) {
 
   const handleMapLocationChange = async (lat, lng) => {
     setMarkerPosition({ lat, lng });
-    
+
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`,
       );
       const data = await response.json();
-      
+
       if (data.results && data.results[0]) {
         const topResult = data.results[0];
-        let { city, state } = parseAddressComponents(topResult.address_components);
-        
+        let { city, state } = parseAddressComponents(
+          topResult.address_components,
+        );
+
         if (!city) {
           city = topResult.formatted_address.split(",")[0];
         }
@@ -195,13 +204,13 @@ export default function SurveyForm({ permissions, user }) {
           data.append(key, formData[key]);
         }
       });
-      
+
       data.append("affectedCount", Number(formData.affectedCount) || 0);
 
       if (markerPosition) {
         data.append("gpsCoordinates[latitude]", markerPosition.lat);
         data.append("gpsCoordinates[longitude]", markerPosition.lng);
-        
+
         data.append("mapLocation[type]", "Point");
         data.append("mapLocation[coordinates][0]", markerPosition.lng);
         data.append("mapLocation[coordinates][1]", markerPosition.lat);
@@ -245,7 +254,9 @@ export default function SurveyForm({ permissions, user }) {
       }, 2000);
     } catch (error) {
       console.error("Submission Error:", error);
-      alert("Field Intelligence Transmission Failed. Please check connectivity.");
+      alert(
+        "Field Intelligence Transmission Failed. Please check connectivity.",
+      );
     }
   };
 
@@ -364,148 +375,178 @@ export default function SurveyForm({ permissions, user }) {
                     <p className="text-[10px] text-primary font-black uppercase tracking-[0.2em]">
                       Section 01: Location Parameters
                     </p>
-                    
-                    <LoadScript
-                      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                      libraries={libraries}
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Target Location Input */}
-                        <Field label="Target Location (Search)" required>
-                          <div className="relative group">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg opacity-50 z-10">
-                              📍
-                            </span>
-                            <Autocomplete
-                              onLoad={onLoad}
-                              onPlaceChanged={onPlaceChanged}
-                              options={{ componentRestrictions: { country: "in" } }}
-                            >
-                              <input
-                                type="text"
-                                required
-                                value={formData.location}
-                                onChange={(e) =>
-                                  setFormData({ ...formData, location: e.target.value })
-                                }
-                                placeholder="Search city"
-                                className="input-field-refined pl-12 bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold placeholder:text-slate-400 transition-all duration-300 w-full"
-                              />
-                            </Autocomplete>
-                          </div>
-                        </Field>
 
-                        {/* State Input */}
-                        <Field label="Administrative Region" required>
-                          <input
-                            type="text"
-                            required
-                            readOnly
-                            value={formData.region}
-                            placeholder="Auto detected state"
-                            className="input-field-refined bg-slate-50 border-2 border-transparent text-slate-900 font-bold w-full"
-                          />
-                        </Field>
-                      </div>
-
-                      {/* Full Address Display */}
-                      {formData.fullAddress && (
-                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
-                            Full Address
-                          </p>
-                          <p className="text-sm text-slate-700 font-medium">
-                            {formData.fullAddress}
-                          </p>
+                    {/* 1. Stripped away <LoadScript> wrapper to avoid instantiation conflicts */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {/* Target Location Input */}
+                      <Field label="Target Location (Search)" required>
+                        <div className="relative group">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg opacity-50 z-10">
+                            📍
+                          </span>
+                          <Autocomplete
+                            onLoad={onLoad}
+                            onPlaceChanged={onPlaceChanged}
+                            options={{
+                              componentRestrictions: { country: "in" },
+                            }}
+                          >
+                            <input
+                              type="text"
+                              required
+                              value={formData.location}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  location: e.target.value,
+                                })
+                              }
+                              placeholder="Search city"
+                              className="input-field-refined pl-12 bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold placeholder:text-slate-400 transition-all duration-300 w-full"
+                            />
+                          </Autocomplete>
                         </div>
-                      )}
+                      </Field>
 
-                      {/* Location Selection Buttons */}
-                      <div className="flex gap-3 flex-wrap">
-                        <button
-                          type="button"
-                          onClick={() => setShowMapSelector(!showMapSelector)}
-                          className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] hover:brightness-110 transition-all flex items-center gap-2 shadow-lg"
-                        >
-                          <span>🗺️</span>
-                          {showMapSelector ? "Hide Map" : "Select on Map"}
-                        </button>
-                        
-                        <button
-                          type="button"
-                          onClick={getCurrentLocation}
-                          className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] hover:bg-slate-700 transition-all flex items-center gap-2 shadow-lg"
-                        >
-                          <span>📍</span>
-                          Use My Location
-                        </button>
+                      {/* State Input */}
+                      <Field label="Administrative Region" required>
+                        <input
+                          type="text"
+                          required
+                          readOnly
+                          value={formData.region}
+                          placeholder="Auto detected state"
+                          className="input-field-refined bg-slate-50 border-2 border-transparent text-slate-900 font-bold w-full"
+                        />
+                      </Field>
+                    </div>
+
+                    {/* Full Address Display */}
+                    {formData.fullAddress && (
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">
+                          Full Address
+                        </p>
+                        <p className="text-sm text-slate-700 font-medium">
+                          {formData.fullAddress}
+                        </p>
                       </div>
+                    )}
 
-                      {/* Map Display Window */}
-                      {showMapSelector && (
-                        <div className="w-full space-y-4 animate-fade-in">
-                          <div className="w-full h-96 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-xl relative">
+                    {/* Location Selection Buttons */}
+                    <div className="flex gap-3 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => setShowMapSelector(!showMapSelector)}
+                        className="px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] hover:brightness-110 transition-all flex items-center gap-2 shadow-lg"
+                      >
+                        <span>🗺️</span>
+                        {showMapSelector ? "Hide Map" : "Select on Map"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={getCurrentLocation}
+                        className="px-6 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] hover:bg-slate-700 transition-all flex items-center gap-2 shadow-lg"
+                      >
+                        <span>📍</span>
+                        Use My Location
+                      </button>
+                    </div>
+
+                    {/* Map Display Window */}
+                    {showMapSelector && (
+                      <div className="w-full space-y-4 animate-fade-in">
+                        <div className="w-full h-96 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-xl relative">
+                          {/* 2. Directly tracking the map setup wrapper */}
+                          {typeof window !== "undefined" &&
+                          window.google?.maps ? (
                             <GoogleMap
-                              mapContainerStyle={{ width: "100%", height: "100%" }}
+                              mapContainerStyle={{
+                                width: "100%",
+                                height: "100%",
+                              }}
                               center={mapCenter}
                               zoom={markerPosition ? 14 : 5}
-                              onLoad={(map) => { mapRef.current = map; }}
-                              onClick={(e) => handleMapLocationChange(e.latLng.lat(), e.latLng.lng())}
+                              onLoad={(map) => {
+                                mapRef.current = map;
+                              }}
+                              onClick={(e) =>
+                                handleMapLocationChange(
+                                  e.latLng.lat(),
+                                  e.latLng.lng(),
+                                )
+                              }
                               options={{
                                 streetViewControl: false,
                                 mapTypeControl: true,
                                 fullscreenControl: true,
+                                zoomControl: true,
                               }}
                             >
                               {markerPosition && (
                                 <Marker
                                   position={markerPosition}
                                   draggable={true}
-                                  onDragEnd={(e) => handleMapLocationChange(e.latLng.lat(), e.latLng.lng())}
-                                  animation={window.google?.maps?.Animation?.DROP}
+                                  onDragEnd={(e) =>
+                                    handleMapLocationChange(
+                                      e.latLng.lat(),
+                                      e.latLng.lng(),
+                                    )
+                                  }
+                                  animation={
+                                    window.google?.maps?.Animation?.DROP
+                                  }
                                 />
                               )}
                             </GoogleMap>
-                            
-                            {!markerPosition && (
-                              <div className="absolute inset-0 bg-slate-900/5 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
-                                <div className="bg-white/95 px-8 py-6 rounded-2xl shadow-xl border-2 border-primary/20 max-w-md text-center">
-                                  <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-900 mb-2">
-                                    🎯 Interactive Map Mode
-                                  </p>
-                                  <p className="text-[10px] text-slate-600 font-medium">
-                                    Click anywhere on the map to pin your location
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          
-                          {markerPosition && (
-                            <div className="bg-gradient-to-r from-emerald-50 to-primary/5 border-2 border-emerald-200 rounded-2xl p-5 flex items-center gap-4">
-                              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">
-                                ✓
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600 mb-1">
-                                  Location Selected
+                          ) : (
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center animate-pulse text-xs font-black uppercase text-slate-400">
+                              Initializing Spatial Context Engine...
+                            </div>
+                          )}
+
+                          {!markerPosition && (
+                            <div className="absolute inset-0 bg-slate-900/5 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
+                              <div className="bg-white/95 px-8 py-6 rounded-2xl shadow-xl border-2 border-primary/20 max-w-md text-center">
+                                <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-900 mb-2">
+                                  🎯 Interactive Map Mode
                                 </p>
-                                <p className="text-sm font-bold text-slate-900">
-                                  {formData.location || "Unknown Location"}, {formData.region || "..."}
-                                </p>
-                                <p className="text-[10px] text-slate-500 font-medium mt-1">
-                                  Coordinates: {markerPosition.lat.toFixed(6)}, {markerPosition.lng.toFixed(6)}
+                                <p className="text-[10px] text-slate-600 font-medium">
+                                  Click anywhere on the map to pin your location
                                 </p>
                               </div>
                             </div>
                           )}
-                          
-                          <p className="text-[10px] text-slate-400 italic text-center">
-                            💡 <strong>Tip:</strong> Click the map, drag the pin, or use "My Location" for precise positioning
-                          </p>
                         </div>
-                      )}
-                    </LoadScript>
+
+                        {markerPosition && (
+                          <div className="bg-gradient-to-r from-emerald-50 to-primary/5 border-2 border-emerald-200 rounded-2xl p-5 flex items-center gap-4">
+                            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl font-black text-emerald-600">
+                              ✓
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-600 mb-1">
+                                Location Selected
+                              </p>
+                              <p className="text-sm font-bold text-slate-900">
+                                {formData.location || "Unknown Location"},{" "}
+                                {formData.region || "..."}
+                              </p>
+                              <p className="text-[10px] text-slate-500 font-medium mt-1">
+                                Coordinates: {markerPosition.lat.toFixed(6)},{" "}
+                                {markerPosition.lng.toFixed(6)}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        <p className="text-[10px] text-slate-400 italic text-center">
+                          💡 <strong>Tip:</strong> Click the map, drag the pin,
+                          or use "My Location" for precise positioning
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Section 2: Category & Survey Type */}
@@ -520,7 +561,14 @@ export default function SurveyForm({ permissions, user }) {
                         className="input-field-refined bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold appearance-none w-full"
                       >
                         <option value="">Choose category</option>
-                        {["healthcare", "education", "food", "shelter", "environment", "disaster"].map((c) => (
+                        {[
+                          "healthcare",
+                          "education",
+                          "food",
+                          "shelter",
+                          "environment",
+                          "disaster",
+                        ].map((c) => (
                           <option key={c} value={c}>
                             {getCategoryIcon(c)} {c.toUpperCase()}
                           </option>
@@ -533,12 +581,23 @@ export default function SurveyForm({ permissions, user }) {
                         required
                         value={formData.surveyType}
                         onChange={(e) =>
-                          setFormData({ ...formData, surveyType: e.target.value })
+                          setFormData({
+                            ...formData,
+                            surveyType: e.target.value,
+                          })
                         }
                         className="input-field-refined bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold appearance-none w-full"
                       >
                         <option value="">Choose Type</option>
-                        {["door-to-door", "community-meeting", "phone-survey", "online", "observation", "other", "interview"].map((c) => (
+                        {[
+                          "door-to-door",
+                          "community-meeting",
+                          "phone-survey",
+                          "online",
+                          "observation",
+                          "other",
+                          "interview",
+                        ].map((c) => (
                           <option key={c} value={c}>
                             {getCategoryIcon(c)} {c.toUpperCase()}
                           </option>
@@ -554,7 +613,9 @@ export default function SurveyForm({ permissions, user }) {
                         <button
                           key={level}
                           type="button"
-                          onClick={() => setFormData({ ...formData, urgency: level })}
+                          onClick={() =>
+                            setFormData({ ...formData, urgency: level })
+                          }
                           className={`py-3 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all border-2 ${
                             formData.urgency === level
                               ? level === "critical"
@@ -578,7 +639,10 @@ export default function SurveyForm({ permissions, user }) {
                           rows={5}
                           value={formData.description}
                           onChange={(e) =>
-                            setFormData({ ...formData, description: e.target.value })
+                            setFormData({
+                              ...formData,
+                              description: e.target.value,
+                            })
                           }
                           placeholder="Log specific observations..."
                           className="input-field-refined bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-medium placeholder:text-slate-400 resize-none p-5 w-full"
@@ -593,7 +657,10 @@ export default function SurveyForm({ permissions, user }) {
                             type="number"
                             value={formData.affectedCount}
                             onChange={(e) =>
-                              setFormData({ ...formData, affectedCount: e.target.value })
+                              setFormData({
+                                ...formData,
+                                affectedCount: e.target.value,
+                              })
                             }
                             placeholder="0"
                             className="input-field-refined bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white text-slate-900 font-bold pr-12 w-full"
@@ -610,7 +677,10 @@ export default function SurveyForm({ permissions, user }) {
                             type="file"
                             multiple
                             onChange={(e) =>
-                              setFormData({ ...formData, photos: e.target.files })
+                              setFormData({
+                                ...formData,
+                                photos: e.target.files,
+                              })
                             }
                             className="absolute inset-0 opacity-0 cursor-pointer z-10"
                           />
@@ -712,21 +782,32 @@ function Field({ label, children, required }) {
     <div className="space-y-2">
       <label className="text-slate-900 text-[10px] font-black uppercase tracking-widest ml-1 flex items-center gap-2">
         {label}{" "}
-        {required && <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>}
+        {required && (
+          <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
+        )}
       </label>
       {children}
     </div>
   );
 }
 
-function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight }) {
+function ReportCard({
+  entry,
+  canVerify,
+  canDelete,
+  onVerify,
+  onDelete,
+  highlight,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
 
   const handleOpenModal = () => {
     if (entry.photos && entry.photos.length > 0) {
       const photoPath = entry.photos[0].url;
-      const imageUrl = photoPath.startsWith("http") ? photoPath : `${ASSET_URL}${photoPath}`;
+      const imageUrl = photoPath.startsWith("http")
+        ? photoPath
+        : `${ASSET_URL}${photoPath}`;
       setSelectedImage(imageUrl);
       setIsModalOpen(true);
     }
@@ -734,20 +815,27 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
 
   return (
     <>
-      <div className={`group bg-white rounded-[2rem] border p-7 transition-all duration-300 hover:shadow-soft ${highlight ? "ring-2 ring-primary ring-offset-4 ring-offset-surface" : "border-white shadow-sm hover:border-primary/20"}`}>
+      <div
+        className={`group bg-white rounded-[2rem] border p-7 transition-all duration-300 hover:shadow-soft ${highlight ? "ring-2 ring-primary ring-offset-4 ring-offset-surface" : "border-white shadow-sm hover:border-primary/20"}`}
+      >
         <div className="flex items-start gap-4 mb-5">
           <div className="w-12 h-12 bg-surface rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-primary/5">
             {getCategoryIcon(entry.category)}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2 mb-1">
-              <h4 className="text-slate-dark font-bold text-base truncate">{entry.location}</h4>
-              <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${entry.verified ? "bg-emerald-50 text-emerald-500" : "bg-amber-50 text-amber-500 animate-pulse"}`}>
+              <h4 className="text-slate-dark font-bold text-base truncate">
+                {entry.location}
+              </h4>
+              <span
+                className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${entry.verified ? "bg-emerald-50 text-emerald-500" : "bg-amber-50 text-amber-500 animate-pulse"}`}
+              >
                 {entry.verified ? "Verified" : "Pending"}
               </span>
             </div>
             <p className="text-slate-dark/30 text-[10px] font-bold uppercase tracking-tight italic">
-              By {entry.submittedBy} • {new Date(entry.date).toLocaleDateString()}
+              By {entry.submittedBy} •{" "}
+              {new Date(entry.date).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -755,11 +843,21 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
           {entry.description}
         </p>
         <div className="flex flex-wrap gap-2 mb-6 text-[9px] font-black uppercase">
-          <span className={`px-3 py-1.5 rounded-xl border ${getCategoryBg(entry.category)}`}>{entry.category}</span>
-          <span className={`px-3 py-1.5 rounded-xl border ${getUrgencyColor(entry.urgency)}`}>{entry.urgency}</span>
-          <span className="px-3 py-1.5 rounded-xl bg-slate-dark text-white">👥 {Number(entry.affectedCount).toLocaleString()} IMPACTED</span>
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${getCategoryBg(entry.category)}`}
+          >
+            {entry.category}
+          </span>
+          <span
+            className={`px-3 py-1.5 rounded-xl border ${getUrgencyColor(entry.urgency)}`}
+          >
+            {entry.urgency}
+          </span>
+          <span className="px-3 py-1.5 rounded-xl bg-slate-dark text-white">
+            👥 {Number(entry.affectedCount).toLocaleString()} IMPACTED
+          </span>
         </div>
-        
+
         {/* GPS Coordinates Display */}
         {entry.gpsCoordinates?.latitude && entry.gpsCoordinates?.longitude && (
           <div className="mb-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
@@ -767,7 +865,8 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
               📍 GPS Location
             </p>
             <p className="text-[10px] text-blue-800 font-mono">
-              {entry.gpsCoordinates.latitude.toFixed(6)}, {entry.gpsCoordinates.longitude.toFixed(6)}
+              {entry.gpsCoordinates.latitude.toFixed(6)},{" "}
+              {entry.gpsCoordinates.longitude.toFixed(6)}
             </p>
           </div>
         )}
@@ -779,17 +878,26 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
             disabled={!entry.photos || entry.photos.length === 0}
             className={`w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] flex items-center justify-center gap-2 transition-all ${entry.photos && entry.photos.length > 0 ? "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200" : "bg-slate-50 text-slate-300 cursor-not-allowed border border-transparent"}`}
           >
-            📸 {entry.photos?.length > 0 ? `View Evidence (${entry.photos.length})` : "No Evidence"}
+            📸{" "}
+            {entry.photos?.length > 0
+              ? `View Evidence (${entry.photos.length})`
+              : "No Evidence"}
           </button>
           {(canVerify || canDelete) && (
             <div className="flex gap-3">
               {!entry.verified && canVerify && (
-                <button onClick={() => onVerify(entry._id)} className="flex-1 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all">
+                <button
+                  onClick={() => onVerify(entry._id)}
+                  className="flex-1 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all"
+                >
                   Authorize
                 </button>
               )}
               {canDelete && (
-                <button onClick={() => onDelete(entry._id)} className="w-12 h-12 flex items-center justify-center bg-rose-50 text-rose-400 rounded-xl hover:bg-rose-100 transition-colors text-lg">
+                <button
+                  onClick={() => onDelete(entry._id)}
+                  className="w-12 h-12 flex items-center justify-center bg-rose-50 text-rose-400 rounded-xl hover:bg-rose-100 transition-colors text-lg"
+                >
                   🗑️
                 </button>
               )}
@@ -797,7 +905,12 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
           )}
         </div>
       </div>
-      <ImageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} imgSrc={selectedImage} location={entry.location} />
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imgSrc={selectedImage}
+        location={entry.location}
+      />
     </>
   );
 }
@@ -805,14 +918,27 @@ function ReportCard({ entry, canVerify, canDelete, onVerify, onDelete, highlight
 function ImageModal({ isOpen, onClose, imgSrc, location }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm animate-fade-in" onClick={onClose}>
-      <div className="relative max-w-4xl w-full bg-white rounded-[2rem] overflow-hidden shadow-2xl animate-scale-in" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-4xl w-full bg-white rounded-[2rem] overflow-hidden shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="absolute top-4 right-4 z-10">
-          <button onClick={onClose} className="w-10 h-10 bg-black/10 hover:bg-black/20 text-slate-900 rounded-full flex items-center justify-center transition-colors text-xl font-bold">✕</button>
+          <button
+            onClick={onClose}
+            className="w-10 h-10 bg-black/10 hover:bg-black/20 text-slate-900 rounded-full flex items-center justify-center transition-colors text-xl font-bold"
+          >
+            ✕
+          </button>
         </div>
         <div className="flex flex-col">
           <div className="bg-slate-50 p-6 border-b border-slate-100">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">Field Evidence Preview</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-1">
+              Field Evidence Preview
+            </p>
             <h3 className="text-slate-dark font-bold text-lg">{location}</h3>
           </div>
           <div className="p-4 bg-white flex items-center justify-center min-h-[300px] max-h-[70vh] overflow-hidden">
@@ -822,12 +948,18 @@ function ImageModal({ isOpen, onClose, imgSrc, location }) {
               className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-sm"
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = "https://placehold.jp/24/334155/ffffff/600x400.png?text=Evidence+Not+Found";
+                e.target.src =
+                  "https://placehold.jp/24/334155/ffffff/600x400.png?text=Evidence+Not+Found";
               }}
             />
           </div>
           <div className="p-6 bg-slate-50 flex justify-center">
-            <button onClick={onClose} className="px-10 py-4 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all duration-300">Close Intelligence Preview</button>
+            <button
+              onClick={onClose}
+              className="px-10 py-4 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all duration-300"
+            >
+              Close Preview
+            </button>
           </div>
         </div>
       </div>
