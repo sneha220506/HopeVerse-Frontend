@@ -16,6 +16,7 @@ import VerifyEmail from "./components/VerifyEmail";
 import { initiateSocketConnection, disconnectSocket } from "./services/socket";
 import { Toaster } from "react-hot-toast";
 import { LoadScript, LoadScriptNext } from "@react-google-maps/api";
+import Settings from "./components/Settings";
 
 const libraries = ["places"];
 // ============================================
@@ -54,6 +55,7 @@ const ROLE_PERMISSIONS = {
     canViewTasks: true,
     canViewSurvey: true,
     canViewAnalytics: false,
+    canviewsettings: true,
   },
   viewer: {
     label: "viewer",
@@ -315,6 +317,10 @@ export default function App() {
       analytics: {
         comp: <Analytics permissions={perms} />,
         view: perms.canViewAnalytics,
+      },
+      settings: {
+        comp: <Settings user={user} permissions={perms} />,
+        view: true,
       },
       verifyEmail: { comp: <VerifyEmail />, view: true },
     };
