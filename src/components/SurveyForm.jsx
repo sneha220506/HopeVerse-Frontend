@@ -290,7 +290,7 @@ export default function SurveyForm({ permissions, user }) {
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">📝</span>
               <h2 className="text-3xl font-heading font-bold text-slate-dark tracking-tight">
-                Field Intelligence
+                Field <span className="text-primary">Intelligence</span>
               </h2>
             </div>
             <p className="text-slate-dark/40 text-sm font-medium italic">

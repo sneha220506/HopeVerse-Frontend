@@ -365,7 +365,7 @@ export default function VolunteerDirectory({
           <div>
 
             <h2 className="text-6xl font-black text-slate-dark tracking-tight transition-all duration-300">
-              The Collective
+              The <span className="text-primary">Collective</span>
             </h2>
 
             <p className="text-black font-bold text-lg mt-4">
@@ -378,7 +378,7 @@ export default function VolunteerDirectory({
           <input
             type="text"
             placeholder="Search volunteer..."
-            className="border border-slate-200 p-4 rounded-2xl w-full md:w-[400px] shadow-sm focus:outline-none focus:border-primary transition-all duration-300"
+            className="border border-primary p-4 rounded-2xl w-full md:w-[400px] shadow-sm focus:outline-none focus:border-primary transition-all duration-300"
             onChange={(e) =>
               setSearchTerm(e.target.value)
             }
@@ -432,7 +432,7 @@ export default function VolunteerDirectory({
                       </span>
 
                       <span className="text-primary text-sm font-black uppercase tracking-wider bg-slate-50 px-4 py-2.5 rounded-xl border border-slate-100 hover:bg-primary hover:text-white transition-all duration-300">
-                        Reveal Identity →
+                        Details →
                       </span>
                     </div>
                   </div>
@@ -452,7 +452,7 @@ export default function VolunteerDirectory({
                         }}
                         className="text-xs font-black uppercase tracking-widest text-primary hover:underline"
                       >
-                        Launch Modal ↗
+                        More Details↗
                       </span>
                     </div>
 
