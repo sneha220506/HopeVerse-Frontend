@@ -12,7 +12,8 @@ export default function SettingsPage({ user, perms }) {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <section className="py-10 bg-[#F8FAFC] min-h-screen relative overflow-hidden text-black">
+     <div className="max-w-7xl mx-auto px-4 py-8 ">
       <div className="mb-8">
         <h1 className="text-3xl font-heading font-bold text-slate-dark">Settings</h1>
         <p className="text-slate-dark/60">Manage your account preferences and system configuration.</p>
@@ -45,6 +46,7 @@ export default function SettingsPage({ user, perms }) {
         </div>
       </div>
     </div>
+   </section>
   );
 }
 
