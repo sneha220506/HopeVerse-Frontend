@@ -5,10 +5,10 @@ export default function SettingsPage({ user, perms }) {
   const brandColor = "#8E7CC3";
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: '👤' },
-    { id: 'appearance', label: 'Interface', icon: '🎨' },
-    { id: 'notifications', label: 'Notifications', icon: '🔔' },
-    { id: 'data', label: 'Data & Privacy', icon: '🛡️' },
+    { id: 'profile', label: 'Profile'},
+    { id: 'appearance', label: 'Interface'},
+    { id: 'notifications', label: 'Notifications'},
+    { id: 'data', label: 'Data & Privacy'},
   ];
 
   return (
@@ -124,41 +124,83 @@ function InterfaceSection({ brandColor }) {
 }
 
 function NotificationSection({ brandColor }) {
-  const rows = [
-    { id: 'new_task', label: 'New Task Assigned' },
-    { id: 'status_update', label: 'Task Status Updated' },
-    { id: 'security', label: 'System & Security' },
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const categories = [
+    { id: 'new_task', label: 'New Task Assigned'},
+    { id: 'status_update', label: 'Task Status Updated'},
+    { id: 'security', label: 'System & Security'},
     { id: 'new_vol', label: 'New Volunteer Registered' },
   ];
 
+  if (selectedCategory) {
+    const currentCategory = categories.find(cat => cat.id === selectedCategory);
+    return (
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+          <button 
+            onClick={() => setSelectedCategory(null)} 
+            className="text-sm font-semibold hover:opacity-75 flex items-center gap-1"
+            style={{ color: brandColor }}
+          >
+            ← Back
+          </button>
+          <div className="h-4 w-px bg-slate-200" />
+          <h2 className="text-xl font-bold text-slate-dark">{currentCategory?.label}</h2>
+        </div>
+
+        <p className="text-sm text-slate-dark/60 -mt-2">{currentCategory?.description}</p>
+
+        <div className="space-y-4 pt-2">
+          {['Email Notifications', 'Push Notifications', 'SMS Notifications'].map((channel) => (
+            <div key={channel} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div>
+                <span className="text-sm font-semibold text-slate-dark">{channel}</span>
+                
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8E7CC3]"></div>
+              </label>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-slate-100">
+          <button style={{ backgroundColor: brandColor }} className="text-white px-5 py-2 rounded-lg text-sm font-semibold hover:opacity-90">
+            Save Preferences
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm overflow-x-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+      <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
         <h2 className="text-xl font-bold text-slate-dark">Notification Settings</h2>
         <button style={{ backgroundColor: brandColor }} className="text-white px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90">
           Save Preferences
         </button>
       </div>
-      <table className="w-full text-left">
-        <thead>
-          <tr className="text-xs font-bold text-slate-dark/40 uppercase tracking-widest border-b border-slate-100">
-            <th className="pb-4">Trigger</th>
-            <th className="pb-4 text-center">Email</th>
-            <th className="pb-4 text-center">Push</th>
-            <th className="pb-4 text-center">SMS</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-50">
-          {rows.map((row) => (
-            <tr key={row.id} className="group hover:bg-slate-50 transition-colors">
-              <td className="py-4 text-sm font-medium text-slate-dark">{row.label}</td>
-              <td className="py-4 text-center"><input type="checkbox" className="w-4 h-4 rounded" style={{ accentColor: brandColor }} /></td>
-              <td className="py-4 text-center"><input type="checkbox" className="w-4 h-4 rounded" style={{ accentColor: brandColor }} /></td>
-              <td className="py-4 text-center"><input type="checkbox" className="w-4 h-4 rounded" style={{ accentColor: brandColor }} /></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <div className="divide-y divide-slate-100">
+        {categories.map((cat) => (
+          <div 
+            key={cat.id} 
+            onClick={() => setSelectedCategory(cat.id)}
+            className="flex items-center justify-between py-4 cursor-pointer hover:bg-slate-50/80 px-2 rounded-xl transition-all group"
+          >
+            <div>
+              <h4 className="text-sm font-semibold text-slate-dark group-hover:text-[#8E7CC3] transition-colors">{cat.label}</h4>
+              <p className="text-xs text-slate-dark/50 mt-0.5">{cat.description}</p>
+            </div>
+            <span className="text-slate-300 group-hover:text-[#8E7CC3] transition-colors text-lg font-bold pr-2">
+              &gt;
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
