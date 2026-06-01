@@ -12,578 +12,722 @@ export default function Dashboard({ onNavigate, permissions }) {
     return acc;
   }, {});
 
+  // Calculate stats for hero metrics
+  const totalNeeds = communityNeeds.length;
+  const activeVolunteers = volunteers.filter(v => v.status === "on-task").length;
+  const completionRate = Math.round(
+    (communityNeeds.filter(n => n.volunteersAssigned >= n.volunteersNeeded).length / totalNeeds) * 100
+  );
+
   return (
-    <section className="py-8 bg-[#F8FAFC] min-h-screen relative overflow-hidden">
-      {/* Visual Depth Accents */}
-      <div className="absolute top-0 right-0 w-1/2 h-96 bg-liner-to-b from-primary/5 to-transparent pointer-events-none" />
+    <section className="py-8 bg-gradient-to-br from-slate-50 via-white to-primary min-h-screen relative overflow-hidden">
+      {/* Enhanced Background Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
+        
+        {/* Floating Geometric Shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
+        <div className="absolute top-40 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
+        <div className="absolute bottom-40 left-1/4 w-12 h-12 border-2 border-accent/20 rounded-lg rotate-45 animate-float animation-delay-3000" />
+      </div>
 
       <style
         dangerouslySetInnerHTML={{
           __html: `
         @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(40px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .animate-card { animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        @keyframes fadeSlideDown {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeSlideLeft {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeSlideRight {
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.6); }
+        }
+        
+        .animate-card { animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .animate-slide-down { animation: fadeSlideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .animate-slide-left { animation: fadeSlideLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .animate-slide-right { animation: fadeSlideRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .animate-scale-in { animation: scaleIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+        .animate-glow { animation: glow 2s ease-in-out infinite; }
+        
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .animation-delay-1000 { animation-delay: 1s; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-3000 { animation-delay: 3s; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8E7CC3, #7C3AED); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #4338CA, #6D28D9); }
+        
+        .gradient-border {
+          background: linear-gradient(white, white) padding-box,
+                      linear-gradient(135deg, #4F46E5, #7C3AED, #EC4899) border-box;
+          border: 2px solid transparent;
+        }
+        
+        .text-gradient {
+          background: linear-gradient(135deg, #4F46E5, #7C3AED);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
       `,
         }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 relative z-10">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6 animate-card stagger-1">
-          <div>
-            <h2 className="text-4xl font-heading font-black text-slate-dark tracking-tight">
-              Operations <span className="text-primary/70">Dashboard</span>
-            </h2>
-            <p className="text-slate-dark/40 text-sm font-medium mt-1">
-              {p.label && (
-                <span className="text-primary font-bold uppercase tracking-wider text-xs mr-2">
-                  {p.label}
-                </span>
-              )}
-              {p.canDeletevolunteer
-                ? "Secure Administrative Node"
-                : p.canSubmitSurvey
-                  ? "Standard Field Access"
-                  : "Observer Interface"}
-            </p>
+        {/* Dynamic Header with Metrics */}
+        <div className="mb-12 space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 animate-slide-down">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-3 h-3 bg-primary rounded-full animate-ping absolute" />
+                  <div className="w-3 h-3 bg-primary rounded-full relative" />
+                </div>
+                <h1 className="text-5xl font-heading font-black text-slate-dark tracking-tight">
+                  Operations{" "}
+                  <span className="text-primary">Command</span>
+                </h1>
+              </div>
+              <div className="flex items-center gap-4 flex-wrap">
+                {p.label && (
+                  <span className="px-4 py-1.5 bg-gradient-to-r from-primary to-secondary text-white font-black uppercase tracking-wider text-xs rounded-full shadow-lg">
+                    {p.label}
+                  </span>
+                )}
+                <p className="text-slate-dark/50 text-sm font-medium">
+                  {p.canDeleteVolunteer
+                    ? "🛡️ Secure Administrative Node"
+                    : p.canSubmitSurvey
+                      ? " Standard Field Access"
+                      : " Observer Interface"}
+                </p>
+              </div>
+            </div>
+
+            {p.label === "volunteer" && (
+              <button
+                onClick={() => onNavigate("survey")}
+                className="group relative px-8 py-4 bg-gradient-to-r from-primary via-secondary to-primary bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-2xl shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-500 active:scale-95 overflow-hidden"
+                style={{
+                  backgroundSize: "200% 100%",
+                  backgroundPosition: "0% 0%",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundPosition = "100% 0%";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundPosition = "0% 0%";
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                <div className="relative flex items-center gap-3">
+                  <span className="text-2xl">📝</span>
+                  <span className="font-black uppercase tracking-widest text-sm">
+                    Submit Report
+                  </span>
+                </div>
+              </button>
+            )}
           </div>
-          {(p.label==="volunteer") && (
-            <button
-              onClick={() => onNavigate("survey")}
-              className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-1 transition-all active:scale-95 text-sm font-black uppercase tracking-widest"
-            >
-              <span className="text-xl">+</span> Submit Report
-            </button>
-          )}
+
+          {/* Hero Metrics Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-scale-in stagger-1">
+            <MetricCard
+              icon="🎯"
+              label="Active Operations"
+              value={totalNeeds}
+              trend="+12%"
+              color="primary"
+              delay="stagger-1"
+            />
+            <MetricCard
+              icon="👥"
+              label="Deployed Personnel"
+              value={activeVolunteers}
+              trend="+8%"
+              color="secondary"
+              delay="stagger-2"
+            />
+            <MetricCard
+              icon="✅"
+              label="Mission Success Rate"
+              value={`${completionRate}%`}
+              trend="+5%"
+              color="success"
+              delay="stagger-3"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Column: Critical Needs */}
-          <div className="lg:col-span-2 bg-white rounded-[2.5rem] shadow-soft border border-slate-100 overflow-hidden animate-card stagger-2 flex flex-col">
-            <div className="px-10 py-7 border-b border-slate-50 flex items-center justify-between bg-gradient-to-r from-white to-slate-50/50">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="w-3 h-3 bg-accent rounded-full animate-ping absolute" />
-                  <div className="w-3 h-3 bg-accent rounded-full relative" />
-                </div>
-                <h3 className="text-slate-dark font-black text-xl tracking-tight">
-                  Critical Interventions
-                </h3>
-              </div>
-              <button
-                onClick={() => onNavigate("needs")}
-                className="px-4 py-2 text-primary text-xs font-black uppercase tracking-widest hover:bg-primary/5 rounded-xl transition-all"
-              >
-                View All Intelligence →
-              </button>
-            </div>
-
-            <div className="divide-y divide-slate-50 overflow-y-auto custom-scrollbar max-h-[600px]">
-              {criticalNeeds.map((need, idx) => (
-                <div
-                  key={need._id}
-                  className="px-10 py-8 hover:bg-slate-50/80 transition-all cursor-pointer group relative overflow-hidden"
-                >
-                  {/* Subtle Hover Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-                  <div className="flex items-start gap-6 relative z-10">
-                    <div className="text-4xl w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                      {getCategoryIcon(need.category)}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Critical Interventions Card */}
+            <div className="gradient-border rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-right stagger-2 group hover:shadow-primary/20 transition-shadow duration-500">
+              <div className="bg-gradient-to-br from-white via-primary/5 to-secondary/5">
+                {/* Header */}
+                <div className="px-10 py-7 border-b border-slate-100/50 flex items-center justify-between bg-white/80 backdrop-blur-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                        <span className="text-2xl">🚨</span>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-ping" />
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 flex-wrap mb-2">
-                        <h4 className="text-slate-dark font-black text-lg group-hover:text-primary transition-colors">
-                          {need.title}
-                        </h4>
-                        <span
-                          className={`px-3 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-[0.15em] border-2 ${getUrgencyColor(need.urgency)}`}
-                        >
-                          {need.urgency}
-                        </span>
-                      </div>
-                      <p className="text-slate-dark/50 text-sm line-clamp-2 leading-relaxed font-medium mb-5">
-                        {need.description}
-                      </p>
-
-                      <div className="flex items-center gap-6 text-[10px] font-black text-slate-dark/30 uppercase tracking-widest">
-                        <span className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg">
-                          📍 {need.location}
-                        </span>
-                        <span className="flex items-center gap-2">
-                          👥 {need.affectedPeople.toLocaleString()}
-                        </span>
-                        <span className="flex items-center gap-2">
-                          🙋 {need.volunteersAssigned}/{need.volunteersNeeded}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-24 flex flex-col items-end">
-                      <div className="relative w-12 h-12 mb-3">
-                        <svg
-                          viewBox="0 0 36 36"
-                          className="w-full h-full transform -rotate-90"
-                        >
-                          <path
-                            className="stroke-slate-100"
-                            strokeWidth="3"
-                            fill="none"
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          />
-                          <path
-                            className="stroke-primary transition-all duration-1000"
-                            strokeWidth="3"
-                            strokeDasharray={`${(need.volunteersAssigned / need.volunteersNeeded) * 100}, 100`}
-                            strokeLinecap="round"
-                            fill="none"
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-primary">
-                          {Math.round(
-                            (need.volunteersAssigned / need.volunteersNeeded) *
-                              100,
-                          )}
-                          %
-                        </div>
-                      </div>
-                      <p className="text-[9px] text-right font-black text-slate-dark/20 uppercase tracking-tighter">
-                        Status: Deploying
+                    <div>
+                      <h3 className="text-slate-dark font-black text-xl tracking-tight">
+                        Critical Interventions
+                      </h3>
+                      <p className="text-xs text-slate-dark/40 font-bold uppercase tracking-wider mt-0.5">
+                        Priority Response Queue
                       </p>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* System Actions */}
-            {p.canViewVolunteers &&
-            (<div className="bg-oklab rounded-[2.5rem] shadow-2xl shadow-primary/20 p-8 text-slate-dark relative overflow-hidden group mt-8">
-              <div className=" absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:scale-150 transition-transform duration-700" />
-              <h3 className="font-black text-lg mb-6 flex items-center gap-3 relative z-10">
-                <span className="w-8 h-8 rounded-xl flex items-center justify-center text-sm">
-                  ⚡
-                </span>
-                System Actions
-              </h3>
-              <div className="space-y-4 relative z-10">
-                {p.canViewMatching && (
-                  <button
-                    onClick={() => onNavigate("survey")}
-                    className="w-full flex items-center gap-4 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-white/10 relative overflow-hidden"
-                  >
-                    {/* Emergency Alert Pulse - Top Right Corner */}
-                    <div className="absolute top-2 right-2">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
-                      </span>
-                    </div>
-
-                    {/* Tactical Clipboard Icon Box */}
-                    <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 shadow-inner border border-amber-500/20 group-hover/btn:scale-110 transition-transform duration-500">
-                      <svg
-                        className="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2.5"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Content Stack */}
-                    <div className="text-left flex-1 z-10">
-                      <p className=" text-[15px] font-black tracking-tight leading-tight">
-                        Report Incident
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <p className="text-amber-500/80 text-[10px] font-black uppercase tracking-[0.15em]">
-                          Log Emergency Data
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Action Indicator */}
-                    <div className="group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 4.5v15m7.5-7.5h-15"
-                        />
-                      </svg>
-                    </div>
-                  </button>
-                )}
-                {p.canViewMatching && (
                   <button
                     onClick={() => onNavigate("needs")}
-                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/20 relative overflow-hidden"
+                    className="group/btn px-6 py-3 bg-gradient-to-r from-primary/10 to-secondary/10 hover:from-primary hover:to-secondary text-primary hover:text-white rounded-xl transition-all duration-500 shadow-lg hover:shadow-xl"
                   >
-                    {/* Hyper-Scan Pulse Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-violet-400/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_2s_infinite] pointer-events-none" />
-
-                    {/* Analytics Icon Box - Cyber Lime Contrast */}
-                    <div className="w-10 h-10 bg-lime-400/10 rounded-xl flex items-center justify-center text-lime-400 shadow-inner border border-lime-400/20 group-hover/btn:scale-110 group-hover/btn:rotate-6 transition-transform duration-500">
+                    <span className="font-black uppercase tracking-widest text-xs flex items-center gap-2">
+                      Full Intel
                       <svg
-                        className="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
                         fill="none"
                         viewBox="0 0 24 24"
-                        strokeWidth="2.5"
                         stroke="currentColor"
+                        strokeWidth="3"
                       >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
+                          d="M13 7l5 5m0 0l-5 5m5-5H6"
                         />
                       </svg>
-                    </div>
-
-                    {/* Text Logic */}
-                    <div className="text-left flex-1 z-10">
-                      <p className="text-[15px] font-black tracking-tight leading-tight">
-                        Needs
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <p className="text-lime-400/80 text-[10px] font-black uppercase tracking-[0.15em]">
-                          Data Insight Matrix
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Trend Indicator Icon */}
-                    <div className="text-white/40 group-hover/btn:text-lime-400 group-hover/btn:translate-x-1 transition-all duration-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.712-1.26m-1.121 4.645l1.717-4.186-4.186 1.717"
-                        />
-                      </svg>
-                    </div>
+                    </span>
                   </button>
-                )}
-                {p.canViewMatching && (
-                  <button
-                    onClick={() => onNavigate("analytics")}
-                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-violet-500/30 relative overflow-hidden"
-                  >
-                    <div className="w-10 h-10 bg-cyan-400/10 rounded-xl flex items-center justify-center text-cyan-400 shadow-inner border border-cyan-400/20 group-hover/btn:scale-110 transition-transform duration-500">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="text-left flex-1 z-10">
-                      <p className="text-[15px] font-black tracking-tight leading-tight">
-                        Intelligence Analysis
-                      </p>
-                      <p className="text-cyan-400/80 text-[10px] font-black uppercase tracking-[0.15em] mt-0.5">
-                        Strategic Data Feed
-                      </p>
-                    </div>
-                    <div className="text-white/40 group-hover/btn:text-cyan-400 group-hover/btn:translate-x-1 transition-all duration-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.712-1.26m-1.121 4.645l1.717-4.186-4.186 1.717"
-                        />
-                      </svg>
-                    </div>
-                  </button>
-                )}
-                {p.canViewVolunteers && (
-                  <button
-                    onClick={() => onNavigate("volunteers")}
-                    className="w-full flex items-center gap-4 p-3 bg-oklab-500/20 hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-rose-500/30 relative overflow-hidden"
-                  >
-                    {/* Biometric Scan Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-400/10 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_2s_infinite] pointer-events-none" />
+                </div>
 
-                    {/* Personnel Icon Box - Rose/Crimson Theme */}
-                    <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-400 shadow-inner border border-rose-500/20 group-hover/btn:scale-110 transition-transform duration-500">
-                      <svg
-                        className="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2.5"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a5.971 5.971 0 00-.941 3.197m0 0a5.995 5.995 0 005.058 2.771M12 12.75a3 3 0 100-6 3 3 0 000 6zm6.53 4.22a4.13 4.13 0 01-6.213 0m6.213 0a4.13 4.13 0 00-6.213 0M12 12.75a4.131 4.131 0 01-3.107-1.354m0 0a4.13 4.13 0 000 5.44m0-5.44a4.13 4.13 0 016.213 0"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Text Section */}
-                    <div className="text-left flex-1 z-10">
-                      <p className="text-[15px] font-black tracking-tight leading-tight">
-                        View Volunteers
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <p className="text-rose-400/80 text-[10px] font-black uppercase tracking-[0.15em]">
-                          Personnel Deployment
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Small Interactive Element */}
-                    <div className="text-white/20 group-hover/btn:text-rose-400 group-hover/btn:translate-x-1 transition-all duration-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.036 12.322a1.012 1.012 0 010-.644C3.399 8.049 7.433 5 12 5c4.567 0 8.51 3.05 9.964 6.678.113.283.113.565 0 .848-1.454 3.628-5.397 6.678-9.964 6.678-4.567 0-8.51-3.05-9.964-6.678z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                    </div>
-                  </button>
-                )}
-                {p.canViewSurvey && (
-                  <button
-                    onClick={() => onNavigate("survey")}
-                    className="w-full flex items-center gap-4 p-3 bg-oklab hover:bg-oklab-500/40 backdrop-blur-md rounded-[1.25rem] transition-all duration-500 shadow-lg group/btn border border-yellow-500/20 relative overflow-hidden"
-                  >
-                    {/* Data Retrieval Scan Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_3s_infinite] pointer-events-none" />
-
-                    {/* Database Icon Box - Electric Gold Theme */}
-                    <div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500 shadow-inner border border-yellow-500/20 group-hover/btn:scale-110 transition-transform duration-500">
-                      <svg
-                        className="w-5 h-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2.5"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M20.25 6.375c0 1.035-.84 1.875-1.875 1.875h-12.75c-1.035 0-1.875-.84-1.875-1.875v-1.125c0-1.035.84-1.875 1.875-1.875h12.75c1.035 0 1.875.84 1.875 1.875v1.125zM3.375 7.5h17.25c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H3.375A1.125 1.125 0 012.25 10.125v-1.5c0-.621.504-1.125 1.125-1.125zM2.25 16.5v-2.25h19.5v2.25a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25z"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Text Section */}
-                    <div className="text-left flex-1 z-10">
-                      <p className="text-[15px] font-black tracking-tight leading-tight">
-                        Field Reports
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <p className="text-yellow-500/80 text-[10px] font-black uppercase tracking-[0.15em]">
-                          Intelligence Archive
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Search/Archive Icon */}
-                    <div className="text-white/20 group-hover/btn:text-yellow-500 group-hover/btn:translate-x-1 transition-all duration-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="3.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                        />
-                      </svg>
-                    </div>
-                  </button>
-                )}
+                {/* Needs List */}
+                <div className="divide-y divide-slate-100/50 overflow-y-auto custom-scrollbar max-h-[600px]">
+                  {criticalNeeds.map((need, idx) => (
+                    <NeedCard key={need._id} need={need} index={idx} />
+                  ))}
+                </div>
               </div>
-            </div>)}
+            </div>
+
+            {/* System Actions Panel */}
+            {p.canViewVolunteers && (
+              <div className="gradient-border rounded-[2.5rem] shadow-2xl p-8 animate-slide-right stagger-3 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 opacity-50" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-1000" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl animate-glow">
+                      <span className="text-3xl">⚡</span>
+                    </div>
+                    <div>
+                      <h3 className="font-black text-2xl tracking-tight text-slate-dark">
+                        Mission Control
+                      </h3>
+                      <p className="text-xs text-slate-dark/50 font-bold uppercase tracking-wider">
+                        Tactical Operations Hub
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {p.canViewMatching && (
+                      <ActionButton
+                        onClick={() => onNavigate("survey")}
+                        icon="📋"
+                        title="Report Incident"
+                        subtitle="Log Emergency Data"
+                        color="amber"
+                      />
+                    )}
+                    {p.canViewMatching && (
+                      <ActionButton
+                        onClick={() => onNavigate("needs")}
+                        icon="🎯"
+                        title="View Needs"
+                        subtitle="Data Insight Matrix"
+                        color="lime"
+                      />
+                    )}
+                    {p.canViewMatching && (
+                      <ActionButton
+                        onClick={() => onNavigate("analytics")}
+                        icon="📊"
+                        title="Analytics"
+                        subtitle="Strategic Data Feed"
+                        color="cyan"
+                      />
+                    )}
+                    {p.canViewVolunteers && (
+                      <ActionButton
+                        onClick={() => onNavigate("volunteers")}
+                        icon="👥"
+                        title="Personnel"
+                        subtitle="Deployment Status"
+                        color="rose"
+                      />
+                    )}
+                    {p.canViewSurvey && (
+                      <ActionButton
+                        onClick={() => onNavigate("survey")}
+                        icon="🗂️"
+                        title="Field Reports"
+                        subtitle="Intelligence Archive"
+                        color="yellow"
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-8 animate-card stagger-3">
+          {/* Right Column: Analytics */}
+          <div className="space-y-6 animate-slide-left stagger-3">
             {/* Category Distribution */}
-            <div className="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8 hover:shadow-xl transition-all duration-500">
-              <h3 className="text-slate-dark font-black text-lg mb-8 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-sm">
-                  📊
-                </span>
-                Sector Analysis
-              </h3>
+            <div className="gradient-border rounded-[2.5rem] shadow-2xl p-8 bg-white hover:shadow-primary/20 transition-all duration-500 group">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
+                  <span className="text-2xl">📊</span>
+                </div>
+                <div>
+                  <h3 className="text-slate-dark font-black text-lg tracking-tight">
+                    Sector Analysis
+                  </h3>
+                  <p className="text-xs text-slate-dark/40 font-bold uppercase tracking-wider">
+                    Category Distribution
+                  </p>
+                </div>
+              </div>
+
               <div className="space-y-6">
                 {Object.entries(categoryCounts)
                   .sort(([, a], [, b]) => b - a)
-                  .map(([cat, count]) => (
-                    <div key={cat} className="group">
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-xl group-hover:scale-125 transition-transform duration-300">
-                            {getCategoryIcon(cat)}
-                          </span>
-                          <span className="text-sm font-bold text-slate-dark/70 capitalize tracking-tight">
-                            {cat}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-black text-primary bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10">
-                          {count}
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-[1px]">
-                        <div
-                          className="h-full rounded-full bg-hero-grad transition-all duration-1000 ease-out"
-                          style={{
-                            width: `${(count / communityNeeds.length) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
+                  .map(([cat, count], idx) => (
+                    <CategoryBar
+                      key={cat}
+                      category={cat}
+                      count={count}
+                      total={totalNeeds}
+                      index={idx}
+                    />
                   ))}
               </div>
             </div>
 
-            {/* Top Volunteers */}
-            {p.canViewVolunteers &&
-            (<div className="bg-white rounded-[2.5rem] shadow-soft border border-slate-100 p-8">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-slate-dark font-black text-lg">
-                  Top Performers
-                </h3>
-                {/* <button
-                  onClick={() => onNavigate("volunteers")}
-                  className="text-primary text-[10px] font-black hover:underline uppercase tracking-[0.2em]"
-                >
-                  Full Roster
-                </button> */}
-              </div>
-              <div className="space-y-5">
-                {topVolunteers.map((v, i) => (
-                  <div
-                    key={v._id}
-                    className="flex items-center gap-4 p-3 rounded-[1.5rem] hover:bg-slate-50 transition-all group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-2xl border border-slate-100 group-hover:rotate-6 transition-transform">
-                      {v.avatar}
+            {/* Top Performers */}
+            {p.canViewVolunteers && (
+              <div className="gradient-border rounded-[2.5rem] shadow-2xl p-8 bg-white hover:shadow-secondary/20 transition-all duration-500 group">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
+                      <span className="text-2xl">🏆</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-black text-slate-dark truncate tracking-tight">
-                        {v.name}
-                      </p>
-                      <p className="text-[9px] font-bold text-slate-dark/30 uppercase tracking-widest mt-1">
-                        {v.tasksCompleted} Impact Points • ⭐ {v.rating}
+                    <div>
+                      <h3 className="text-slate-dark font-black text-lg tracking-tight">
+                        Top Performers
+                      </h3>
+                      <p className="text-xs text-slate-dark/40 font-bold uppercase tracking-wider">
+                        Elite Response Team
                       </p>
                     </div>
-                    <div
-                      className={`w-2 h-2 rounded-full ${v.status === "on-task" ? "bg-secondary animate-pulse" : "bg-success"}`}
-                    />
                   </div>
-                ))}
-              </div>
-            </div>)}
+                </div>
 
-            {/* Quick Actions Card */}
+                <div className="space-y-4">
+                  {topVolunteers.map((v, i) => (
+                    <VolunteerCard key={v._id} volunteer={v} rank={i + 1} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Region Stats - Enhanced Horizontal Grid */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-card stagger-3">
-          {regionStats.map((r) => (
-            <div
-              key={r.region}
-              className="bg-white p-6 rounded-[2rem] shadow-soft border border-slate-100 hover:border-primary/30 hover:-translate-y-1.5 transition-all duration-500 group"
-            >
-              <h4 className="text-slate-dark font-black text-xs uppercase tracking-[0.15em] mb-4 group-hover:text-primary transition-colors">
-                {r.region}
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-dark/20">
-                  <span>Incident Load</span>
-                  <span className="text-slate-dark">{r.totalNeeds}</span>
-                </div>
-                <div className="h-1.5 bg-slate-50 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent rounded-full"
-                    style={{
-                      width: `${(r.criticalNeeds / r.totalNeeds) * 100}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between items-center pt-1">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-accent tracking-tighter">
-                      {r.criticalNeeds} Critical
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-black text-success tracking-tighter">
-                      {r.volunteersActive} Active
-                    </span>
-                  </div>
-                </div>
-              </div>
+        {/* Regional Intelligence Grid */}
+        <div className="mt-12">
+          <div className="flex items-center gap-4 mb-8 animate-slide-up stagger-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-success/20 to-primary/20 flex items-center justify-center shadow-xl">
+              <span className="text-3xl">🗺️</span>
             </div>
-          ))}
+            <div>
+              <h2 className="text-3xl font-heading font-black text-slate-dark tracking-tight">
+                Regional Intelligence
+              </h2>
+              <p className="text-sm text-slate-dark/50 font-bold uppercase tracking-wider">
+                Geographic Distribution & Status
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 animate-scale-in stagger-5">
+            {regionStats.map((region, idx) => (
+              <RegionCard key={region.region} region={region} index={idx} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+// ============ COMPONENT LIBRARY ============
+
+function MetricCard({ icon, label, value, trend, color, delay }) {
+  const colorClasses = {
+    primary: "from-primary/20 to-primary/10 text-primary border-primary/30",
+    secondary: "from-secondary/20 to-secondary/10 text-secondary border-secondary/30",
+    success: "from-success/20 to-success/10 text-success border-success/30",
+  };
+
+  return (
+    <div
+      className={`gradient-border rounded-2xl p-6 bg-gradient-to-br ${colorClasses[color]} hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer ${delay}`}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-14 h-14 rounded-xl bg-white/50 backdrop-blur-sm flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
+          {icon}
+        </div>
+        <div className="px-3 py-1 bg-white/70 backdrop-blur-sm rounded-full">
+          <span className="text-xs font-black text-success">{trend}</span>
+        </div>
+      </div>
+      <div className="space-y-1">
+        <p className="text-xs font-bold uppercase tracking-wider opacity-70">
+          {label}
+        </p>
+        <p className="text-4xl font-black tracking-tight">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function NeedCard({ need, index }) {
+  return (
+    <div
+      className="px-10 py-8 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-all cursor-pointer group"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <div className="flex items-start gap-6">
+        <div className="relative">
+          <div className="text-4xl w-16 h-16 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-lg flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            {getCategoryIcon(need.category)}
+          </div>
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent rounded-full flex items-center justify-center shadow-lg animate-pulse">
+            <span className="text-[10px] font-black text-white">!</span>
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 flex-wrap mb-3">
+            <h4 className="text-slate-dark font-black text-lg group-hover:text-primary transition-colors">
+              {need.title}
+            </h4>
+            <span
+              className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border-2 ${getUrgencyColor(need.urgency)} shadow-sm`}
+            >
+              {need.urgency}
+            </span>
+          </div>
+
+          <p className="text-slate-dark/60 text-sm line-clamp-2 leading-relaxed font-medium mb-5">
+            {need.description}
+          </p>
+
+          <div className="flex items-center gap-4 flex-wrap">
+            <InfoChip icon="📍" label={need.location} />
+            <InfoChip
+              icon="👥"
+              label={need.affectedPeople.toLocaleString()}
+            />
+            <InfoChip
+              icon="🙋"
+              label={`${need.volunteersAssigned}/${need.volunteersNeeded}`}
+            />
+          </div>
+        </div>
+
+        <ProgressRing
+          progress={(need.volunteersAssigned / need.volunteersNeeded) * 100}
+        />
+      </div>
+    </div>
+  );
+}
+
+function InfoChip({ icon, label }) {
+  return (
+    <span className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg text-[11px] font-black text-slate-dark/60 uppercase tracking-wider transition-colors">
+      <span>{icon}</span>
+      {label}
+    </span>
+  );
+}
+
+function ProgressRing({ progress }) {
+  return (
+    <div className="w-20 flex flex-col items-center">
+      <div className="relative w-16 h-16 mb-2">
+        <svg
+          viewBox="0 0 36 36"
+          className="w-full h-full transform -rotate-90"
+        >
+          <path
+            className="stroke-slate-100"
+            strokeWidth="3"
+            fill="none"
+            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+          <path
+            className="stroke-primary transition-all duration-1000"
+            strokeWidth="3"
+            strokeDasharray={`${progress}, 100`}
+            strokeLinecap="round"
+            fill="none"
+            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-xs font-black text-primary">
+            {Math.round(progress)}%
+          </span>
+        </div>
+      </div>
+      <p className="text-[9px] text-center font-black text-slate-dark/30 uppercase tracking-tight">
+        Progress
+      </p>
+    </div>
+  );
+}
+
+function ActionButton({ onClick, icon, title, subtitle, color }) {
+  const colorClasses = {
+    amber: "from-amber-500/10 to-amber-500/5 hover:from-amber-500 hover:to-amber-600 border-amber-500/20 hover:border-amber-500 text-amber-600 hover:text-white",
+    lime: "from-lime-500/10 to-lime-500/5 hover:from-lime-500 hover:to-lime-600 border-lime-500/20 hover:border-lime-500 text-lime-600 hover:text-white",
+    cyan: "from-cyan-500/10 to-cyan-500/5 hover:from-cyan-500 hover:to-cyan-600 border-cyan-500/20 hover:border-cyan-500 text-cyan-600 hover:text-white",
+    rose: "from-rose-500/10 to-rose-500/5 hover:from-rose-500 hover:to-rose-600 border-rose-500/20 hover:border-rose-500 text-rose-600 hover:text-white",
+    yellow: "from-yellow-500/10 to-yellow-500/5 hover:from-yellow-500 hover:to-yellow-600 border-yellow-500/20 hover:border-yellow-500 text-yellow-600 hover:text-white",
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`group/btn relative flex items-center gap-4 p-4 bg-gradient-to-br ${colorClasses[color]} border-2 rounded-2xl transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-1 active:scale-95 overflow-hidden`}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]" />
+      
+      <div className="relative w-12 h-12 rounded-xl bg-white/50 backdrop-blur-sm flex items-center justify-center text-2xl shadow-inner group-hover/btn:scale-110 group-hover/btn:rotate-12 transition-all duration-500">
+        {icon}
+      </div>
+
+      <div className="text-left flex-1 relative z-10">
+        <p className="text-sm font-black tracking-tight leading-tight group-hover/btn:text-white transition-colors">
+          {title}
+        </p>
+        <p className="text-[10px] font-bold uppercase tracking-wider opacity-70 mt-0.5 group-hover/btn:text-white/90 transition-colors">
+          {subtitle}
+        </p>
+      </div>
+
+      <svg
+        className="w-5 h-5 opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all relative z-10"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="3"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M13 7l5 5m0 0l-5 5m5-5H6"
+        />
+      </svg>
+    </button>
+  );
+}
+
+function CategoryBar({ category, count, total, index }) {
+  const percentage = (count / total) * 100;
+
+  return (
+    <div
+      className="group"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl group-hover:scale-125 transition-transform duration-300">
+            {getCategoryIcon(category)}
+          </span>
+          <span className="text-sm font-bold text-slate-dark/70 capitalize tracking-tight">
+            {category}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-black text-primary bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
+            {count}
+          </span>
+          <span className="text-[10px] font-bold text-slate-dark/40">
+            {percentage.toFixed(0)}%
+          </span>
+        </div>
+      </div>
+      <div className="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+        <div
+          className="h-full bg-gradient-to-r from-primary via-secondary to-primary rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+          style={{ width: `${percentage}%` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VolunteerCard({ volunteer, rank }) {
+  const medals = ["🥇", "🥈", "🥉"];
+  const medal = medals[rank - 1] || "🏅";
+
+  return (
+    <div className="flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r from-slate-50 to-transparent hover:from-secondary/10 hover:to-primary/10 transition-all duration-500 group border border-transparent hover:border-primary/20">
+      <div className="relative">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white to-slate-100 shadow-lg flex items-center justify-center text-3xl border-2 border-slate-200 group-hover:border-primary/30 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500">
+          {volunteer.avatar}
+        </div>
+        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg text-sm">
+          {medal}
+        </div>
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <p className="text-sm font-black text-slate-dark truncate tracking-tight group-hover:text-primary transition-colors">
+            {volunteer.name}
+          </p>
+          <div
+            className={`w-2 h-2 rounded-full ${volunteer.status === "on-task" ? "bg-secondary animate-pulse" : "bg-success"}`}
+          />
+        </div>
+        <div className="flex items-center gap-4 text-[10px] font-bold text-slate-dark/40 uppercase tracking-wider">
+          <span className="flex items-center gap-1">
+            ⚡ {volunteer.tasksCompleted}
+          </span>
+          <span className="flex items-center gap-1">
+            ⭐ {volunteer.rating}
+          </span>
+        </div>
+      </div>
+
+      <div className="text-xs font-black text-slate-dark/20 group-hover:text-primary/40 transition-colors">
+        #{rank}
+      </div>
+    </div>
+  );
+}
+
+function RegionCard({ region, index }) {
+  const criticalPercentage = (region.criticalNeeds / region.totalNeeds) * 100;
+
+  return (
+    <div
+      className="gradient-border rounded-2xl p-6 bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-success/20 to-primary/20 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
+          🗺️
+        </div>
+        <div
+          className={`w-3 h-3 rounded-full ${criticalPercentage > 50 ? "bg-accent animate-pulse" : "bg-success"}`}
+        />
+      </div>
+
+      <h4 className="text-slate-dark font-black text-sm uppercase tracking-wider mb-4 group-hover:text-primary transition-colors">
+        {region.region}
+      </h4>
+
+      <div className="space-y-3">
+        <div className="flex justify-between text-[10px] font-black uppercase tracking-wider text-slate-dark/40">
+          <span>Operations</span>
+          <span className="text-slate-dark">{region.totalNeeds}</span>
+        </div>
+
+        <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-accent to-accent/70 rounded-full transition-all duration-1000"
+            style={{ width: `${criticalPercentage}%` }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 pt-2">
+          <div className="text-center p-2 bg-accent/10 rounded-lg">
+            <p className="text-xs font-black text-accent">
+              {region.criticalNeeds}
+            </p>
+            <p className="text-[9px] font-bold text-slate-dark/40 uppercase tracking-wider">
+              Critical
+            </p>
+          </div>
+          <div className="text-center p-2 bg-success/10 rounded-lg">
+            <p className="text-xs font-black text-success">
+              {region.volunteersActive}
+            </p>
+            <p className="text-[9px] font-bold text-slate-dark/40 uppercase tracking-wider">
+              Active
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
