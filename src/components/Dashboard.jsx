@@ -19,6 +19,8 @@ export default function Dashboard({ onNavigate, permissions }) {
     (communityNeeds.filter(n => n.volunteersAssigned >= n.volunteersNeeded).length / totalNeeds) * 100
   );
 
+
+  
   return (
     <section className="py-8 bg-gradient-to-br from-slate-50 via-white to-primary min-h-screen relative overflow-hidden">
       {/* Enhanced Background Effects */}

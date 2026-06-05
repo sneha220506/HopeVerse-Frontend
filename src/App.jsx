@@ -341,7 +341,7 @@ export default function App() {
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={libraries}
     >
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-200">
+    <div className="min-h-screen bg-[#f8f2fc] text-slate-200">
       <Toaster position="top-right" />
       <Navbar
         activeSection={activeSection}
@@ -352,12 +352,12 @@ export default function App() {
         perms={perms}
       />
 
-      <main className="pt-16 bg-[#0f172a]">
+      <main className="pt-16 bg-[#f8f2fc]">
         {/* Tactical Status Bar */}
         <div
           className={`text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b transition-all duration-700 ${
             backendStatus
-              ? "bg-emerald-500/5 text-emerald-500 border-emerald-500/10"
+              ? "bg-slate text-black border-slate-700/20"
               : "bg-amber-500/5 text-amber-500 border-amber-500/10"
           }`}
         >
@@ -381,9 +381,9 @@ export default function App() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+    <div className="min-h-screen bg-primary flex items-center justify-center">
       <div className="text-center">
-        <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center shadow-2xl border border-slate-700 mb-6 mx-auto animate-pulse">
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl border border-slate-700 mb-6 mx-auto animate-pulse">
           <span className="text-3xl">🤝</span>
         </div>
         <div className="space-y-2">

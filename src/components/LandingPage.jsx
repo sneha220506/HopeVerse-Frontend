@@ -277,7 +277,7 @@ function NavBar({ onLogin, onRegister }) {
             <motion.button
               onClick={onRegister}
               className="relative px-7 py-3 bg-gradient-to-r from-primary via-secondary to-primary rounded-full text-white text-sm font-bold shadow-xl shadow-primary/30 overflow-hidden group"
-              whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -10px rgba(79, 70, 229, 0.4)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 20px 40px -10px rgba(218, 170, 238, 0.81)" }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -380,7 +380,7 @@ function HeroSection({ onLogin, onRegister, communityNeeds, volunteers, tasks, t
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "linear-gradient(#4F46E5 1px, transparent 1px), linear-gradient(90deg, #4F46E5 1px, transparent 1px)",
+              "linear-gradient(#4F46E5 1px, transparent 1px), linear-gradient(90deg, #bc91db 1px, transparent 1px)",
             backgroundSize: "50px 50px",
           }}
         />
@@ -1046,7 +1046,7 @@ function RoleCard({ role, icon, gradient, border, bg, features, index }) {
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
             transition={{ delay: index * 0.15 + i * 0.05 }}
-            whileHover={{ x: 5, color: "#334155" }}
+            whileHover={{ x: 5, color: "rgb(188, 154, 227)" }}
           >
             <motion.div
               className={`w-2 h-2 rounded-full bg-gradient-to-r ${gradient}`}
