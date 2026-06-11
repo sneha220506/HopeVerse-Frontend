@@ -1,1 +1,1 @@
-# Community-Pulse-Frontend
+# Hope-Verse-Frontend

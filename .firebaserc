@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "communitypulse-a614d"
+    "default": "communitypulse-a614d",
+    "production": "hopeverse01"
   },
   "targets": {},
   "etags": {}
