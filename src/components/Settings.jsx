@@ -69,7 +69,7 @@ function ProfileSection({ user, brandColor }) {
         </div>
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
           <InputField label="Full Name" defaultValue={user?.name || "Raj Sharma"} />
-          <InputField label="Email" defaultValue={user?.email || "raj@communitypulse.org"} disabled />
+          <InputField label="Email" defaultValue={user?.email || "raj@hopeverse.org"} disabled />
           <InputField label="Location" defaultValue={user?.location || "Jaipur"} />
           <InputField label="Region" defaultValue={user?.region || "Rajasthan"} />
           <InputField label="Phone" defaultValue={user?.phone || "1234567899"} />

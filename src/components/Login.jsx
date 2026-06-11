@@ -144,7 +144,7 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
                 <label className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block ml-2">Email Address</label>
                 <input
                   type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@communitypulse.org"
+                  placeholder="email@hopeverse.org"
                   className="w-full bg-white border-2 border-slate-50 rounded-2xl px-6 py-4 text-[15px] font-semibold text-slate-700 focus:outline-none focus:border-[#8E7CC3] focus:ring-4 focus:ring-[#8E7CC3]/5 transition-all shadow-sm"
                 />
               </div>
@@ -209,10 +209,10 @@ export default function AuthContainer({ onLogin, onSwitchToRegister, onBack }) {
              <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-6 text-center">Fast-Track Login - For Testing</p>
             <div className="grid grid-cols-4 gap-4">
               {[
-                { name: 'Admin', icon: '👑', email: 'admin@communitypulse.org' },
-                { name: 'Coordinator', icon: '👩‍💼', email: 'sarah@communitypulse.org' },
-                { name: 'Volunteer', icon: '👷', email: 'raj@communitypulse.org' },
-                { name: 'Viewer', icon: '👁️', email: 'adore@communitypulse.org' }
+                { name: 'Admin', icon: '👑', email: 'admin@hopeverse.org' },
+                { name: 'Coordinator', icon: '👩‍💼', email: 'sarah@hopeverse.org' },
+                { name: 'Volunteer', icon: '👷', email: 'raj@hopeverse.org' },
+                { name: 'Viewer', icon: '👁️', email: 'adore@hopeverse.org' }
               ].map((role) => (
                 <button 
                   key={role.name} 

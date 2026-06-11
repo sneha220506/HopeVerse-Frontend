@@ -9,7 +9,7 @@ export default function Footer() {
               <span className="text-white text-xl">🤝</span>
             </div>
             <span className="text-slate-dark font-heading font-bold text-xl tracking-tight">
-              Community<span className="text-primary">Pulse</span>
+              Hope<span className="text-primary">Verse</span>
             </span>
           </div>
 
@@ -26,7 +26,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-slate-dark/20 text-[10px] font-bold uppercase tracking-widest">
-            © 2026 CommunityPulse. Designed for Social Impact.
+            © 2026 HopeVerse. Designed for Social Impact.
           </p>
           
           <div className="flex items-center gap-6">

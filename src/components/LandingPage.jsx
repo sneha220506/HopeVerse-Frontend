@@ -231,9 +231,9 @@ function NavBar({ onLogin, onRegister }) {
               </motion.div>
             </div>
             <span className="text-slate-dark font-heading font-bold text-2xl tracking-tight">
-              Community
+              Hope
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Pulse
+                Verse
               </span>
             </span>
           </motion.div>
@@ -392,29 +392,6 @@ function HeroSection({ onLogin, onRegister, communityNeeds, volunteers, tasks, t
       >
         {/* Hero Content */}
         <div className="text-center mb-20">
-          {/* Badge */}
-          <motion.div
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/60 backdrop-blur-xl rounded-full border border-primary/20 shadow-xl mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <span className="relative flex h-2 w-2">
-              <motion.span
-                className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
-                animate={{ scale: [1, 1.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-            </span>
-            <motion.span
-              className="text-xs font-black uppercase tracking-wider text-slate-dark/70"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              Next-Gen Community Platform
-            </motion.span>
-          </motion.div>
 
           {/* Main Heading */}
           <div className="mb-8">
@@ -1210,7 +1187,7 @@ function ImpactSection() {
                 </div>
               </div>
               <p className="text-slate-dark/80 text-lg leading-relaxed italic mb-6">
-                "CommunityPulse transformed how we coordinate relief efforts. The AI matching saved
+                "HopeVerse transformed how we coordinate relief efforts. The AI matching saved
                 us countless hours, and the real-time analytics helped us make data-driven
                 decisions that actually work."
               </p>
@@ -1426,7 +1403,7 @@ function Footer() {
                   <span className="text-white text-xl">🤝</span>
                 </motion.div>
               </div>
-              <span className="text-slate-dark font-bold text-xl">CommunityPulse</span>
+              <span className="text-slate-dark font-bold text-xl">HopeVerse</span>
             </motion.div>
             <p className="text-slate-dark/60 mb-6 max-w-md leading-relaxed">
               Empowering communities through intelligent resource allocation and data-driven
@@ -1513,7 +1490,7 @@ function Footer() {
           transition={{ delay: 0.5 }}
         >
           <p className="text-slate-dark/40 text-xs font-bold uppercase tracking-widest">
-            © 2026 CommunityPulse. All rights reserved.
+            © 2026 HopeVerse. All rights reserved.
           </p>
           <div className="flex gap-6 text-slate-dark/40 text-xs font-bold uppercase tracking-wider">
             {["Terms", "Privacy", "Cookies"].map((link, i) => (

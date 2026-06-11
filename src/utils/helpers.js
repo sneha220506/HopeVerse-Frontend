@@ -1,4 +1,4 @@
-// Helper functions for the CommunityPulse frontend
+// Helper functions for the HopeVerse frontend
 
 export const getCategoryColor = (category) => {
   const colors = {

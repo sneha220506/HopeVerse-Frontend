@@ -39,7 +39,7 @@ const ResetPassword = ({ token }) => {
               <span className="text-white text-lg">🤝</span>
             </div>
             <span className="text-slate-dark font-heading font-bold text-lg tracking-tight">
-              Community<span className="text-primary">Pulse</span>
+              Hope<span className="text-primary">Verse</span>
             </span>
           </button>
         <button 
