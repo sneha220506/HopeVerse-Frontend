@@ -13,7 +13,7 @@ export const useNotifications = (user) => {
 
     const fetchNotifications = async () => {
       try {
-        const token = localStorage.getItem("CommunityPulse_token");
+        const token = localStorage.getItem("HopeVerse_token");
         const res = await axios.get(`${url}/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });

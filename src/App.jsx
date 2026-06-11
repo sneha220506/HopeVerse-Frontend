@@ -65,19 +65,19 @@ const ROLE_PERMISSIONS = {
 };
 
 const DEMO_USERS = {
-  "admin@communitypulse.org": {
+  "admin@hopeverse.org": {
     id: "u1",
     name: "System Admin",
-    email: "admin@communitypulse.org",
+    email: "admin@hopeverse.org",
     password: "admin123",
     role: "admin",
     avatar: "👑",
-    organization: "CommunityPulse HQ",
+    organization: "HopeVerse HQ",
   },
-  "sarah@communitypulse.org": {
+  "sarah@hopeverse.org": {
     id: "u2",
     name: "Sarah Miller",
-    email: "sarah@communitypulse.org",
+    email: "sarah@hopeverse.org",
     password: "password123",
     role: "coordinator",
     avatar: "👩‍💼",
@@ -127,7 +127,7 @@ export default function App() {
         setBackendStatus(false);
       }
 
-      const stored = localStorage.getItem("CommunityPulse_user");
+      const stored = localStorage.getItem("HopeVerse_user");
       if (stored) {
         setUser(JSON.parse(stored));
         setAuthView("authenticated");
@@ -153,8 +153,8 @@ export default function App() {
       try {
         const { authAPI } = await import("./services/api");
         const d = await authAPI.login(email, pw);
-        localStorage.setItem("CommunityPulse_token", d.token);
-        localStorage.setItem("CommunityPulse_user", JSON.stringify(d.user));
+        localStorage.setItem("HopeVerse_token", d.token);
+        localStorage.setItem("HopeVerse_user", JSON.stringify(d.user));
         setUser(d.user);
         setAuthView("authenticated");
         setActiveSection("dashboard");
@@ -169,7 +169,7 @@ export default function App() {
     if (demo && demo.password === pw) {
       const u = { ...demo };
       delete u.password;
-      localStorage.setItem("CommunityPulse_user", JSON.stringify(u));
+      localStorage.setItem("HopeVerse_user", JSON.stringify(u));
       setUser(u);
       setAuthView("authenticated");
       setActiveSection("dashboard");
@@ -185,8 +185,8 @@ export default function App() {
       try {
         const { authAPI } = await import("./services/api");
         const d = await authAPI.register(data);
-        localStorage.setItem("CommunityPulse_token", d.token);
-        localStorage.setItem("CommunityPulse_user", JSON.stringify(d.user));
+        localStorage.setItem("HopeVerse_token", d.token);
+        localStorage.setItem("HopeVerse_user", JSON.stringify(d.user));
         setUser(d.user);
         setVerifyEmail(data.email);
         setAuthView("verify");
@@ -203,7 +203,7 @@ export default function App() {
       avatar: "👤",
       organization: data.organization || "",
     };
-    localStorage.setItem("CommunityPulse_user", JSON.stringify(u));
+    localStorage.setItem("HopeVerse_user", JSON.stringify(u));
     setUser(u);
     setAuthView("authenticated");
     setActiveSection("dashboard");
@@ -230,8 +230,8 @@ export default function App() {
         throw new Error("User data not received");
       }
 
-      localStorage.setItem("CommunityPulse_token", d.token);
-      localStorage.setItem("CommunityPulse_user", JSON.stringify(d.user));
+      localStorage.setItem("HopeVerse_token", d.token);
+      localStorage.setItem("HopeVerse_user", JSON.stringify(d.user));
 
       setUser(d.user); // ✅ ensure ho
       setAuthView("authenticated");
@@ -388,7 +388,7 @@ function LoadingScreen() {
         </div>
         <div className="space-y-2">
           <p className="text-white font-bold tracking-widest uppercase text-xs">
-            CommunityPulse
+            HopeVerse
           </p>
           <p className="text-slate-500 text-[10px] uppercase tracking-[0.3em] animate-pulse">
             Decrypting Network...

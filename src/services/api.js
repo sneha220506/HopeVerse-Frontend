@@ -4,7 +4,7 @@ const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
 // Helper for API calls
 const apiCall = async (endpoint, options = {}) => {
   try {
-    const token = localStorage.getItem("CommunityPulse_token");
+    const token = localStorage.getItem("HopeVerse_token");
     const { isFormData, ...rest } = options;
 
     // 1. URL Formatting (endpoint should start with /)
