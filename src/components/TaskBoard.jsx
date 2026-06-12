@@ -56,7 +56,6 @@ export default function TaskBoard({ permissions, user }) {
       color: "border-amber-400",
       bg: "bg-amber-50/50",
       text: "text-amber-600",
-      icon: "⏳",
       gradient: "from-amber-500/20 to-amber-500/5",
     },
     {
@@ -65,7 +64,6 @@ export default function TaskBoard({ permissions, user }) {
       color: "border-primary",
       bg: "bg-primary/5",
       text: "text-primary",
-      icon: "📌",
       gradient: "from-primary/20 to-primary/5",
     },
     {
@@ -74,7 +72,6 @@ export default function TaskBoard({ permissions, user }) {
       color: "border-blue-400",
       bg: "bg-blue-50/50",
       text: "text-blue-600",
-      icon: "🔄",
       gradient: "from-blue-500/20 to-blue-500/5",
     },
     {
@@ -83,7 +80,6 @@ export default function TaskBoard({ permissions, user }) {
       color: "border-emerald-400",
       bg: "bg-emerald-50/50",
       text: "text-emerald-600",
-      icon: "✅",
       gradient: "from-emerald-500/20 to-emerald-500/5",
     },
   ];
@@ -228,7 +224,7 @@ export default function TaskBoard({ permissions, user }) {
             transition={{ duration: 1.5, repeat: Infinity }}
           />
           <motion.div className="absolute inset-0 flex items-center justify-center text-4xl">
-            📋
+            
           </motion.div>
         </motion.div>
         <motion.p
@@ -244,57 +240,8 @@ export default function TaskBoard({ permissions, user }) {
   const currentFocusedTaskInstance = allTasks.find((t) => t._id === selectedTask);
 
   return (
-    <section className="py-12 min-h-screen relative overflow-x-hidden bg-[#F8FAFC]">
-      {/* Configuration Stylesheet for Advanced Micro-Interactions */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-          @keyframes slowFluidFloat {
-            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 0.14; }
-            33% { transform: translateY(-40px) scale(1.1) rotate(5deg); opacity: 0.22; }
-            66% { transform: translateY(20px) scale(0.92) rotate(-4deg); opacity: 0.16; }
-          }
-          @keyframes slowFluidFloatReverse {
-            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 0.12; }
-            50% { transform: translateY(50px) scale(1.15) rotate(-8deg); opacity: 0.20; }
-          }
-          .ambient-fluid-particle-1 {
-            position: fixed; top: 10%; left: 5%; width: 550px; height: 550px;
-            background: radial-gradient(circle, #4F46E5 0%, transparent 70%);
-            filter: blur(90px); pointer-events: none; z-index: 0;
-            animation: slowFluidFloat 15s ease-in-out infinite;
-          }
-          .ambient-fluid-particle-2 {
-            position: fixed; bottom: 5%; right: 2%; width: 600px; height: 600px;
-            background: radial-gradient(circle, #7C3AED 0%, transparent 70%);
-            filter: blur(100px); pointer-events: none; z-index: 0;
-            animation: slowFluidFloatReverse 19s ease-in-out infinite;
-          }
-          .ambient-fluid-particle-3 {
-            position: fixed; top: 45%; left: 55%; width: 450px; height: 450px;
-            background: radial-gradient(circle, #EC4899 0%, transparent 70%);
-            filter: blur(85px); pointer-events: none; z-index: 0;
-            animation: slowFluidFloat 25s ease-in-out infinite alternate;
-          }
-          .card-magnetic-glow {
-            position: absolute; width: 250px; height: 250px; 
-            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 75%);
-            border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
-          }
-          .interactive-card-element {
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-style: preserve-3d;
-          }
-        `,
-        }}
-      />
-
-      {/* Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent z-[200] origin-left"
-        style={{ scaleX }}
-      />
-
+    <section className="py-12 bg-[#F8FAFC]">
+      
       {/* Fixed Background Fluid Dynamic Aurora Ecosystem */}
       <div className="ambient-fluid-particle-1" />
       <div className="ambient-fluid-particle-2" />
@@ -623,9 +570,6 @@ function TaskCard({
       <div className="p-5 relative z-10">
         <div className="flex justify-between items-center mb-4">
           <motion.div
-            className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-xl border border-slate-100 shadow-xs"
-            whileHover={{ scale: 1.15, rotate: 12 }}
-            transition={{ type: "spring", stiffness: 300 }}
           >
             {getCategoryIcon(task.category)}
           </motion.div>
@@ -833,9 +777,6 @@ function FocusedTaskView({
               transition={{ delay: 0.3 }}
             >
               <motion.div
-                className="w-16 h-16 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl flex items-center justify-center text-3xl border border-slate-200 shadow-lg"
-                whileHover={{ scale: 1.1, rotate: 12 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
                 {getCategoryIcon(task.category)}
               </motion.div>
@@ -1095,7 +1036,7 @@ function CategoryView({
                 <div className="relative z-10">
                   <div className="flex justify-between items-center mb-4">
                     <motion.div
-                      className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-xl border border-slate-100"
+                     
                       whileHover={{ scale: 1.15, rotate: 12 }}
                     >
                       {getCategoryIcon(task.category)}

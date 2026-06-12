@@ -43,8 +43,6 @@ export const getStatusColor = (status) => {
 
 export const getCategoryIcon = (category) => {
   const icons = {
-    healthcare: '🏥', education: '📚', food: '🍲', shelter: '🏠',
-    environment: '🌿', elderly: '👴', youth: '👦', disaster: '🆘',
   };
-  return icons[category] || '📌';
+  return icons[category] ;
 };

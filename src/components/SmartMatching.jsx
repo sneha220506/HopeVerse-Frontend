@@ -112,13 +112,9 @@ export default function SmartMatching({ permissions }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8 animate-reveal">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 bg-hero-grad rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20"><span className="text-2xl">🤖</span></div>
             <h2 className="text-4xl font-heading font-black text-slate-dark tracking-tighter">Smart Match <span className="text-primary">Engine</span></h2>
           </div>
-          <div className="px-6 py-3 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="relative"><div className="w-3 h-3 bg-emerald-400 rounded-full animate-ping absolute" /><div className="w-3 h-3 bg-emerald-400 rounded-full relative" /></div>
-            <span className="text-[10px] font-black text-slate-dark/60 uppercase tracking-widest">Core Status: Operational</span>
-          </div>
+          
         </div>
 
         <div className="bg-primary/20 backdrop-blur-3xl rounded-[3rem] border border-white p-10 mb-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] animate-reveal stagger-1">
@@ -150,7 +146,7 @@ export default function SmartMatching({ permissions }) {
 
             <div className="lg:col-span-3">
               <button onClick={runMatch} disabled={isMatching} className={`w-full py-5 rounded-[1.5rem] flex items-center justify-center gap-4 transition-all duration-500 font-black uppercase tracking-[0.2em] text-[11px] ${isMatching ? 'bg-slate-100 text-slate-400' : 'bg-primary text-white shadow-xl shadow-primary/25 hover:shadow-2xl hover:-translate-y-1'}`}>
-                {isMatching ? <><div className="w-5 h-5 border-[3px] border-slate-300 border-t-primary rounded-full animate-spin" />Crunching Data...</> : <><span className="text-xl">⚡</span>Execute Matrix Scan</>}
+                {isMatching ? <><div className="w-5 h-5 border-[3px] border-slate-300 border-t-primary rounded-full animate-spin" />Crunching Data...</> : <><span className="text-xl"></span>Execute Matrix Scan</>}
               </button>
             </div>
           </div>

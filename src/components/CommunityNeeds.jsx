@@ -281,10 +281,9 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
             </h2>
             <p className="text-slate-dark/40 font-black uppercase tracking-[0.2em] text-[11px] mt-4 flex items-center gap-3">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              
               </span>
-              Live Stream:{" "}
+              {" "}
               <span className="text-red-500">
                 {filteredNeeds.length} active nodes
               </span>{" "}
@@ -307,13 +306,13 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                 onClick={() => setViewMode("map")}
                 className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all duration-300 ${viewMode === "map" ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
               >
-                🗺️ MAP VIEW
+                MAP VIEW
               </button>
               <button
                 onClick={() => setViewMode("list")}
                 className={`px-8 py-3 rounded-xl text-[10px] font-black tracking-widest transition-all duration-300 ${viewMode === "list" ? "bg-slate-900 text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
               >
-                📋 INDEX VIEW
+                INDEX VIEW
               </button>
             </div>
           </div>
@@ -514,11 +513,7 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                 >
                   {/* Header Info */}
                   <div className="flex items-start gap-6 mb-6">
-                    <div
-                      className={`w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-sm border border-slate-100`}
-                    >
-                      {getCategoryIcon(need.category)}
-                    </div>
+                    
                     <div className="flex-1 min-w-0">
                       <h4 className="text-slate-dark font-black text-xl tracking-tight leading-tight group-hover:text-primary transition-colors truncate">
                         {need.title}
@@ -537,7 +532,7 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                   </div>
 
                   {/* Description */}
-                  <p className="text-slate-dark/50 text-xs mb-6 leading-relaxed font-semibold line-clamp-2 italic bg-slate-50/50 p-4 rounded-2xl border border-slate-50">
+                  <p className="text-slate-dark/50 text-xs mb-6 leading-relaxed font-semibold line-clamp-2 italic bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                     "{need.description}"
                   </p>
 
