@@ -347,7 +347,7 @@ export default function SurveyForm({ permissions, user }) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
-
+        
         {/* Floating Geometric Shapes */}
         <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
         <div className="absolute top-30 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
@@ -407,7 +407,7 @@ export default function SurveyForm({ permissions, user }) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
+        <motion.div 
           className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -494,9 +494,8 @@ export default function SurveyForm({ permissions, user }) {
             </motion.div>
           )}
 
-          {(activeTab === "reports" ||
-            activeTab === "pending" ||
-            activeTab === "yourreports") && (
+
+          {(activeTab === "reports" || activeTab === "pending" || activeTab === "yourreports") && (
             <ReportsView
               key="reports-view"
               activeTab={activeTab}
@@ -611,7 +610,7 @@ function SurveyFormContent({
       animate={{ opacity: 1 }}
     >
       <div className="space-y-10 relative z-10">
-        <motion.div
+        <motion.div 
           className="border-b border-slate-100 pb-8"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -632,7 +631,7 @@ function SurveyFormContent({
           </div>
         </motion.div>
 
-        <motion.div
+        <motion.div 
           className="space-y-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -809,7 +808,7 @@ function SurveyFormContent({
           </AnimatePresence>
         </motion.div>
 
-        <motion.div
+        <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -897,7 +896,7 @@ function SurveyFormContent({
           </Field>
         </motion.div>
 
-        <motion.div
+        <motion.div 
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -1063,15 +1062,7 @@ function ReportsView({
   );
 }
 
-function ReportCard({
-  entry,
-  index,
-  canVerify,
-  canDelete,
-  onVerify,
-  onDelete,
-  highlight,
-}) {
+function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, highlight }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const cardRef = useRef(null);
@@ -1159,18 +1150,14 @@ function ReportCard({
             </span>
           </div>
 
-          {entry.gpsCoordinates?.latitude &&
-            entry.gpsCoordinates?.longitude && (
-              <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
-                  📍 Coordinates Registry
-                </p>
-                <p className="text-[10px] text-slate-700 font-mono font-bold">
-                  {entry.gpsCoordinates.latitude.toFixed(6)},{" "}
-                  {entry.gpsCoordinates.longitude.toFixed(6)}
-                </p>
-              </div>
-            )}
+          {entry.gpsCoordinates?.latitude && entry.gpsCoordinates?.longitude && (
+            <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg">
+              <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-0.5">📍 Coordinates Registry</p>
+              <p className="text-[10px] text-slate-700 font-mono font-bold">
+                {entry.gpsCoordinates.latitude.toFixed(6)}, {entry.gpsCoordinates.longitude.toFixed(6)}
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-col gap-2">
             <button

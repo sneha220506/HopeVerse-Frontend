@@ -396,29 +396,14 @@ export default function App() {
           perms={perms}
         />
 
-        <main className="pt-16 bg-[#f8f2fc]">
-          {/* Tactical Status Bar */}
-          <div
-            className={`text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b transition-all duration-700 ${
-              backendStatus
-                ? "bg-slate text-black border-slate-700/20"
-                : "bg-amber-500/5 text-amber-500 border-amber-500/10"
-            }`}
-          >
-            {backendStatus ? "● System Connected" : "○ Local Offline Mode"}
-            <span className="mx-4 opacity-20">|</span>
-            Operator: {user?.name || "Guest"}
-            <span className="opacity-50">[{perms.label}]</span>
-          </div>
-
-          {/* Section Animation Wrapper */}
-          <div className="transition-all duration-500 ease-in-out ">
-            {renderSection()}
-          </div>
-        </main>
-          
-        <Footer />
-      </div>
+        {/* Section Animation Wrapper */}
+        <div className="transition-all duration-500 ease-in-out ">
+          {renderSection()}
+        </div>
+      </main>
+        
+      <Footer />
+    </div>
     </LoadScriptNext>
   );
 }
