@@ -1,8 +1,24 @@
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useSpring,
+  useInView,
+} from "framer-motion";
 import { surveysAPI } from "../services/api";
-import { getCategoryIcon, getCategoryBg, getUrgencyColor } from "../utils/helpers";
-import { useJsApiLoader, Autocomplete, GoogleMap, Marker } from "@react-google-maps/api";
+import {
+  getCategoryIcon,
+  getCategoryBg,
+  getUrgencyColor,
+} from "../utils/helpers";
+import {
+  useJsApiLoader,
+  Autocomplete,
+  GoogleMap,
+  Marker,
+} from "@react-google-maps/api";
 
 const ASSET_URL = "http://localhost:5000";
 const libraries = ["places"];
@@ -49,7 +65,8 @@ export default function SurveyForm({ permissions, user }) {
   });
 
   const isAdminOrCoordinator =
-    permissions?.label === "Administrator" || permissions?.label === "Coordinator";
+    permissions?.label === "Administrator" ||
+    permissions?.label === "Coordinator";
   const p = permissions;
   const canVerify = isAdminOrCoordinator;
   const canDelete = isAdminOrCoordinator;
@@ -82,8 +99,10 @@ export default function SurveyForm({ permissions, user }) {
         },
         (error) => {
           console.error("Error getting location:", error);
-          alert("Unable to get your current location. Please search or click on the map.");
-        }
+          alert(
+            "Unable to get your current location. Please search or click on the map.",
+          );
+        },
       );
     } else {
       alert("Geolocation is not supported by your browser.");
@@ -146,13 +165,15 @@ export default function SurveyForm({ permissions, user }) {
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`,
       );
       const data = await response.json();
 
       if (data.results && data.results[0]) {
         const topResult = data.results[0];
-        let { city, state } = parseAddressComponents(topResult.address_components);
+        let { city, state } = parseAddressComponents(
+          topResult.address_components,
+        );
 
         if (!city) {
           city = topResult.formatted_address.split(",")[0];
@@ -174,7 +195,9 @@ export default function SurveyForm({ permissions, user }) {
     setIsLoading(true);
     try {
       const response = await surveysAPI.getAll();
-      const reportsArray = Array.isArray(response) ? response : response?.data || [];
+      const reportsArray = Array.isArray(response)
+        ? response
+        : response?.data || [];
       setAllReports(reportsArray);
     } catch (error) {
       console.error("Database Fetch Error:", error);
@@ -186,7 +209,9 @@ export default function SurveyForm({ permissions, user }) {
 
   const myReports = (allReports || []).filter(
     (report) =>
-      report.submitterId && user?.id && String(report.submitterId) === String(user.id)
+      report.submitterId &&
+      user?.id &&
+      String(report.submitterId) === String(user.id),
   );
 
   const handleSubmit = async (e) => {
@@ -249,14 +274,18 @@ export default function SurveyForm({ permissions, user }) {
       }, 2000);
     } catch (error) {
       console.error("Submission Error:", error);
-      alert("Field Intelligence Transmission Failed. Please check connectivity.");
+      alert(
+        "Field Intelligence Transmission Failed. Please check connectivity.",
+      );
     }
   };
 
   const handleVerify = async (id) => {
     try {
       await surveysAPI.verify(id);
-      setAllReports((prev) => prev.map((r) => (r._id === id ? { ...r, verified: true } : r)));
+      setAllReports((prev) =>
+        prev.map((r) => (r._id === id ? { ...r, verified: true } : r)),
+      );
     } catch (error) {
       console.error("Verification Error:", error);
     }
@@ -271,47 +300,45 @@ export default function SurveyForm({ permissions, user }) {
       console.error("Delete Error:", error);
     }
   };
-if (isLoading) {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="relative w-32 h-32">
-        
-        <motion.div
-          className="absolute inset-0 border-4 border-purple-200 border-t-purple-600 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-        />
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="relative w-32 h-32">
+          <motion.div
+            className="absolute inset-0 border-4 border-purple-200 border-t-purple-600 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          />
 
-        <motion.div
-          className="absolute inset-2 border-4 border-pink-200 border-t-pink-500 rounded-full"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        />
+          <motion.div
+            className="absolute inset-2 border-4 border-pink-200 border-t-pink-500 rounded-full"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
 
-        <motion.div
-          className="absolute inset-4 border-4 border-blue-200 border-t-blue-500 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-        />
+          <motion.div
+            className="absolute inset-4 border-4 border-blue-200 border-t-blue-500 rounded-full"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+          />
 
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          animate={{ scale: [1, 1.15, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <span className="text-3xl">⚡</span>
-        </motion.div>
-
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <span className="text-3xl">⚡</span>
+          </motion.div>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.06, delayChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+    },
   };
 
   return (
@@ -320,7 +347,7 @@ if (isLoading) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
-        
+
         {/* Floating Geometric Shapes */}
         <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
         <div className="absolute top-30 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
@@ -364,7 +391,7 @@ if (isLoading) {
           animate={{
             scale: [1, 1.2, 1],
             x: [0, 50, 0],
-            y: [0, -30, 0]
+            y: [0, -30, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -373,14 +400,14 @@ if (isLoading) {
           animate={{
             scale: [1.2, 1, 1.2],
             x: [0, -30, 0],
-            y: [0, 50, 0]
+            y: [0, 50, 0],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
+        <motion.div
           className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -388,9 +415,11 @@ if (isLoading) {
         >
           <div>
             <div className="flex items-center gap-3 mb-2">
-              
               <h2 className="text-3xl font-heading font-bold text-slate-900 tracking-tight">
-                Field <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Intelligence</span>
+                Field{" "}
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Intelligence
+                </span>
               </h2>
             </div>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
@@ -465,7 +494,9 @@ if (isLoading) {
             </motion.div>
           )}
 
-          {(activeTab === "reports" || activeTab === "pending" || activeTab === "yourreports") && (
+          {(activeTab === "reports" ||
+            activeTab === "pending" ||
+            activeTab === "yourreports") && (
             <ReportsView
               key="reports-view"
               activeTab={activeTab}
@@ -489,8 +520,8 @@ function TabButton({ active, onClick, label, icon, index }) {
     <motion.button
       onClick={onClick}
       className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap overflow-hidden ${
-        active 
-          ? "bg-slate-900 text-white shadow-md shadow-slate-900/10" 
+        active
+          ? "bg-slate-900 text-white shadow-md shadow-slate-900/10"
           : "bg-white text-slate-500 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
       }`}
       initial={{ opacity: 0, y: -10 }}
@@ -580,7 +611,7 @@ function SurveyFormContent({
       animate={{ opacity: 1 }}
     >
       <div className="space-y-10 relative z-10">
-        <motion.div 
+        <motion.div
           className="border-b border-slate-100 pb-8"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -601,7 +632,7 @@ function SurveyFormContent({
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="space-y-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -612,7 +643,7 @@ function SurveyFormContent({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Field label="Target Location (Search)" required>
               <div className="relative group">
-                <motion.span 
+                <motion.span
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-base opacity-60 z-10"
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -625,7 +656,9 @@ function SurveyFormContent({
                       type="text"
                       required
                       value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, location: e.target.value })
+                      }
                       placeholder="Search city"
                       className="w-full px-4 py-3 pl-10 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 transition-all"
                     />
@@ -635,7 +668,9 @@ function SurveyFormContent({
                     type="text"
                     required
                     value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
                     placeholder="Loading lookup context..."
                     className="w-full px-4 py-3 pl-10 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-400 focus:outline-none transition-all"
                     disabled
@@ -665,8 +700,12 @@ function SurveyFormContent({
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Full Address</p>
-                <p className="text-xs text-slate-700 font-semibold">{formData.fullAddress}</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                  Full Address
+                </p>
+                <p className="text-xs text-slate-700 font-semibold">
+                  {formData.fullAddress}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -707,8 +746,12 @@ function SurveyFormContent({
                       mapContainerStyle={{ width: "100%", height: "100%" }}
                       center={mapCenter}
                       zoom={markerPosition ? 14 : 5}
-                      onLoad={(map) => { mapRef.current = map; }}
-                      onClick={(e) => handleMapLocationChange(e.latLng.lat(), e.latLng.lng())}
+                      onLoad={(map) => {
+                        mapRef.current = map;
+                      }}
+                      onClick={(e) =>
+                        handleMapLocationChange(e.latLng.lat(), e.latLng.lng())
+                      }
                       options={{
                         streetViewControl: false,
                         mapTypeControl: false,
@@ -720,7 +763,12 @@ function SurveyFormContent({
                         <Marker
                           position={markerPosition}
                           draggable={true}
-                          onDragEnd={(e) => handleMapLocationChange(e.latLng.lat(), e.latLng.lng())}
+                          onDragEnd={(e) =>
+                            handleMapLocationChange(
+                              e.latLng.lat(),
+                              e.latLng.lng(),
+                            )
+                          }
                         />
                       )}
                     </GoogleMap>
@@ -742,12 +790,15 @@ function SurveyFormContent({
                       exit={{ opacity: 0, y: -10 }}
                     >
                       <div className="flex-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600 mb-0.5">📍 Location Pinned</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600 mb-0.5">
+                          📍 Location Pinned
+                        </p>
                         <p className="text-sm font-bold text-slate-900">
                           {formData.location || "Coordinates Bound"}
                         </p>
                         <p className="text-[10px] text-slate-500 font-medium font-mono mt-0.5">
-                          {markerPosition.lat.toFixed(6)}, {markerPosition.lng.toFixed(6)}
+                          {markerPosition.lat.toFixed(6)},{" "}
+                          {markerPosition.lng.toFixed(6)}
                         </p>
                       </div>
                     </motion.div>
@@ -758,7 +809,7 @@ function SurveyFormContent({
           </AnimatePresence>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -768,11 +819,20 @@ function SurveyFormContent({
             <select
               required
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none transition-all"
             >
               <option value="">Choose category</option>
-              {["healthcare", "education", "food", "shelter", "environment", "disaster"].map((c) => (
+              {[
+                "healthcare",
+                "education",
+                "food",
+                "shelter",
+                "environment",
+                "disaster",
+              ].map((c) => (
                 <option key={c} value={c}>
                   {getCategoryIcon(c)} {c.toUpperCase()}
                 </option>
@@ -784,11 +844,21 @@ function SurveyFormContent({
             <select
               required
               value={formData.surveyType}
-              onChange={(e) => setFormData({ ...formData, surveyType: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, surveyType: e.target.value })
+              }
               className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none transition-all"
             >
               <option value="">Choose Type</option>
-              {["door-to-door", "community-meeting", "phone-survey", "online", "observation", "other", "interview"].map((c) => (
+              {[
+                "door-to-door",
+                "community-meeting",
+                "phone-survey",
+                "online",
+                "observation",
+                "other",
+                "interview",
+              ].map((c) => (
                 <option key={c} value={c}>
                   {c.toUpperCase()}
                 </option>
@@ -827,7 +897,7 @@ function SurveyFormContent({
           </Field>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -839,7 +909,9 @@ function SurveyFormContent({
                 required
                 rows={5}
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Log specific field metrics and narrative notes..."
                 className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none transition-all resize-none p-4"
               />
@@ -851,24 +923,30 @@ function SurveyFormContent({
               <input
                 type="number"
                 value={formData.affectedCount}
-                onChange={(e) => setFormData({ ...formData, affectedCount: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, affectedCount: e.target.value })
+                }
                 placeholder="0"
                 className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 placeholder-slate-400 focus:outline-none transition-all"
               />
             </Field>
 
             <Field label="Evidence Photos">
-              <motion.div 
+              <motion.div
                 className="relative h-28 w-full bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl border border-dashed border-slate-300 flex flex-col items-center justify-center cursor-pointer hover:border-slate-400 transition-all overflow-hidden group"
                 whileHover={{ scale: 1.02 }}
               >
                 <input
                   type="file"
                   multiple
-                  onChange={(e) => setFormData({ ...formData, photos: e.target.files })}
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      photos: e.target.files,
+                    })
+                  }
                 />
-                <motion.span 
+                <motion.span
                   className="text-xl mb-1"
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -876,7 +954,9 @@ function SurveyFormContent({
                   📸
                 </motion.span>
                 <span className="text-[9px] font-black text-slate-400 group-hover:text-slate-900 uppercase tracking-widest transition-colors">
-                  {formData.photos?.length > 0 ? `${formData.photos.length} Selected` : "Attach Media File"}
+                  {formData.photos?.length > 0
+                    ? `${formData.photos.length} Selected`
+                    : "Attach Media File"}
                 </span>
               </motion.div>
             </Field>
@@ -949,7 +1029,8 @@ function ReportsView({
 }) {
   const getReportsToShow = () => {
     if (activeTab === "yourreports") return myReports || [];
-    if (activeTab === "pending") return (allReports || []).filter((r) => !r.verified);
+    if (activeTab === "pending")
+      return (allReports || []).filter((r) => !r.verified);
     return allReports || [];
   };
 
@@ -982,7 +1063,15 @@ function ReportsView({
   );
 }
 
-function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, highlight }) {
+function ReportCard({
+  entry,
+  index,
+  canVerify,
+  canDelete,
+  onVerify,
+  onDelete,
+  highlight,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const cardRef = useRef(null);
@@ -991,7 +1080,9 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
   const handleOpenModal = () => {
     if (entry.photos && entry.photos.length > 0) {
       const photoPath = entry.photos[0].url;
-      const imageUrl = photoPath.startsWith("http") ? photoPath : `${ASSET_URL}${photoPath}`;
+      const imageUrl = photoPath.startsWith("http")
+        ? photoPath
+        : `${ASSET_URL}${photoPath}`;
       setSelectedImage(imageUrl);
       setIsModalOpen(true);
     }
@@ -1002,41 +1093,48 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
       <motion.div
         ref={cardRef}
         className={`group bg-white rounded-xl border p-6 transition-all duration-300 relative overflow-hidden ${
-          highlight 
-            ? "border-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.04)]" 
+          highlight
+            ? "border-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.04)]"
             : "border-slate-200 shadow-sm hover:border-slate-900"
         }`}
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: Math.min(index * 0.04, 0.2) }}
+        transition={{
+          duration: 0.5,
+          ease: [0.16, 1, 0.3, 1],
+          delay: Math.min(index * 0.04, 0.2),
+        }}
         whileHover={{ y: -5 }}
       >
         <div className="relative z-10">
           <div className="flex items-start gap-4 mb-4">
-            <div >
-              {getCategoryIcon(entry.category)}
-            </div>
+            <div>{getCategoryIcon(entry.category)}</div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2 mb-0.5">
                 <h4 className="text-slate-900 font-bold text-base truncate tracking-tight">
                   {entry.location}
                 </h4>
-                <motion.span 
+                <motion.span
                   className={`px-2.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${
-                    entry.verified 
-                      ? "bg-emerald-50 border-emerald-200 text-emerald-600" 
+                    entry.verified
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-600"
                       : "bg-amber-50 border-amber-200 text-amber-600"
                   }`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, delay: index * 0.05 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    delay: index * 0.05,
+                  }}
                 >
                   {entry.verified ? "Verified" : "Pending"}
                 </motion.span>
               </div>
               <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                By {entry.submittedBy} • {new Date(entry.date).toLocaleDateString()}
+                By {entry.submittedBy} •{" "}
+                {new Date(entry.date).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -1046,10 +1144,14 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
           </p>
 
           <div className="flex flex-wrap gap-1.5 mb-5 text-[8px] font-black uppercase tracking-wider">
-            <span className={`px-2.5 py-1 rounded border ${getCategoryBg(entry.category)}`}>
+            <span
+              className={`px-2.5 py-1 rounded border ${getCategoryBg(entry.category)}`}
+            >
               {entry.category}
             </span>
-            <span className={`px-2.5 py-1 rounded border ${getUrgencyColor(entry.urgency)}`}>
+            <span
+              className={`px-2.5 py-1 rounded border ${getUrgencyColor(entry.urgency)}`}
+            >
               {entry.urgency}
             </span>
             <span className="px-2.5 py-1 rounded bg-slate-900 text-white border border-slate-900">
@@ -1057,14 +1159,18 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
             </span>
           </div>
 
-          {entry.gpsCoordinates?.latitude && entry.gpsCoordinates?.longitude && (
-            <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg">
-              <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-0.5">📍 Coordinates Registry</p>
-              <p className="text-[10px] text-slate-700 font-mono font-bold">
-                {entry.gpsCoordinates.latitude.toFixed(6)}, {entry.gpsCoordinates.longitude.toFixed(6)}
-              </p>
-            </div>
-          )}
+          {entry.gpsCoordinates?.latitude &&
+            entry.gpsCoordinates?.longitude && (
+              <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg">
+                <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+                  📍 Coordinates Registry
+                </p>
+                <p className="text-[10px] text-slate-700 font-mono font-bold">
+                  {entry.gpsCoordinates.latitude.toFixed(6)},{" "}
+                  {entry.gpsCoordinates.longitude.toFixed(6)}
+                </p>
+              </div>
+            )}
 
           <div className="flex flex-col gap-2">
             <button
@@ -1077,7 +1183,9 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
                   : "bg-slate-50/50 text-slate-300 border-transparent cursor-not-allowed"
               }`}
             >
-              {entry.photos?.length > 0 ? `View Evidence (${entry.photos.length})` : "No Evidence Registered"}
+              {entry.photos?.length > 0
+                ? `View Evidence (${entry.photos.length})`
+                : "No Evidence Registered"}
             </button>
 
             {(canVerify || canDelete) && (
@@ -1146,8 +1254,12 @@ function ImageModal({ isOpen, onClose, imgSrc, location }) {
 
             <div className="flex flex-col">
               <div className="bg-slate-50 p-5 border-b border-slate-100">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Field Evidence Registry</p>
-                <h3 className="text-slate-900 font-bold text-base tracking-tight">{location}</h3>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+                  Field Evidence Registry
+                </p>
+                <h3 className="text-slate-900 font-bold text-base tracking-tight">
+                  {location}
+                </h3>
               </div>
 
               <div className="p-4 bg-white flex items-center justify-center min-h-[260px] max-h-[60vh] overflow-hidden">
@@ -1157,7 +1269,8 @@ function ImageModal({ isOpen, onClose, imgSrc, location }) {
                   className="max-w-full max-h-[50vh] object-contain rounded-lg"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://placehold.jp/24/334155/ffffff/600x400.png?text=Evidence+Not+Found";
+                    e.target.src =
+                      "https://placehold.jp/24/334155/ffffff/600x400.png?text=Evidence+Not+Found";
                   }}
                 />
               </div>
