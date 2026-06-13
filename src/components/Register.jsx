@@ -7,6 +7,7 @@ const libraries = ["places"];
 export default function Register({ onRegister, onSwitchToLogin, onBack }) {
   const [formData, setFormData] = useState({
     name: "",
+    gender:"",
     email: "",
     password: "",
     confirmPassword: "",
@@ -227,7 +228,23 @@ export default function Register({ onRegister, onSwitchToLogin, onBack }) {
                     className="input-field-refined"
                   />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
+                    Gender
+                  </label>
 
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => updateField("gender", e.target.value)}
+                    className="input-field-refined"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                  </select>
+                </div>
                 {/* Email */}
                 <div className="space-y-2">
                   <label className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-1">
