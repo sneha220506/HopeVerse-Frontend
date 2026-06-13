@@ -85,8 +85,17 @@ export default function Analytics({ permissions }) {
   };
 
   return (
-    <section className="py-16 bg-[#F8FAFC] min-h-screen relative overflow-x-hidden">
-      {/* Fixed Layout Structural Guide Lines (Hugo Style Minimal Canvas Overlay) */}
+    // <section className="py-16 bg-[#F8FAFC] min-h-screen relative overflow-x-hidden">
+    <section className="py-8 bg-gradient-to-br from-slate-50 via-white to-primary min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
+        
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
+        <div className="absolute top-30 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
+        <div className="absolute bottom-100 left-1/4 w-12 h-12 border-2 border-accent/20 rounded-lg rotate-45 animate-float animation-delay-3000" />
+      </div>
+
       <style dangerouslySetInnerHTML={{ __html: `
         .hugo-track-line-1 {
           position: fixed; top: 35%; left: 0; right: 0; height: 1px;
@@ -97,13 +106,23 @@ export default function Analytics({ permissions }) {
           position: fixed; top: 75%; left: 0; right: 0; height: 1px;
           background: linear-gradient(90deg, transparent, rgba(142, 124, 195, 0.04) 50%, transparent);
           pointer-events: none; z-index: 0;
+          @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
         }
       `}} />
 
       <div className="hugo-track-line-1" />
       <div className="hugo-track-line-2" />
 
-      {/* Fixed Static Ambient Glow Fields */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-1/4 right-[-10%] w-[500px] h-[500px] bg-[#8E7CC3]/5 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 left-[-10%] w-[500px] h-[500px] bg-[#FF8A65]/4 rounded-full blur-[100px]" />
@@ -128,7 +147,6 @@ export default function Analytics({ permissions }) {
           </div>
         </motion.div>
 
-        {/* Impact Highlights Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
           {[
             { l: 'Affected', v: totalAffected, bg: 'bg-[#8E7CC3]/5' },
@@ -144,24 +162,19 @@ export default function Analytics({ permissions }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
           
-          {/* Category Bar Chart */}
           <CategoryChartCard categoryData={categoryData} barColors={barColors} getCategoryIcon={getCategoryIcon} />
 
-          {/* Urgency Donut */}
           <UrgencyDonutCard urgencyData={urgencyData} totalCases={communityNeeds.length} />
 
-          {/* Personnel Density Section (Using Real DB Data) */}
           <PersonnelMetricsCard volunteers={volunteers} avgRating={avgRating} totalHours={totalHours} />
         </div>
 
-        {/* Global Impact Summary Banner */}
         <GlobalSummaryBanner totalHours={totalHours} totalAffected={totalAffected} activeNodes={communityNeeds.length} verifiedInsights={surveyEntries.filter(s => s.verified).length} />
       </div>
     </section>
   );
 }
 
-// ============ SUB-COMPONENT: RUNNING COUNTER ENGINE ============
 function RunningCounter({ targetValue, isDecimal = false }) {
   const nodeRef = useRef(null);
   const motionValue = useMotionValue(0);
@@ -193,7 +206,6 @@ function RunningCounter({ targetValue, isDecimal = false }) {
   return <span ref={cardRef}><span ref={nodeRef}>0</span></span>;
 }
 
-// ============ SUB-COMPONENT: METRIC HIGHLIGHT CARD ============
 function MetricCard({ metric, index }) {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: false, margin: "-50px" });
@@ -218,7 +230,6 @@ function MetricCard({ metric, index }) {
   );
 }
 
-// ============ SUB-COMPONENT: CATEGORY CHART ============
 function CategoryChartCard({ categoryData, barColors, getCategoryIcon }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-80px" });
@@ -271,7 +282,6 @@ function CategoryChartCard({ categoryData, barColors, getCategoryIcon }) {
   );
 }
 
-// ============ SUB-COMPONENT: URGENCY DONUT CHART ============
 function UrgencyDonutCard({ urgencyData, totalCases }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-80px" });
@@ -344,7 +354,6 @@ function UrgencyDonutCard({ urgencyData, totalCases }) {
   );
 }
 
-// ============ SUB-COMPONENT: PERSONNEL METRICS ============
 function PersonnelMetricsCard({ volunteers, avgRating, totalHours }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-80px" });
@@ -383,7 +392,6 @@ function PersonnelMetricsCard({ volunteers, avgRating, totalHours }) {
   );
 }
 
-// ============ SUB-COMPONENT: SUMMARY BANNER ============
 function GlobalSummaryBanner({ totalHours, totalAffected, activeNodes, verifiedInsights }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: "-50px" });
@@ -396,7 +404,6 @@ function GlobalSummaryBanner({ totalHours, totalAffected, activeNodes, verifiedI
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Absolute Geometric Backdrop Beam Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(142,124,195,0.12),transparent_60%)] pointer-events-none" />
 
       <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">

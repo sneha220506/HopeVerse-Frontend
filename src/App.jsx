@@ -368,11 +368,11 @@ export default function App() {
         </div>
 
         {/* Section Animation Wrapper */}
-        <div className="transition-all duration-500 ease-in-out">
+        <div className="transition-all duration-500 ease-in-out ">
           {renderSection()}
         </div>
       </main>
-
+        
       <Footer />
     </div>
     </LoadScriptNext>

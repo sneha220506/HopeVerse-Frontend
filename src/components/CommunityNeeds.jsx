@@ -62,6 +62,16 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
   // Database States
   const [needs, setNeeds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeletingId, setIsDeletingId] = useState(null);
+
+  // Custom Tactical Modal Popup State
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    type: "confirm", // 'confirm' | 'status'
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
   // Map States
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -96,6 +106,55 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
     fetchNeeds();
   }, []);
 
+  // Triggers the deletion protocol api confirmation sequence
+  const initiateDeleteSequence = (id, nodeTitle) => {
+    setModalConfig({
+      isOpen: true,
+      type: "confirm",
+      title: "⚠️ CRITICAL PROTOCOL",
+      message: `Are you sure you want to terminate "${nodeTitle || "this requirement node"}" permanently? This action removes all satellite intelligence mapping for this node.`,
+      onConfirm: () => executionDeleteSequence(id),
+    });
+  };
+
+  const executionDeleteSequence = async (id) => {
+    // Close confirmation modal to display action state
+    setModalConfig((prev) => ({ ...prev, isOpen: false }));
+    setIsDeletingId(id);
+    
+    try {
+      await needsAPI.delete(id);
+      
+      // Optimistic UI update
+      setNeeds((prevNeeds) => prevNeeds.filter((need) => need._id !== id));
+      if (selectedMarker?._id === id) {
+        setSelectedMarker(null);
+      }
+
+      // Success Notification Modal
+      setModalConfig({
+        isOpen: true,
+        type: "status",
+        title: "📡 PROTOCOL COMPLETE",
+        message: "Operational node successfully decoupled and erased from decentralized register maps.",
+        onConfirm: null,
+      });
+    } catch (error) {
+      console.error("Deletion error:", error);
+      
+      // Error Notification Modal
+      setModalConfig({
+        isOpen: true,
+        type: "status",
+        title: "❌ OPERATIONAL FAILURE",
+        message: "Could not execute node deletion protocol due to database uplink disruption.",
+        onConfirm: null,
+      });
+    } finally {
+      setIsDeletingId(null);
+    }
+  };
+
   const filteredNeeds = needs.filter((need) => {
     if (filterCategory !== "all" && need.category !== filterCategory)
       return false;
@@ -103,14 +162,12 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
     return true;
   });
 
-  // Only show needs with GPS coordinates on map
   const needsWithCoordinates = filteredNeeds.filter(
     (need) => need.gpsCoordinates?.latitude && need.gpsCoordinates?.longitude,
   );
 
   const categories = [...new Set(needs.map((n) => n.category))];
 
-  // Tactical Color Mapping for Urgency - PRESERVED
   const urgencyStyles = {
     critical: {
       bg: "bg-red-500",
@@ -142,7 +199,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
     },
   };
 
-  // Get marker color based on urgency
   const getMarkerColor = (urgency) => {
     const colors = {
       critical: "#EF4444",
@@ -171,40 +227,14 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
         
-        {/* Floating Geometric Shapes */}
         <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
         <div className="absolute top-40 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
         <div className="absolute bottom-40 left-1/4 w-12 h-12 border-2 border-accent/20 rounded-lg rotate-45 animate-float animation-delay-3000" />
       </div>
 
-      {/* Global Tactical Styles with integrated Custom Scrollbar and Gradient Border Rules */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-           @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(40px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeSlideDown {
-          from { opacity: 0; transform: translateY(-30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeSlideLeft {
-          from { opacity: 0; transform: translateX(40px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes fadeSlideRight {
-          from { opacity: 0; transform: translateX(-40px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.9); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }
@@ -213,39 +243,9 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
           0%, 100% { opacity: 0.3; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(1.05); }
         }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.3); }
-          50% { box-shadow: 0 0 40px rgba(79, 70, 229, 0.6); }
-        }
-        
-        .animate-card { animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
-        .animate-slide-down { animation: fadeSlideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
-        .animate-slide-left { animation: fadeSlideLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
-        .animate-slide-right { animation: fadeSlideRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
-        .animate-scale-in { animation: scaleIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
-        .animate-spin-slow { animation: spin-slow 8s linear infinite; }
-        .animate-glow { animation: glow 2s ease-in-out infinite; }
-        
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-        .animation-delay-1000 { animation-delay: 1s; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-3000 { animation-delay: 3s; }
-
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .reveal-card { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; opacity: 1 !important; }
         
         .tactical-select {
           appearance: none;
@@ -258,9 +258,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
         .custom-scrollbar::-webkit-scrollbar-thumb { 
           background: linear-gradient(180deg, #8E7CC3, #7C3AED); 
           border-radius: 10px; 
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-          background: linear-gradient(180deg, #4338CA, #6D28D9); 
         }
         
         .gradient-border {
@@ -280,10 +277,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
               Operational <span className="text-primary/70">Requirements</span>
             </h2>
             <p className="text-slate-dark/40 font-black uppercase tracking-[0.2em] text-[11px] mt-4 flex items-center gap-3">
-              <span className="relative flex h-3 w-3">
-              
-              </span>
-              {" "}
               <span className="text-red-500">
                 {filteredNeeds.length} active nodes
               </span>{" "}
@@ -358,14 +351,6 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                   {needsWithCoordinates.length} locations plotted
                 </p>
               </div>
-
-              {needsWithCoordinates.length < filteredNeeds.length && (
-                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl px-5 py-3">
-                  <p className="text-[9px] font-black text-yellow-700 uppercase tracking-wider">
-                    ⚠️ {filteredNeeds.length - needsWithCoordinates.length} needs without GPS data
-                  </p>
-                </div>
-              )}
             </div>
 
             {typeof window !== 'undefined' && window.google?.maps ? (
@@ -382,33 +367,21 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                     navigatorControl: false,
                   }}
                 >
-                  {needsWithCoordinates.map((need) => {
-                    const position = {
-                      lat: need.gpsCoordinates.latitude,
-                      lng: need.gpsCoordinates.longitude,
-                    };
-
-                    return (
-                      <Marker
-                        key={need._id}
-                        position={position}
-                        onClick={() => setSelectedMarker(need)}
-                        icon={{
-                          path: window.google?.maps?.SymbolPath?.CIRCLE || 0,
-                          fillColor: getMarkerColor(need.urgency),
-                          fillOpacity: 0.9,
-                          strokeColor: "#ffffff",
-                          strokeWeight: 3,
-                          scale: 12,
-                        }}
-                        animation={
-                          need.urgency === "critical"
-                            ? window.google?.maps?.Animation?.BOUNCE
-                            : null
-                        }
-                      />
-                    );
-                  })}
+                  {needsWithCoordinates.map((need) => (
+                    <Marker
+                      key={need._id}
+                      position={{ lat: need.gpsCoordinates.latitude, lng: need.gpsCoordinates.longitude }}
+                      onClick={() => setSelectedMarker(need)}
+                      icon={{
+                        path: window.google?.maps?.SymbolPath?.CIRCLE || 0,
+                        fillColor: getMarkerColor(need.urgency),
+                        fillOpacity: 0.9,
+                        strokeColor: "#ffffff",
+                        strokeWeight: 3,
+                        scale: 12,
+                      }}
+                    />
+                  ))}
 
                   {selectedMarker && (
                     <InfoWindow
@@ -420,35 +393,31 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                     >
                       <div className="p-4 max-w-xs">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-2xl">
-                            {getCategoryIcon(selectedMarker.category)}
-                          </span>
+                          <span className="text-2xl">{getCategoryIcon(selectedMarker.category)}</span>
                           <div>
-                            <h4 className="font-black text-slate-900 text-sm leading-tight">
-                              {selectedMarker.title}
-                            </h4>
-                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                              📍 {selectedMarker.location}
-                            </p>
+                            <h4 className="font-black text-slate-900 text-sm leading-tight">{selectedMarker.title}</h4>
+                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-1">📍 {selectedMarker.location}</p>
                           </div>
                         </div>
+                        <p className="text-xs text-slate-600 mb-3 leading-relaxed">{selectedMarker.description.substring(0, 100)}...</p>
 
-                        <p className="text-xs text-slate-600 mb-3 leading-relaxed">
-                          {selectedMarker.description.substring(0, 100)}...
-                        </p>
-
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                          <span
-                            className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-wider ${urgencyStyles[selectedMarker.urgency]?.light} ${urgencyStyles[selectedMarker.urgency]?.text}`}
-                          >
-                            {selectedMarker.urgency}
-                          </span>
-                          <button
-                            onClick={() => onNavigate("matching")}
-                            className="text-primary text-[9px] font-black uppercase tracking-wider hover:underline"
-                          >
-                            Deploy →
-                          </button>
+                        <div className="flex flex-col gap-2 pt-3 border-t border-slate-100">
+                          <div className="flex items-center justify-between">
+                            <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-wider ${urgencyStyles[selectedMarker.urgency]?.light} ${urgencyStyles[selectedMarker.urgency]?.text}`}>
+                              {selectedMarker.urgency}
+                            </span>
+                            <button onClick={() => onNavigate("matching")} className="text-primary text-[9px] font-black uppercase tracking-wider hover:underline">Deploy →</button>
+                          </div>
+                          
+                          {permissions?.canCreateNeed && (
+                            <button
+                              disabled={isDeletingId === selectedMarker._id}
+                              onClick={() => initiateDeleteSequence(selectedMarker._id, selectedMarker.title)}
+                              className="w-full mt-1 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all text-center py-2 rounded-lg text-[8px] font-black uppercase tracking-widest disabled:opacity-50"
+                            >
+                              {isDeletingId === selectedMarker._id ? "TERMINATING..." : "✕ DELETE NODE"}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </InfoWindow>
@@ -456,38 +425,10 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                 </GoogleMap>
               </div>
             ) : (
-              <div className="w-full h-[600px] bg-slate-100 flex items-center justify-center rounded-[3rem] animate-pulse text-xs font-black uppercase tracking-widest text-slate-400">
+              <div className="w-full h-[600px] bg-slate-100 flex items-center justify-center rounded-[3rem] text-xs font-black uppercase tracking-widest text-slate-400">
                 Loading Map Layer Grid...
               </div>
             )}
-
-            {/* Map Legend */}
-            <div className="mt-6 flex flex-wrap gap-4 justify-center">
-              <div className="flex items-center gap-2 px-4 py-2 bg-red-50 rounded-xl border border-red-200">
-                <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-white shadow-sm"></div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-red-700">
-                  Critical
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-orange-50 rounded-xl border border-orange-200">
-                <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-white shadow-sm"></div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-orange-700">
-                  High
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-xl border border-yellow-200">
-                <div className="w-3 h-3 rounded-full bg-yellow-400 border-2 border-white shadow-sm"></div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-yellow-700">
-                  Medium
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="w-3 h-3 rounded-full bg-yellow-100 border-2 border-white shadow-sm"></div>
-                <span className="text-[9px] font-black uppercase tracking-wider text-slate-700">
-                  Low
-                </span>
-              </div>
-            </div>
           </div>
         )}
 
@@ -496,13 +437,7 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
           <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredNeeds.map((need, idx) => {
               const style = urgencyStyles[need.urgency] || urgencyStyles.low;
-              const saturation =
-                need.volunteersNeeded > 0
-                  ? Math.round(
-                      (need.volunteersAssigned / need.volunteersNeeded) * 100,
-                    )
-                  : 0;
-
+              const saturation = need.volunteersNeeded > 0 ? Math.round((need.volunteersAssigned / need.volunteersNeeded) * 100) : 0;
               const itemEvidence = need.images || need.photos || [];
 
               return (
@@ -511,85 +446,57 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
                   delayStyle={{ animationDelay: `${(idx % 3) * 0.1}s` }}
                   className="gradient-border rounded-[3rem] p-10 shadow-soft hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 group relative flex flex-col"
                 >
-                  {/* Header Info */}
-                  <div className="flex items-start gap-6 mb-6">
-                    
+                  {permissions?.canCreateNeed && (
+                    <button
+                      disabled={isDeletingId === need._id}
+                      onClick={() => initiateDeleteSequence(need._id, need.title)}
+                      className="absolute top-6 right-6 z-20 bg-slate-50 hover:bg-red-500 hover:text-white text-slate-400 border border-slate-100 rounded-full w-8 h-8 flex items-center justify-center text-xs font-black transition-all shadow-sm hover:rotate-90 disabled:opacity-50"
+                      title="Terminate Requirement Node"
+                    >
+                      {isDeletingId === need._id ? "..." : "✕"}
+                    </button>
+                  )}
+
+                  <div className="flex items-start gap-6 mb-6 pr-6">
                     <div className="flex-1 min-w-0">
                       <h4 className="text-slate-dark font-black text-xl tracking-tight leading-tight group-hover:text-primary transition-colors truncate">
                         {need.title}
                       </h4>
-                      <p className="text-slate-dark/30 text-[10px] font-black uppercase tracking-[0.2em] mt-2">
-                        📍 {need.location} ({need.region})
-                      </p>
-                      {need.gpsCoordinates?.latitude &&
-                        need.gpsCoordinates?.longitude && (
-                          <p className="text-blue-500 text-[8px] font-mono mt-1">
-                            ‡ {need.gpsCoordinates.latitude.toFixed(4)},{" "}
-                            {need.gpsCoordinates.longitude.toFixed(4)}
-                          </p>
-                        )}
+                      <p className="text-slate-dark/30 text-[10px] font-black uppercase tracking-[0.2em] mt-2">📍 {need.location} ({need.region})</p>
                     </div>
                   </div>
 
-                  {/* Description */}
                   <p className="text-slate-dark/50 text-xs mb-6 leading-relaxed font-semibold line-clamp-2 italic bg-slate-50/50 p-4 rounded-xl border border-slate-100">
                     "{need.description}"
                   </p>
 
-                  {/* --- Ground Evidence Gallery with added custom-scrollbar class --- */}
                   {itemEvidence.length > 0 && (
                     <div className="mb-6">
-                      <p className="text-slate-dark/30 text-[8px] font-black uppercase tracking-[0.2em] mb-2">
-                        📸 Field Evidence ({itemEvidence.length})
-                      </p>
                       <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
                         {itemEvidence.map((imgUrl, i) => (
-                          <div
-                            key={i}
-                            onClick={() => setActiveLightboxImage(imgUrl)}
-                            className="w-24 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-slate-100 border border-slate-100 cursor-zoom-in hover:scale-105 hover:border-primary/40 transition-all duration-300 shadow-sm"
-                          >
-                            <img
-                              src={imgUrl}
-                              alt="Evidence"
-                              className="absolute inset-0 w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = "none";
-                              }}
-                            />
+                          <div key={i} onClick={() => setActiveLightboxImage(imgUrl)} className="w-24 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-slate-100 border border-slate-100 cursor-zoom-in">
+                            <img src={imgUrl} alt="Evidence" className="absolute inset-0 w-full h-full object-cover" />
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Resource Metrics */}
                   <div className="mt-auto space-y-4 mb-8">
                     <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                      <span className="text-slate-dark/20">
-                        Resource Saturation
-                      </span>
+                      <span className="text-slate-dark/20">Resource Saturation</span>
                       <span className="text-primary">{saturation}%</span>
                     </div>
                     <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden p-[1px] border border-slate-100">
-                      <div
-                        className="h-full bg-hero-grad rounded-full transition-all duration-1000 ease-out"
-                        style={{ width: `${Math.min(saturation, 100)}%` }}
-                      />
+                      <div className="h-full bg-hero-grad rounded-full transition-all duration-1000" style={{ width: `${Math.min(saturation, 100)}%` }} />
                     </div>
                   </div>
 
-                  {/* Card Footer Actions */}
                   <div className="flex items-center justify-between pt-6 border-t border-slate-50">
-                    <span
-                      className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border-2 ${style.light} ${style.border} ${style.text}`}
-                    >
+                    <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border-2 ${style.light} ${style.border} ${style.text}`}>
                       {need.urgency}
                     </span>
-                    <button
-                      onClick={() => onNavigate("matching")}
-                      className="text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:translate-x-2 transition-transform flex items-center gap-2"
-                    >
+                    <button onClick={() => onNavigate("matching")} className="text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:translate-x-2 transition-transform flex items-center gap-2">
                       Deploy Support <span>→</span>
                     </button>
                   </div>
@@ -598,53 +505,56 @@ export default function CommunityNeeds({ onNavigate, permissions }) {
             })}
           </div>
         )}
-
-        {/* Empty State */}
-        {filteredNeeds.length === 0 && (
-          <div className="text-center py-40 bg-white rounded-[4rem] border-4 border-dashed border-slate-100 animate-in zoom-in duration-500">
-            <div className="text-6xl mb-6 grayscale opacity-20">📡</div>
-            <p className="text-slate-dark/20 font-black uppercase tracking-[0.4em] text-sm">
-              Zero Signal: No active nodes matched filters
-            </p>
-            <button
-              onClick={() => {
-                setFilterCategory("all");
-                setFilterUrgency("all");
-              }}
-              className="mt-8 text-primary font-black text-[10px] uppercase tracking-widest underline underline-offset-8"
-            >
-              Reset Protocol
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* --- Global Lightbox Overlay Modal --- */}
+      {/* --- Tactical Lightbox Preview Overlay --- */}
       {activeLightboxImage && (
-        <div
-          onClick={() => setActiveLightboxImage(null)}
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200"
-        >
-          {/* Fixed Top-Header Action Bar */}
-          <div className="fixed top-0 left-0 right-0 p-6 flex justify-end pointer-events-none z-[100000]">
-            <button
-              onClick={() => setActiveLightboxImage(null)}
-              className="pointer-events-auto bg-white hover:bg-red-500 text-slate-900 hover:text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-200 shadow-2xl flex items-center gap-2 active:scale-95 border border-slate-100"
-            >
-              <span className="text-xs font-bold">✕</span> CLOSE PREVIEW
-            </button>
+        <div onClick={() => setActiveLightboxImage(null)} className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="fixed top-0 right-0 p-6 z-[100000]">
+            <button onClick={() => setActiveLightboxImage(null)} className="bg-white hover:bg-red-500 text-slate-900 hover:text-white px-6 py-4 rounded-2xl text-[10px] font-black tracking-widest border border-slate-100">✕ CLOSE PREVIEW</button>
           </div>
+          <div onClick={(e) => e.stopPropagation()} className="max-w-[85vw] max-h-[75vh] rounded-[2rem] overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 mt-16">
+            <img src={activeLightboxImage} alt="Field Evidence" className="w-full h-full object-contain max-h-[75vh]" />
+          </div>
+        </div>
+      )}
 
-          {/* Expanded Image Frame */}
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="max-w-[85vw] max-h-[75vh] rounded-[2rem] overflow-hidden border-4 border-white/20 shadow-2xl bg-slate-900 animate-in zoom-in-95 duration-200 mt-16"
-          >
-            <img
-              src={activeLightboxImage}
-              alt="Expanded Field Evidence"
-              className="w-full h-full object-contain max-h-[75vh] max-w-[85vw] block"
-            />
+      {/* --- CUSTOM TACTICAL MODAL POPUP COMPONENT --- */}
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-[100001] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150 p-4">
+          <div className="bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-150">
+            <h3 className={`text-base font-black tracking-wider mb-3 uppercase ${modalConfig.type === 'confirm' ? 'text-amber-600' : 'text-slate-900'}`}>
+              {modalConfig.title}
+            </h3>
+            <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6">
+              {modalConfig.message}
+            </p>
+            
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-50">
+              {modalConfig.type === "confirm" ? (
+                <>
+                  <button
+                    onClick={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+                    className="px-6 py-3 border border-slate-200 hover:bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
+                  >
+                    Abort
+                  </button>
+                  <button
+                    onClick={modalConfig.onConfirm}
+                    className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-red-200"
+                  >
+                    Confirm Execution
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+                  className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-slate-200"
+                >
+                  Acknowledge
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -240,17 +240,39 @@ export default function TaskBoard({ permissions, user }) {
   const currentFocusedTaskInstance = allTasks.find((t) => t._id === selectedTask);
 
   return (
-    <section className="py-12 bg-[#F8FAFC]">
-      
-      {/* Fixed Background Fluid Dynamic Aurora Ecosystem */}
+<section className="py-8 bg-gradient-to-br from-slate-50 via-white to-primary min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
+        
+        {/* Floating Geometric Shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
+        <div className="absolute top-30 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
+        <div className="absolute bottom-100 left-1/4 w-12 h-12 border-2 border-accent/20 rounded-lg rotate-45 animate-float animation-delay-3000" />
+      </div>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+      `,
+        }}
+      />
       <div className="ambient-fluid-particle-1" />
       <div className="ambient-fluid-particle-2" />
       <div className="ambient-fluid-particle-3" />
 
-      {/* Main Scrollable Content Box */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatePresence mode="wait">
-          {/* BOARD VIEW */}
           {currentView === "board" && (
             <motion.div
               key="board-view"
@@ -259,7 +281,6 @@ export default function TaskBoard({ permissions, user }) {
               exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              {/* Header Section */}
               <motion.div
                 className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16"
                 initial={{ opacity: 0, y: -30 }}
@@ -316,7 +337,6 @@ export default function TaskBoard({ permissions, user }) {
                 </motion.div>
               </motion.div>
 
-              {/* Horizontal Task Lanes */}
               <div className="space-y-12">
                 {columns
                   .filter((col) => statusPermissions[col.status])
@@ -346,7 +366,6 @@ export default function TaskBoard({ permissions, user }) {
             </motion.div>
           )}
 
-          {/* FOCUSED TASK VIEW */}
           {currentView === "focused_task" && currentFocusedTaskInstance && (
             <FocusedTaskView
               task={currentFocusedTaskInstance}
@@ -364,7 +383,6 @@ export default function TaskBoard({ permissions, user }) {
             />
           )}
 
-          {/* CATEGORY VIEW */}
           {currentView === "category_view" && activeCategory && (
             <CategoryView
               activeCategory={activeCategory}
@@ -383,7 +401,6 @@ export default function TaskBoard({ permissions, user }) {
         </AnimatePresence>
       </div>
 
-      {/* Assignment Modal */}
       <AnimatePresence>
         {showAssignModal && (
           <AssignmentModal
@@ -399,7 +416,6 @@ export default function TaskBoard({ permissions, user }) {
   );
 }
 
-// ============ TASK LANE COMPONENT ============
 function TaskLane({
   col,
   colIdx,
@@ -427,7 +443,6 @@ function TaskLane({
       exit={{ opacity: 0, y: -70, scale: 0.98 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Lane Header */}
       <motion.div
         className={`mb-6 px-6 py-4 rounded-2xl border-b-4 ${col.color} bg-gradient-to-r ${col.gradient} flex items-center justify-between shadow-lg relative overflow-hidden`}
         whileHover={{ scale: 1.01 }}
@@ -473,7 +488,6 @@ function TaskLane({
         </motion.button>
       </motion.div>
 
-      {/* Horizontal Scrolling Task Cards */}
       <div className="flex gap-6 overflow-x-auto pb-4 pt-2 px-1 snap-x snap-mandatory scroll-smooth">
         <AnimatePresence>
           {colTasks.map((task, taskIdx) => (
@@ -521,7 +535,6 @@ function TaskLane({
   );
 }
 
-// ============ TASK CARD COMPONENT ============
 function TaskCard({
   task,
   taskIdx,
@@ -553,10 +566,8 @@ function TaskCard({
       }}
       onClick={onClick}
     >
-      {/* Interactive Laser Glow Node */}
       <div className="card-magnetic-glow" />
 
-      {/* Internal Shimmer Wave on Entry */}
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none"
         initial={{ x: "-100%" }}
@@ -614,7 +625,6 @@ function TaskCard({
           <span className="text-sm">📍</span> {task.location}
         </p>
 
-        {/* Progress Bar */}
         <div className="space-y-2 mb-4">
           <div className="flex justify-between items-center text-[10px] font-bold tracking-wide">
             <span className="text-slate-400 uppercase text-[9px]">Progress</span>
@@ -643,7 +653,6 @@ function TaskCard({
           </div>
         </div>
 
-        {/* Team Section */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-50">
           <div className="flex -space-x-2 overflow-hidden">
             <AnimatePresence>
@@ -688,7 +697,6 @@ function TaskCard({
   );
 }
 
-// ============ FOCUSED TASK VIEW COMPONENT ============
 function FocusedTaskView({
   task,
   permissions,
@@ -716,7 +724,6 @@ function FocusedTaskView({
       exit={{ opacity: 0, scale: 0.93, y: -40 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Control Strip */}
       <motion.div
         className="flex justify-between items-center bg-white/80 backdrop-blur-xl p-4 rounded-2xl border border-slate-100 shadow-xl"
         initial={{ opacity: 0, y: -20 }}
@@ -754,14 +761,12 @@ function FocusedTaskView({
         </div>
       </motion.div>
 
-      {/* Task Detail Card */}
       <motion.div
         className="bg-white/90 backdrop-blur-xl rounded-[3rem] border border-slate-100 shadow-2xl p-8 md:p-10 relative overflow-hidden"
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
         transition={{ delay: 0.2, type: "spring", stiffness: 150, damping: 20 }}
       >
-        {/* Ambient Internal Glow Element */}
         <motion.div
           className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/15 to-transparent rounded-full blur-3xl"
           animate={{ scale: [1, 1.15, 1], rotate: [0, 90, 0] }}
@@ -853,7 +858,6 @@ function FocusedTaskView({
               </motion.div>
             </div>
 
-            {/* Team Roster */}
             <motion.div
               className="pt-4"
               initial={{ opacity: 0, y: 20 }}
@@ -887,7 +891,6 @@ function FocusedTaskView({
             </motion.div>
           </div>
 
-          {/* Action Buttons */}
           <motion.div
             className="mt-8 pt-6 border-t border-slate-100 flex flex-col gap-3"
             initial={{ opacity: 0, y: 20 }}
@@ -939,7 +942,6 @@ function FocusedTaskView({
   );
 }
 
-// ============ CATEGORY VIEW COMPONENT ============
 function CategoryView({
   activeCategory,
   allTasks,
@@ -967,7 +969,6 @@ function CategoryView({
       exit={{ opacity: 0, y: -30 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Header */}
       <motion.div
         className="flex justify-between items-center flex-wrap gap-4 bg-white/80 backdrop-blur-xl p-6 rounded-3xl border border-slate-100 shadow-xl"
         initial={{ opacity: 0, y: -20 }}
@@ -1002,7 +1003,6 @@ function CategoryView({
         </motion.span>
       </motion.div>
 
-      {/* Task Grid */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         initial={{ opacity: 0 }}
@@ -1094,7 +1094,6 @@ function CategoryView({
   );
 }
 
-// ============ ASSIGNMENT MODAL COMPONENT ============
 function AssignmentModal({
   showAssignModal,
   setShowAssignModal,
@@ -1126,7 +1125,6 @@ function AssignmentModal({
         exit={{ scale: 0.9, y: 50 }}
         transition={{ type: "spring", damping: 25 }}
       >
-        {/* Header */}
         <div className="px-12 py-10 border-b border-slate-100 flex items-center justify-between">
           <div>
             <motion.h3
@@ -1163,7 +1161,6 @@ function AssignmentModal({
           </motion.button>
         </div>
 
-        {/* Volunteer List */}
         <div className="p-8 max-h-[450px] overflow-y-auto space-y-4">
           <AnimatePresence>
             {availableVolunteers

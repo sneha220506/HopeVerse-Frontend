@@ -315,7 +315,17 @@ if (isLoading) {
   };
 
   return (
-    <section className="py-16 bg-[#F8FAFC] min-h-screen font-sans relative overflow-x-hidden">
+    // <section className="py-16 bg-[#F8FAFC] min-h-screen font-sans relative overflow-x-hidden">
+    <section className="py-8 bg-gradient-to-br from-slate-50 via-white to-primary min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 animate-pulse-slow" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-accent/10 via-success/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 animate-pulse-slow animation-delay-2000" />
+        
+        {/* Floating Geometric Shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/20 rounded-2xl rotate-12 animate-float" />
+        <div className="absolute top-30 right-20 w-16 h-16 border-2 border-secondary/20 rounded-full animate-float animation-delay-1000" />
+        <div className="absolute bottom-100 left-1/4 w-12 h-12 border-2 border-accent/20 rounded-lg rotate-45 animate-float animation-delay-3000" />
+      </div>
       {/* Hugo Style Line Track System */}
       <style
         dangerouslySetInnerHTML={{
@@ -329,19 +339,25 @@ if (isLoading) {
             position: fixed; top: 70%; left: 0; right: 0; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.03) 50%, transparent);
             pointer-events: none; z-index: 0;
+            @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
           }
         `,
         }}
       />
 
-      {/* Progress Bar */}
-      
-
-      {/* Fixed Geometric Linear Background Tracks */}
       <div className="hugo-fixed-track-1" />
       <div className="hugo-fixed-track-2" />
 
-      {/* Background Ambient Glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div
           className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-indigo-200/20 to-purple-200/20 rounded-full blur-3xl"
@@ -364,7 +380,6 @@ if (isLoading) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Page Header */}
         <motion.div 
           className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
           initial={{ opacity: 0, y: -20 }}
@@ -384,7 +399,6 @@ if (isLoading) {
           </div>
         </motion.div>
 
-        {/* Navigation Tabs */}
         <div className="flex gap-2.5 mb-12 overflow-x-auto pb-2 no-scrollbar">
           <TabButton
             active={activeTab === "form"}
@@ -417,7 +431,6 @@ if (isLoading) {
         </div>
 
         <AnimatePresence mode="wait">
-          {/* FORM VIEW */}
           {activeTab === "form" && (
             <motion.div
               key="form-view"
@@ -452,7 +465,6 @@ if (isLoading) {
             </motion.div>
           )}
 
-          {/* REPORTS VIEW */}
           {(activeTab === "reports" || activeTab === "pending" || activeTab === "yourreports") && (
             <ReportsView
               key="reports-view"
@@ -472,7 +484,6 @@ if (isLoading) {
   );
 }
 
-// ============ TAB BUTTON COMPONENT ============
 function TabButton({ active, onClick, label, icon, index }) {
   return (
     <motion.button
@@ -502,7 +513,6 @@ function TabButton({ active, onClick, label, icon, index }) {
   );
 }
 
-// ============ SUCCESS MESSAGE COMPONENT ============
 function SuccessMessage() {
   return (
     <motion.div
@@ -547,7 +557,6 @@ function SuccessMessage() {
   );
 }
 
-// ============ SURVEY FORM CONTENT COMPONENT ============
 function SurveyFormContent({
   formData,
   setFormData,
@@ -571,7 +580,6 @@ function SurveyFormContent({
       animate={{ opacity: 1 }}
     >
       <div className="space-y-10 relative z-10">
-        {/* Section 0: Identity */}
         <motion.div 
           className="border-b border-slate-100 pb-8"
           initial={{ x: -20, opacity: 0 }}
@@ -593,7 +601,6 @@ function SurveyFormContent({
           </div>
         </motion.div>
 
-        {/* Section 1: Location */}
         <motion.div 
           className="space-y-6"
           initial={{ x: -20, opacity: 0 }}
@@ -649,7 +656,6 @@ function SurveyFormContent({
             </Field>
           </div>
 
-          {/* Full Address Display */}
           <AnimatePresence>
             {formData.fullAddress && (
               <motion.div
@@ -665,7 +671,6 @@ function SurveyFormContent({
             )}
           </AnimatePresence>
 
-          {/* Location Buttons */}
           <div className="flex gap-2.5 flex-wrap">
             <motion.button
               type="button"
@@ -687,8 +692,6 @@ function SurveyFormContent({
               Use My Location
             </motion.button>
           </div>
-
-          {/* Map Display */}
           <AnimatePresence>
             {showMapSelector && (
               <motion.div
@@ -755,7 +758,6 @@ function SurveyFormContent({
           </AnimatePresence>
         </motion.div>
 
-        {/* Section 2: Category & Survey Type */}
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial={{ x: -20, opacity: 0 }}
@@ -795,7 +797,6 @@ function SurveyFormContent({
           </Field>
         </motion.div>
 
-        {/* Urgency Protocol */}
         <motion.div
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -826,7 +827,6 @@ function SurveyFormContent({
           </Field>
         </motion.div>
 
-        {/* Description & Impact */}
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
           initial={{ x: -20, opacity: 0 }}
@@ -883,7 +883,6 @@ function SurveyFormContent({
           </div>
         </motion.div>
 
-        {/* Submit Layout */}
         <motion.button
           type="submit"
           className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-black uppercase tracking-widest text-[11px] transition-all shadow-md relative overflow-hidden group"
@@ -899,8 +898,6 @@ function SurveyFormContent({
     </motion.form>
   );
 }
-
-// ============ SECTION HEADER COMPONENT ============
 function SectionHeader({ title }) {
   return (
     <motion.p
@@ -918,7 +915,6 @@ function SectionHeader({ title }) {
   );
 }
 
-// ============ FIELD COMPONENT ============
 function Field({ label, children, required }) {
   return (
     <motion.div
@@ -941,7 +937,6 @@ function Field({ label, children, required }) {
   );
 }
 
-// ============ REPORTS VIEW COMPONENT ============
 function ReportsView({
   activeTab,
   allReports,
@@ -987,7 +982,6 @@ function ReportsView({
   );
 }
 
-// ============ REPORT CARD COMPONENT ============
 function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, highlight }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -1063,7 +1057,6 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
             </span>
           </div>
 
-          {/* GPS Coordinates Field */}
           {entry.gpsCoordinates?.latitude && entry.gpsCoordinates?.longitude && (
             <div className="mb-4 p-3 bg-slate-50 border border-slate-100 rounded-lg">
               <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-0.5">📍 Coordinates Registry</p>
@@ -1121,7 +1114,6 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
   );
 }
 
-// ============ IMAGE MODAL COMPONENT ============
 function ImageModal({ isOpen, onClose, imgSrc, location }) {
   if (!isOpen) return null;
 
