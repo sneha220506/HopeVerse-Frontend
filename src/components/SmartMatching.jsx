@@ -89,7 +89,7 @@ export default function SmartMatching({ permissions }) {
       }
       setAssigned(prev => new Set([...prev, key]));
     } catch (err) {
-      alert("Deployment Protocol Error: " + err.message);
+      alert("Deployment Protocol Error : " + err.message);
     }
   };
 
