@@ -271,29 +271,41 @@ export default function SurveyForm({ permissions, user }) {
       console.error("Delete Error:", error);
     }
   };
-
-  if (isLoading) {
-    return (
-      <motion.div
-        className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
+if (isLoading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="relative w-32 h-32">
+        
         <motion.div
-          className="relative w-20 h-20 mb-6"
+          className="absolute inset-0 border-4 border-purple-200 border-t-purple-600 rounded-full"
           animate={{ rotate: 360 }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-        >
-          <div className="absolute inset-0 border-2 border-primary/10 border-t-primary rounded-full" />
-        </motion.div>
-        <p className="font-sans font-bold text-slate-800 text-xs tracking-wider uppercase">
-          Synchronizing Master Registry...
-        </p>
-      </motion.div>
-    );
-  }
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+        />
 
+        <motion.div
+          className="absolute inset-2 border-4 border-pink-200 border-t-pink-500 rounded-full"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        />
+
+        <motion.div
+          className="absolute inset-4 border-4 border-blue-200 border-t-blue-500 rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+        />
+
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        >
+          <span className="text-3xl">⚡</span>
+        </motion.div>
+
+      </div>
+    </div>
+  );
+}
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -323,10 +335,7 @@ export default function SurveyForm({ permissions, user }) {
       />
 
       {/* Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-[200] origin-left"
-        style={{ scaleX }}
-      />
+      
 
       {/* Fixed Geometric Linear Background Tracks */}
       <div className="hugo-fixed-track-1" />
@@ -364,15 +373,9 @@ export default function SurveyForm({ permissions, user }) {
         >
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <motion.span 
-                className="text-xl"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                📝
-              </motion.span>
+              
               <h2 className="text-3xl font-heading font-bold text-slate-900 tracking-tight">
-                Field <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Intelligence</span>
+                Field <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Intelligence</span>
               </h2>
             </div>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
@@ -387,14 +390,12 @@ export default function SurveyForm({ permissions, user }) {
             active={activeTab === "form"}
             onClick={() => setActiveTab("form")}
             label="New Entry"
-            icon="✍️"
             index={0}
           />
           <TabButton
             active={activeTab === "reports"}
             onClick={() => setActiveTab("reports")}
             label={`All Reports (${(allReports || []).length})`}
-            icon="📊"
             index={1}
           />
           {p?.canViewSurvey && (
@@ -402,7 +403,6 @@ export default function SurveyForm({ permissions, user }) {
               active={activeTab === "yourreports"}
               onClick={() => setActiveTab("yourreports")}
               label={`Your Reports (${(myReports || []).length})`}
-              icon="📋"
               index={2}
             />
           )}
@@ -411,7 +411,6 @@ export default function SurveyForm({ permissions, user }) {
               active={activeTab === "pending"}
               onClick={() => setActiveTab("pending")}
               label={`Review (${(allReports || []).filter((r) => !r.verified).length})`}
-              icon="⏳"
               index={3}
             />
           )}
@@ -1021,7 +1020,7 @@ function ReportCard({ entry, index, canVerify, canDelete, onVerify, onDelete, hi
       >
         <div className="relative z-10">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-11 h-11 bg-slate-50 rounded-xl flex items-center justify-center text-xl border border-slate-100 group-hover:scale-105 transition-transform duration-300">
+            <div >
               {getCategoryIcon(entry.category)}
             </div>
             <div className="flex-1 min-w-0">

@@ -120,30 +120,23 @@ export default function Analytics({ permissions }) {
         >
           <div>
             <h2 className="text-5xl font-black text-[#2F2F3A] tracking-tighter uppercase">
-              Impact <span className="text-[#8E7CC3]">Analytics</span>
+              Impact <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Analytics</span>
             </h2>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-2">
               Real-time platform resource telemetry pipelines
             </p>
-          </div>
-          
-          <div className="flex items-center gap-4">
-             <div className="bg-white px-5 py-3 rounded-xl border border-slate-200/80 shadow-sm flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Engine Active</span>
-             </div>
           </div>
         </motion.div>
 
         {/* Impact Highlights Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-16">
           {[
-            { l: 'Affected', v: totalAffected, i: '🏘️', bg: 'bg-[#8E7CC3]/5' },
-            { l: 'Open Needs', v: communityNeeds.length, i: '📋', bg: 'bg-[#FF8A65]/5' },
-            { l: 'Volunteers', v: volunteers.length, i: '👥', bg: 'bg-[#7BC47F]/5' },
-            { l: 'Completed', v: tasks.length, i: '✅', bg: 'bg-indigo-50/50' },
-            { l: 'Hours', v: totalHours, i: '⏱️', bg: 'bg-blue-50/50' },
-            { l: 'Sentiment', v: parseFloat(avgRating), i: '⭐', bg: 'bg-amber-50/50', isDecimal: true }
+            { l: 'Affected', v: totalAffected, bg: 'bg-[#8E7CC3]/5' },
+            { l: 'Open Needs', v: communityNeeds.length, bg: 'bg-[#FF8A65]/5' },
+            { l: 'Volunteers', v: volunteers.length,  bg: 'bg-[#7BC47F]/5' },
+            { l: 'Completed', v: tasks.length,  bg: 'bg-indigo-50/50' },
+            { l: 'Hours', v: totalHours,  bg: 'bg-blue-50/50' },
+            { l: 'Sentiment', v: parseFloat(avgRating),  bg: 'bg-amber-50/50', isDecimal: true }
           ].map((m, idx) => (
             <MetricCard key={m.l} metric={m} index={idx} />
           ))}
@@ -214,7 +207,7 @@ function MetricCard({ metric, index }) {
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: index * 0.04 }}
       whileHover={{ y: -6, border: '1px solid #8E7CC3', boxShadow: "0 20px 40px rgba(142, 124, 195, 0.05)" }}
     >
-      <div className={`w-12 h-12 ${metric.bg} rounded-xl flex items-center justify-center text-xl mx-auto mb-4 group-hover:scale-105 transition-transform duration-300`}>
+      <div>
         {metric.i}
       </div>
       <div className="text-3xl font-black text-slate-800 tracking-tighter">
@@ -252,7 +245,7 @@ function CategoryChartCard({ categoryData, barColors, getCategoryIcon }) {
             <div key={cat} className="group">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <span className="w-9 h-9 flex items-center justify-center bg-slate-50 rounded-xl text-lg border border-slate-100">{getCategoryIcon(cat)}</span>
+                  <span>{getCategoryIcon(cat)}</span>
                   <span className="text-xs font-black text-slate-700 capitalize tracking-wide">{cat}</span>
                 </div>
                 <div className="text-right">
@@ -408,10 +401,10 @@ function GlobalSummaryBanner({ totalHours, totalAffected, activeNodes, verifiedI
 
       <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
         {[
-          { v: ((totalHours * 25) / 1000), l: 'Valuation Created', i: '📈', prefix: '$', suffix: 'K+' },
-          { v: (totalAffected / 1000), l: 'Humans Helped', i: '💙', suffix: 'K' },
-          { v: activeNodes, l: 'Active Nodes', i: '🌍' },
-          { v: verifiedInsights, l: 'Verified Insights', i: '🛡️' }
+          { v: ((totalHours * 25) / 1000), l: 'Valuation Created', prefix: '$', suffix: 'K+' },
+          { v: (totalAffected / 1000), l: 'Humans Helped', suffix: 'K' },
+          { v: activeNodes, l: 'Active Nodes' },
+          { v: verifiedInsights, l: 'Verified Insights'}
         ].map((stat) => (
           <div key={stat.l} className="flex flex-col items-center justify-center px-2">
             <span className="text-xl mb-2.5">{stat.i}</span>

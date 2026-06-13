@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-surface border-t border-primary/5 mt-20">
+    <footer className="bg-#f8f2fc border-t border-primary/5 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex flex-col items-center text-center">
           {/* Logo & Identity */}
@@ -39,7 +39,7 @@ export default function Footer() {
             <div className="h-4 w-px bg-primary/10 hidden md:block" />
             <a href="#" className="flex items-center gap-2 text-primary/60 hover:text-primary text-[10px] font-black uppercase tracking-widest transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              CP Version v1.0 Live
+              HP Version v1.0 Live
             </a>
           </div>
         </div>

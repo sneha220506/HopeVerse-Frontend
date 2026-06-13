@@ -233,7 +233,7 @@ export default function App() {
       localStorage.setItem("HopeVerse_token", d.token);
       localStorage.setItem("HopeVerse_user", JSON.stringify(d.user));
 
-      setUser(d.user); // ✅ ensure ho
+      setUser(d.user); 
       setAuthView("authenticated");
       setActiveSection("dashboard");
     } catch (err) {
@@ -381,7 +381,7 @@ export default function App() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center">
+    <div className="min-h-screen bg-#f8f2fc flex items-center justify-center">
       <div className="text-center">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl border border-slate-700 mb-6 mx-auto animate-pulse">
           <span className="text-3xl">🤝</span>

@@ -104,7 +104,7 @@ export default function Dashboard({ onNavigate, permissions }) {
         
         .gradient-border {
           background: linear-gradient(white, white) padding-box,
-                      linear-gradient(135deg, #4F46E5, #7C3AED, #EC4899) border-box;
+                      linear-gradient(135deg, #ab7dd0, #7C3AED, #EC4899) border-box;
           border: 2px solid transparent;
         }
         
@@ -125,8 +125,6 @@ export default function Dashboard({ onNavigate, permissions }) {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-3 h-3 bg-primary rounded-full animate-ping absolute" />
-                  <div className="w-3 h-3 bg-primary rounded-full relative" />
                 </div>
                 <h1 className="text-5xl font-heading font-black text-slate-dark tracking-tight">
                   Operations{" "}
@@ -208,10 +206,10 @@ export default function Dashboard({ onNavigate, permissions }) {
           {/* Main Column: Critical Needs */}
           <div className="lg:col-span-2 space-y-6">
             {/* Critical Interventions Card */}
-            <div className="gradient-border rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-right stagger-2 group hover:shadow-primary/20 transition-shadow duration-500">
+            <div className="gradient-border rounded-[2.5rem] shadow-2xl overflow-hidden ">
               <div className="bg-gradient-to-br from-white via-primary/5 to-secondary/5">
                 {/* Header */}
-                <div className="px-10 py-7 border-b border-slate-100/50 flex items-center justify-between bg-white/80 backdrop-blur-sm">
+                <div className="flex items-center justify-between px-8 py-6 animate-slide-right stagger-2">
                   <div className="flex items-center gap-4">
                     <div className="relative">
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
@@ -236,7 +234,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                     <span className="font-black uppercase tracking-widest text-xs flex items-center gap-2">
                       Full Intel
                       <svg
-                        className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
+                        className="w-4 h-4 hover/btn:translate-x-1 transition-transform"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -269,9 +267,6 @@ export default function Dashboard({ onNavigate, permissions }) {
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-8">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-xl animate-glow">
-                      <span className="text-3xl">⚡</span>
-                    </div>
                     <div>
                       <h3 className="font-black text-2xl tracking-tight text-slate-dark">
                         Mission Control
@@ -337,11 +332,10 @@ export default function Dashboard({ onNavigate, permissions }) {
           {/* Right Column: Analytics */}
           <div className="space-y-6 animate-slide-left stagger-3">
             {/* Category Distribution */}
-            <div className="gradient-border rounded-[2.5rem] shadow-2xl p-8 bg-white hover:shadow-primary/20 transition-all duration-500 group">
+            <div className="gradient-border rounded-[2.5rem] overflow-hidden">
+            <div className="overflow-y-auto custom-scrollbar max-h-173 shadow-2xl p-8 bg-white ">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
-                  <span className="text-2xl">📊</span>
-                </div>
+                
                 <div>
                   <h3 className="text-slate-dark font-black text-lg tracking-tight">
                     Sector Analysis
@@ -366,15 +360,14 @@ export default function Dashboard({ onNavigate, permissions }) {
                   ))}
               </div>
             </div>
+            </div>
 
             {/* Top Performers */}
             {p.canViewVolunteers && (
-              <div className="gradient-border rounded-[2.5rem] shadow-2xl p-8 bg-white hover:shadow-secondary/20 transition-all duration-500 group">
+              <div className="gradient-border rounded-[2.5rem] overflow-hidden">
+              <div className=" overflow-y-auto custom-scrollbar max-h-106 shadow-2xl p-8 bg-white ">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
-                      <span className="text-2xl">🏆</span>
-                    </div>
                     <div>
                       <h3 className="text-slate-dark font-black text-lg tracking-tight">
                         Top Performers
@@ -392,6 +385,7 @@ export default function Dashboard({ onNavigate, permissions }) {
                   ))}
                 </div>
               </div>
+              </div>
             )}
           </div>
         </div>
@@ -399,9 +393,7 @@ export default function Dashboard({ onNavigate, permissions }) {
         {/* Regional Intelligence Grid */}
         <div className="mt-12">
           <div className="flex items-center gap-4 mb-8 animate-slide-up stagger-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-success/20 to-primary/20 flex items-center justify-center shadow-xl">
-              <span className="text-3xl">🗺️</span>
-            </div>
+            
             <div>
               <h2 className="text-3xl font-heading font-black text-slate-dark tracking-tight">
                 Regional Intelligence
@@ -462,12 +454,7 @@ function NeedCard({ need, index }) {
     >
       <div className="flex items-start gap-6">
         <div className="relative">
-          <div className="text-4xl w-16 h-16 bg-gradient-to-br from-white to-slate-50 rounded-2xl shadow-lg flex items-center justify-center border border-slate-100 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-            {getCategoryIcon(need.category)}
-          </div>
-          <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent rounded-full flex items-center justify-center shadow-lg animate-pulse">
-            <span className="text-[10px] font-black text-white">!</span>
-          </div>
+          
         </div>
 
         <div className="flex-1 min-w-0">
@@ -685,14 +672,7 @@ function RegionCard({ region, index }) {
       className="gradient-border rounded-2xl p-6 bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
       style={{ animationDelay: `${index * 0.1}s` }}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-success/20 to-primary/20 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-          🗺️
-        </div>
-        <div
-          className={`w-3 h-3 rounded-full ${criticalPercentage > 50 ? "bg-accent animate-pulse" : "bg-success"}`}
-        />
-      </div>
+      
 
       <h4 className="text-slate-dark font-black text-sm uppercase tracking-wider mb-4 group-hover:text-primary transition-colors">
         {region.region}

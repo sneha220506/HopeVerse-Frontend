@@ -48,7 +48,7 @@ export default function Navbar({ activeSection, onNavigate, backendStatus, user,
               <span className="text-white text-lg leading-none">🤝</span>
             </motion.div>
             <span className="text-slate-800 font-heading font-black text-base sm:text-lg tracking-tight hidden sm:inline-block">
-              Hope<span className="text-primary font-bold">Verse</span>
+              Hope<span className="text-primary font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">Verse</span>
             </span>
           </button>
 

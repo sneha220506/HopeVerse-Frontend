@@ -343,15 +343,22 @@ export default function VolunteerDirectory({
 
   /* Loading matched perfectly to system theme style */
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#F8FAFC]">
-        <div className="w-16 h-16 border-4 border-slate-100 border-t-primary rounded-full animate-spin bg-gradient-to-tr from-transparent to-secondary/10 mb-4" />
-        <div className="text-slate-dark/40 font-black text-xs uppercase tracking-[0.2em] animate-pulse">
-          Loading Directory...
-        </div>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-white via-[#F5F2FF] to-[#8E7CC3]/20">
+      
+      <div className="relative">
+        <div className="w-20 h-20 border-4 border-purple-200 rounded-full"></div>
+
+        <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-[#8E7CC3] rounded-full animate-spin"></div>
       </div>
-    );
-  }
+
+      <div className="mt-6 text-slate-600 font-bold text-sm uppercase tracking-[0.2em] animate-pulse">
+        Loading Directory...
+      </div>
+
+    </div>
+  );
+}
 
   return (
 

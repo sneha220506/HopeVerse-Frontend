@@ -596,13 +596,6 @@ function StatCard({ value, label, icon, color, index }) {
           >
             {icon}
           </motion.div>
-          <motion.div
-            className="px-3 py-1 bg-success/10 rounded-full"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <span className="text-xs font-black text-success">● LIVE</span>
-          </motion.div>
         </div>
 
         <motion.div
@@ -692,7 +685,7 @@ function FeaturesSection({ activeFeature, setActiveFeature }) {
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              ⚡
+              
             </motion.span>
             <span className="text-xs font-black uppercase tracking-wider text-primary">
               Platform Capabilities
@@ -905,13 +898,7 @@ function RolesSection() {
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.span
-              className="text-2xl"
-              animate={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              🔐
-            </motion.span>
+            
             <span className="text-xs font-black uppercase tracking-wider text-secondary">
               Access Control
             </span>
@@ -1097,13 +1084,7 @@ function ImpactSection() {
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.span
-              className="text-2xl"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              🌟
-            </motion.span>
+            
             <span className="text-xs font-black uppercase tracking-wider text-success">
               Real Impact
             </span>
@@ -1269,7 +1250,7 @@ function CTASection({ onLogin, onRegister }) {
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                🚀
+                
               </motion.span>
               <span className="text-xs font-black uppercase tracking-wider">Join the Movement</span>
             </motion.div>
@@ -1403,7 +1384,9 @@ function Footer() {
                   <span className="text-white text-xl">🤝</span>
                 </motion.div>
               </div>
-              <span className="text-slate-dark font-bold text-xl">HopeVerse</span>
+              <span className="text-slate-800 font-heading font-black text-base sm:text-lg tracking-tight hidden sm:inline-block">
+              Hope<span className="text-primary font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">Verse</span>
+            </span>
             </motion.div>
             <p className="text-slate-dark/60 mb-6 max-w-md leading-relaxed">
               Empowering communities through intelligent resource allocation and data-driven
@@ -1490,7 +1473,7 @@ function Footer() {
           transition={{ delay: 0.5 }}
         >
           <p className="text-slate-dark/40 text-xs font-bold uppercase tracking-widest">
-            © 2026 HopeVerse. All rights reserved.
+            © 2026 Hope<span className="text-primary ">Verse</span>. All rights reserved.
           </p>
           <div className="flex gap-6 text-slate-dark/40 text-xs font-bold uppercase tracking-wider">
             {["Terms", "Privacy", "Cookies"].map((link, i) => (
