@@ -11,14 +11,16 @@ import Analytics from "./components/Analytics";
 import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import ResetPassword from "./components/ResetPassword"; 
 import { checkBackendHealth } from "./services/api";
 import VerifyEmail from "./components/VerifyEmail";
 import { initiateSocketConnection, disconnectSocket } from "./services/socket";
 import { Toaster } from "react-hot-toast";
-import { LoadScript, LoadScriptNext } from "@react-google-maps/api";
+import { LoadScriptNext } from "@react-google-maps/api";
 import Settings from "./components/Settings";
 
 const libraries = ["places"];
+
 // ============================================
 // ROLE PERMISSIONS - Single Source of Truth
 // ============================================
@@ -102,6 +104,10 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [verifyEmail, setVerifyEmail] = useState("");
 
+  // Deep Link Reset Token Parameters State
+  const [resetToken, setResetToken] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+
   // Derived permissions
   const perms = user
     ? ROLE_PERMISSIONS[user.role] || ROLE_PERMISSIONS.viewer
@@ -118,6 +124,7 @@ export default function App() {
       disconnectSocket();
     };
   }, [user, backendStatus]);
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -126,6 +133,21 @@ export default function App() {
       } catch {
         setBackendStatus(false);
       }
+
+      // --- PATH-BASED DEEP LINK INTERCEPTION PROTOCOL ---
+      // Intercepts custom formatted links like: https://hopeverse01.web.app/reset/:token
+      const currentPath = window.location.pathname;
+      if (currentPath.includes("/reset/")) {
+        const tokenFromPath = currentPath.split("/reset/")[1];
+        if (tokenFromPath) {
+          setResetToken(tokenFromPath);
+          setResetEmail(""); // Set by context dynamically if needed later
+          setAuthView("reset-password"); // Push viewport layout to update submission state
+          setAuthLoading(false);
+          return;
+        }
+      }
+      // --------------------------------------------------
 
       const stored = localStorage.getItem("HopeVerse_user");
       if (stored) {
@@ -215,12 +237,15 @@ export default function App() {
     setUser(null);
     setAuthView("landing");
     setActiveSection("dashboard");
+    // Purges path strings safely back to clean core base routing path
+    window.history.replaceState({}, document.title, "/");
   };
 
   const go = (s) => {
     setActiveSection(s);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
   const handleVerify = async (email, otp) => {
     try {
       const { authAPI } = await import("./services/api");
@@ -254,7 +279,9 @@ export default function App() {
 
   if (authLoading) return <LoadingScreen />;
 
-  // Auth Routing
+  // ============================================
+  // AUTH VIEWS ROUTING MATRIX
+  // ============================================
   if (authView === "landing")
     return (
       <LandingPage
@@ -267,6 +294,7 @@ export default function App() {
       <Login
         onLogin={doLogin}
         onSwitchToRegister={() => setAuthView("register")}
+        onForgotPassword={() => setAuthView("reset-request")}
         onBack={() => setAuthView("landing")}
       />
     );
@@ -286,8 +314,24 @@ export default function App() {
         onResendOTP={handleResendOTP}
       />
     );
+    
+  if (authView === "reset-request" || authView === "reset-password")
+    return (
+      <ResetPassword
+        mode={authView === "reset-request" ? "request" : "submit"}
+        token={resetToken}
+        email={resetEmail}
+        onBackToLogin={() => {
+          // Clears out path artifacts dynamically on viewport cancel action
+          window.history.replaceState({}, document.title, "/");
+          setAuthView("login");
+        }}
+      />
+    );
 
-  // Main Section Router with Security Guard
+  // ============================================
+  // MAIN APP NAVIGATION DATA BLOCK
+  // ============================================
   const renderSection = () => {
     const config = {
       dashboard: {
@@ -341,31 +385,16 @@ export default function App() {
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={libraries}
     >
-    <div className="min-h-screen bg-[#f8f2fc] text-slate-200">
-      <Toaster position="top-right" />
-      <Navbar
-        activeSection={activeSection}
-        onNavigate={go}
-        backendStatus={backendStatus}
-        user={user}
-        onLogout={doLogout}
-        perms={perms}
-      />
-
-      <main className="pt-16 bg-[#f8f2fc]">
-        {/* Tactical Status Bar */}
-        <div
-          className={`text-center py-1.5 text-[10px] font-black uppercase tracking-[0.2em] border-b transition-all duration-700 ${
-            backendStatus
-              ? "bg-slate text-black border-slate-700/20"
-              : "bg-amber-500/5 text-amber-500 border-amber-500/10"
-          }`}
-        >
-          {backendStatus ? "● System Connected" : "○ Local Offline Mode"}
-          <span className="mx-4 opacity-20">|</span>
-          Operator: {user?.name || "Guest"}
-          <span className="opacity-50">[{perms.label}]</span>
-        </div>
+      <div className="min-h-screen bg-[#f8f2fc] text-slate-200">
+        <Toaster position="top-right" />
+        <Navbar
+          activeSection={activeSection}
+          onNavigate={go}
+          backendStatus={backendStatus}
+          user={user}
+          onLogout={doLogout}
+          perms={perms}
+        />
 
         {/* Section Animation Wrapper */}
         <div className="transition-all duration-500 ease-in-out ">
@@ -381,7 +410,7 @@ export default function App() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-#f8f2fc flex items-center justify-center">
+    <div className="min-h-screen bg-[#f8f2fc] flex items-center justify-center">
       <div className="text-center">
         <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl border border-slate-700 mb-6 mx-auto animate-pulse">
           <span className="text-3xl">🤝</span>
